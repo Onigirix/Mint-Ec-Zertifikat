@@ -1,0 +1,37 @@
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  vertical-align: baseline;
+}
+
+.h1{
+  text-align: justify;
+}
+
+.input-fields{
+  height: 4vh;
+}
+
+#Fachliche-Kompetenz{
+  background-color: rgba(0, 0, 255, 0.5);
+  width: 33vw;
+  height: 95vh;
+}
+
+#Fachwissenschaftliches-Arbeiten{
+  background-color: rgba(0, 255, 0, 0.5);
+  width: 33vw;
+  height: 95vh;
+}
+
+#Zusätzliche-MINT-Aktivität{
+  background-color: rgba(104, 0, 104, 0.8);
+  width: 33vw;
+  height: 95vh;
+}
+
+#top-bar{
+  width: 100vw;
+  height: 5vh;
+}
