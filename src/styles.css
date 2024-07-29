@@ -1,37 +1,63 @@
-.flex-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  vertical-align: baseline;
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
 }
 
-.h1{
-  text-align: justify;
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
 }
 
-.input-fields{
-  height: 4vh;
+.sidenav a:hover {
+  color: #f1f1f1;
 }
 
-#Fachliche-Kompetenz{
-  background-color: rgba(0, 0, 255, 0.5);
-  width: 33vw;
-  height: 95vh;
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }
 
-#Fachwissenschaftliches-Arbeiten{
-  background-color: rgba(0, 255, 0, 0.5);
-  width: 33vw;
-  height: 95vh;
+#closeNav{
+  cursor: pointer;
 }
 
-#Zusätzliche-MINT-Aktivität{
-  background-color: rgba(104, 0, 104, 0.8);
-  width: 33vw;
-  height: 95vh;
+#Fachliche-Kompetenz:hover {
+  filter:drop-shadow(0 0 1rem rgb(0, 0, 255));
 }
 
-#top-bar{
-  width: 100vw;
-  height: 5vh;
+#Fachwissenschaftliches-Arbeiten:hover {
+  filter:drop-shadow(0 0 1rem rgb(0, 255, 0));
+}
+
+#Zusätzliche-MINT-Aktivitäten:hover {
+  filter:drop-shadow(0 0 1rem rgb(255, 0, 255));
+}
+
+#settings:hover {
+  filter:drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
+#export:hover {
+  filter:drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 20px;
 }

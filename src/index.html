@@ -10,22 +10,17 @@
   </head>
 
   <body>
-    <div class="flex-container" id="top-bar">
-      <button id="printer-button"><i class="material-icons">print</i></button> <!-- publish instead of print would also fit quite well -->
-      <div class="input-fields">
-        <input type="text" placeholder="Input 1" />
-        <input type="text" placeholder="Input 2" />
-        <button idd="add-button"><i class="material-icons">add</i></button>
-      </div>
-      <button id="settings-button"><i class="material-icons">settings</i></button>
+    <div id="sidenav" class="sidenav">
+      <a id="closeNav"><i class="material-icons">close</i></a>
+      <a href="#" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
+      <a href="#" id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches Arbeiten</a>
+      <a href="#" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
+      <a href="#" id="export">Exportieren</a>
+      <a href="#" id="settings">Einstellungen</a>
     </div>
-    <div class="flex-container">
-      <div id="Fachliche-Kompetenz">
-      </div>
-      <div id="Fachwissenschaftliches-Arbeiten">
-      </div>
-      <div id="Zusätzliche-MINT-Aktivität">
-      </div>
+    <div id="main">
+      <button id="openNav">open</button>
+    </div>
   </body>
 </html>
 <!--TODO: Add a "stop animations" button to the settings menu-->
