@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  font-family: Verdana, Tahoma, Helvetica, sans-serif, Arial;
+}
+
 .sidenav {
   height: 100%;
   width: 0;
@@ -5,59 +10,55 @@
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #212225;
   overflow-x: hidden;
   padding-top: 60px;
-  transition: 0.5s;
+  transition: 0.5s; /*TODO: Slide in effect for all the elements within the sidenav*/
 }
 
+#closeNav {
+  padding: 2vw 2vw 2vw 2vw;
+  color: #ffffffaa;
+  cursor: pointer;
+  will-change: filter;
+  transition: filter 0.2s ease-out;
+}
 
-.sidenav a {
-  padding: 8px 8px 8px 32px;
+#navLinks a {
+  padding: 2vw 2vw 2vw 2vw;
   text-decoration: none;
   font-size: 25px;
-  color: #818181;
+  color: #ffffffaa;
   display: block;
-  transition: 0.3s;
+  will-change: filter;
+  transition: filter 0.3s ease-out;
 }
 
-.sidenav a:hover {
-  color: #f1f1f1;
-}
-
-.sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
-
-#closeNav{
-  cursor: pointer;
+#closeNav:hover {
+  filter: drop-shadow(0 0 0.75rem rgb(255, 255, 255));
 }
 
 #Fachliche-Kompetenz:hover {
-  filter:drop-shadow(0 0 1rem rgb(0, 0, 255));
+  filter: drop-shadow(0 0 1rem rgb(0, 0, 255));
 }
 
 #Fachwissenschaftliches-Arbeiten:hover {
-  filter:drop-shadow(0 0 1rem rgb(0, 255, 0));
+  filter: drop-shadow(0 0 1rem rgb(0, 255, 0));
 }
 
 #Zusätzliche-MINT-Aktivitäten:hover {
-  filter:drop-shadow(0 0 1rem rgb(255, 0, 255));
+  filter: drop-shadow(0 0 1rem rgb(255, 0, 255));
 }
 
 #settings:hover {
-  filter:drop-shadow(0 0 1rem rgb(255, 255, 255));
+  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
 }
 
 #export:hover {
-  filter:drop-shadow(0 0 1rem rgb(255, 255, 255));
+  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
 }
 
 #main {
-  transition: margin-left .5s;
-  padding: 20px;
+  width: 100vw;
+  height: 100vh;
 }

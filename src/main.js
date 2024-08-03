@@ -1,5 +1,4 @@
 //const { invoke } = window.__TAURI__.core;
-let currentFocus = "none";
 
 window.addEventListener("DOMContentLoaded", () => {
   const openNavButton = document.getElementById("openNav");
@@ -10,7 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function openNav() {
-  document.getElementById("sidenav").style.width = "20vw";
+  document.getElementById("sidenav").style.width = "30vw";
   document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
 }
 
