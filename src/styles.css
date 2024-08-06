@@ -62,3 +62,8 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+#topbar {
+  width: 100vw;
+  height: 10vh;
+}
