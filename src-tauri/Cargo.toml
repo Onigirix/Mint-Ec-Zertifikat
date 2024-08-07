@@ -1,7 +1,7 @@
 [package]
 name = "mint-ec"
 version = "0.0.0"
-description = "A Tauri App"
+description = "Ein Programm zum Erstellen von Mint-EC Zertifikaten"
 authors = ["you"]
 edition = "2021"
 
@@ -12,11 +12,11 @@ name = "mint_ec_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-beta", features = [] }
+tauri-build = { version = "2.0.0-rc.0", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-beta", features = [] }
-tauri-plugin-shell = "2.0.0-beta"
+tauri = { version = "2.0.0-rc.0", features = [] }
+tauri-plugin-shell = "2.0.0-rc.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlx = { version = "0.8.0", features = ["runtime-tokio-native-tls", "sqlite"] }
