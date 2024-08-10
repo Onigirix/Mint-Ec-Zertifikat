@@ -9,6 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function openNav() {
+  console.log("openNav");
   document.getElementById("sidenav").style.width = "30vw";
   document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
 }
