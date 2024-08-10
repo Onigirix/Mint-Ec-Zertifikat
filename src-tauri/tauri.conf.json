@@ -34,7 +34,7 @@
       "icons/icon.ico",
       "icons/icon.icns"
     ],
-    "resources": ["icons/*", "resources/*", "api/*"],
+    "resources": ["icons/*", "resources/*"],
     "publisher": "Arved Lieker"
   }
 }

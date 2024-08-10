@@ -1,5 +1,4 @@
-import { Window } from "/api/window";
-import { Webview } from "/api/webview";
+const { WebviewWindow } = window.__TAURI__.webviewWindow;
 
 window.addEventListener("DOMContentLoaded", () => {
   console.log("DOM fully loaded and parsed");
@@ -9,9 +8,11 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function createSchülerPopup() {
-  const schülerPopupWindow = new Window("schülerPopup");
-  const schülerPopupWebview = new Webview(schülerPopupWindow, "schülerPopup", {
-    url: "schülerPopup.html",
+  const schülerPopupWebview = new WebviewWindow("schuelerPopup", {
+    hiddenTitle: true,
+    minimizable: false,
+    title: "Schüler hinzufügen",
+    url: "schueler-popup.html"
   });
   schülerPopupWebview.once("tauri://created", function () {
     console.log("webview created");

@@ -9,27 +9,33 @@
     <script type="module" src="main.js" defer></script>
     <script type="module" src="components/topbar.js" defer></script>
     <script type="module" src="createSchuelerPopup.js" defer></script>
-    <!--type="text/javascript"-->
   </head>
 
   <body>
     <div id="sidenav" class="sidenav">
       <a id="closeNav"><i class="material-icons">close</i></a>
       <div id="navLinks">
-        <a href="#" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
-        <a href="#" id="Fachwissenschaftliches-Arbeiten"
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
+          >Fachliche Kompetenz</a
+        >
+        <a
+          href="fachwissenschaftliches-arbeiten.html"
+          id="Fachwissenschaftliches-Arbeiten"
           >Fachwissenschaftliches Arbeiten</a
         >
-        <a href="#" id="Zusätzliche-MINT-Aktivitäten"
+        <a href="zusätzlich.html" id="Zusätzliche-MINT-Aktivitäten"
           >Zusätzliche MINT-Aktivitäten</a
         >
-        <a href="#" id="export">Exportieren</a>
+        <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
       </div>
     </div>
     <div id="main">
-      <topbar-component></topbar-component>
-      <button id="openNav">open</button>
+      <h1>StartupPage</h1>
+      <input type="password" id="Password" />
+      <!--TODO: Add database encryption (probably will never happen, because the integrated SQLite encryption costs money)-->
+      <!--TODO: Add smth to explain how the program works (a big carousel that shows it step-by-step)-->
+      <button id="openNav">openNav</button>
       <button id="fill-search-bar-datalists">fill</button>
       <button id="createSchüler">try to open popup via JS, won't work</button>
     </div>
