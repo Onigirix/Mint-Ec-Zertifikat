@@ -1,12 +1,19 @@
 pub mod db;
 use std::sync::Mutex;
-use tauri::{Builder, Manager};
+use tauri::{Builder, Manager, WebviewWindowBuilder};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
+
+/*#[tauri::command] //FIXME: Find the WindowUrl class
+async fn openAddSchülerPopup(handle: tauri::AppHandle) {
+    let schüler_popup = WebviewWindowBuilder::new(&handle, "add-schüler", "add-schüler.html")
+        .build()
+        .unwrap();
+}*/
 
 #[derive(Default)]
 struct AppState {
@@ -15,7 +22,6 @@ struct AppState {
     full_name: String,
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     db::setup_db();
     Builder::default()

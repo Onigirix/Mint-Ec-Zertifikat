@@ -3,6 +3,19 @@
 version = 3
 
 [[package]]
+name = "Mint-EC"
+version = "0.0.1"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-shell",
+ "tokio",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1917,19 +1930,6 @@ checksum = "b8a240ddb74feaf34a79a7add65a741f3167852fba007066dcac1ca548d89c08"
 dependencies = [
  "adler",
  "simd-adler32",
-]
-
-[[package]]
-name = "mint-ec"
-version = "0.0.0"
-dependencies = [
- "serde",
- "serde_json",
- "sqlx",
- "tauri",
- "tauri-build",
- "tauri-plugin-shell",
- "tokio",
 ]
 
 [[package]]
