@@ -22,6 +22,7 @@ struct AppState {
     full_name: String,
 }
 
+
 pub fn run() {
     db::setup_db();
     Builder::default()

@@ -1,6 +1,8 @@
 body {
   margin: 0;
   font-family: Verdana, Tahoma, Helvetica, sans-serif, Arial;
+  overflow: hidden;
+  user-select: none;
 }
 
 .sidenav {

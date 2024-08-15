@@ -6,102 +6,156 @@ const DATABASE: &str = "resources/db.sqlite";
 
 #[tokio::main]
 pub async fn setup_db() {
-    fs::remove_file(DATABASE).unwrap_or_default(); //TODO: remove this line, when finished with development
     if !Sqlite::database_exists(DATABASE).await.unwrap_or(false) {
-        let result = Sqlite::create_database(DATABASE)
+        let _result = Sqlite::create_database(DATABASE)
             .await
             .map_err(|e| eprintln!("Error creating database: {}", e));
     }
 
-    create_schüler_table().await;
-    create_fachliche_kompetenz_table().await;
-    create_zusätzlich_table().await;
-
-    add_test_value_to_schüler().await;
-    add_fachwissenschaftliches_arbeiten("added".to_string(), 1).await;
-    print_fachwissenschaftliches_arbeiten().await;
+    create_students_table().await;
+    create_grades_table().await;
+    create_additional_mint_activities_table().await;
 }
 
-async fn create_schüler_table() {
+async fn create_students_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS schüler (
-        id INTEGER PRIMARY KEY,
-        vorname TEXT NOT NULL,
-        nachname TEXT NOT NULL,
-        geburtsdatum TEXT,
-        zertifikat TEXT,
-        fachwissenschaftliches_arbeiten TEXT
+    let _result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS students (
+        student_id INTEGER PRIMARY KEY,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        birthday TEXT,
+        certificate TEXT
     );",
     )
     .execute(&db)
     .await
-    .map_err(|e| eprintln!("Error creating schüler table: {}", e));
+    .map_err(|e| eprintln!("Error creating students table: {}", e));
 }
 
-async fn create_fachliche_kompetenz_table() {
+async fn create_grades_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS fachliche_kompetenz (
+    let _result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS grades (
         id INTEGER PRIMARY KEY,
-        fach_1 TEXT,
-        note_1_1 INT,
-        note_1_2 INT,
-        note_1_3 INT,
-        note_1_4 INT,
-        note_1_avg REAL,
-        fach_2 TEXT,
-        erhöhtes_fach BOOL,
-        note_2_1 INT,
-        note_2_2 INT,
-        note_2_3 INT,
-        note_2_4 INT,
-        note_2_avg REAL,
-        fach_3 TEXT,
-        note_3_1 INT,
-        note_3_2 INT,
-        note_3_3 INT,
-        note_3_4 INT,
-        note_3_avg REAL,
-        fach_4 TEXT,
-        note_4_1 INT,
-        note_4_2 INT,
-        note_4_3 INT,
-        note_4_4 INT,
-        note_4_avg REAL,
-        fach_5 TEXT,
-        note_5_1 INT,
-        note_5_2 INT,
-        note_5_3 INT,
-        note_5_4 INT,
-        note_5_avg REAL,
+        subject_1 TEXT,
+        grade_1_1 INT,
+        grade_1_2 INT,
+        grade_1_3 INT,
+        grade_1_4 INT,
+        grade_1_avg REAL,
+        subject_2 TEXT,
+        highered_subject BOOL,
+        grade_2_1 INT,
+        grade_2_2 INT,
+        grade_2_3 INT,
+        grade_2_4 INT,
+        grade_2_avg REAL,
+        subject_3 TEXT,
+        grade_3_1 INT,
+        grade_3_2 INT,
+        grade_3_3 INT,
+        grade_3_4 INT,
+        grade_3_avg REAL,
+        subject_4 TEXT,
+        grade_4_1 INT,
+        grade_4_2 INT,
+        grade_4_3 INT,
+        grade_4_4 INT,
+        grade_4_avg REAL,
+        subject_5 TEXT,
+        grade_5_1 INT,
+        grade_5_2 INT,
+        grade_5_3 INT,
+        grade_5_4 INT,
+        grade_5_avg REAL,
     );",
     )
     .execute(&db)
     .await
-    .map_err(|e| eprintln!("Error creating fachliche_kompetenz table: {}", e));
+    .map_err(|e| eprintln!("Error creating grades table: {}", e));
 }
 
-async fn create_zusätzlich_table() {
+async fn create_additional_mint_activities_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS zusätzlich (
-        id INTEGER PRIMARY KEY,
-
+    let _result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS additional_mint_activities (
+        additional_mint_activity_id INTEGER PRIMARY KEY,
+        name TEXT,
+        description TEXT
     );",
     )
     .execute(&db)
     .await
-    .map_err(|e| eprintln!("Error creating zusätzlich table: {}", e));
+    .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
+}
+
+async fn create_additional_mint_activities_levels_table() {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS additional_mint_activities_levels (
+        additional_mint_activity_level_id INTEGER PRIMARY KEY
+        additional_mint_activity_id INTEGER UNIQUE NOT NULL,
+        level_one TEXT,
+        level_two TEXT,
+        level_three TEXT
+        );",
+    )
+    .execute(&db)
+    .await
+    .map_err(|e| {
+        eprintln!(
+            "Error creating additional_mint_activities_levels table: {}",
+            e
+        )
+    });
+}
+
+async fn create_student_additional_mint_activites_table() {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS student_additional_mint_activities (
+            student_id INTEGER,
+            additional_mint_activity_id INTEGER,
+            level INT,
+            PRIMARY KEY (student_id, additional_mint_activity_id),
+            FOREIGN KEY (student_id) REFERENCES students(student_id),
+            FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
+            );"
+        )
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error creating student_additional_mint_activities table: {}", e));
+}
+
+pub async fn add_additional_mint_activity_to_student(
+    student_id: i32,
+    additional_mint_activity_id: i32,
+    level: i32,
+) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "INSERT INTO student_additional_mint_activities(student_id, additional_mint_activity_id, level) VALUES
+        (?, ?, ?);"
+    )
+    .bind(&student_id)
+    .bind(&additional_mint_activity_id)
+    .bind(&level)
+    .execute(&db)
+    .await
+    .map_err(|e|eprintln!("Error adding additional MINT activity to student: {}", e));
 }
 
 pub async fn add_fachwissenschaftliches_arbeiten(data_to_add: String, id: i32) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query(
+    let _result = sqlx::query(
         "UPDATE schüler
         SET fachwissenschaftliches_arbeiten =
             CASE
