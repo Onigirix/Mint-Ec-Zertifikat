@@ -1,26 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="material-icons.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
+    <script type="module" src="components/topbar.js" defer></script>
+    <script type="module" src="createSchuelerPopup.js" defer></script>
   </head>
 
   <body>
     <div id="sidenav" class="sidenav">
       <a id="closeNav"><i class="material-icons">close</i></a>
-      <a href="#" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
-      <a href="#" id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches Arbeiten</a>
-      <a href="#" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
-      <a href="#" id="export">Exportieren</a>
-      <a href="#" id="settings">Einstellungen</a>
+      <div id="navLinks">
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
+          >Fachliche Kompetenz</a
+        >
+        <a
+          href="fachwissenschaftliches-arbeiten.html"
+          id="Fachwissenschaftliches-Arbeiten"
+          >Fachwissenschaftliches Arbeiten</a
+        >
+        <a href="zusätzlich.html" id="Zusätzliche-MINT-Aktivitäten"
+          >Zusätzliche MINT-Aktivitäten</a
+        >
+        <a href="export.html" id="export">Exportieren</a>
+        <a href="settings.html" id="settings">Einstellungen</a>
+      </div>
     </div>
     <div id="main">
-      <button id="openNav">open</button>
+      <h1>StartupPage</h1>
+      <input type="password" id="Password" />
+      <!--TODO: Add database encryption (probably will never happen, because the integrated SQLite encryption costs money)-->
+      <!--TODO: Add smth to explain how the program works (a big carousel that shows it step-by-step)-->
+      <button id="openNav">openNav</button>
+      <button id="fill-search-bar-datalists">fill</button>
+      <button id="create-student">try to open popup via JS, won't work</button>
+      <button id="save-pdf">Saves a test pdf</button>
     </div>
   </body>
 </html>
-<!--TODO: Add a "stop animations" button to the settings menu-->
+<!--TODO: Make the Sidenav closable by clicking back on main-->
+<!--TODO: Light and Dark mode toggle-->
