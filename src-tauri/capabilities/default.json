@@ -15,6 +15,8 @@
     "shell:allow-open",
     "core:webview:allow-create-webview-window",
     "core:webview:allow-create-webview",
-    "core:window:allow-create"
+    "core:window:allow-create",
+    "core:window:allow-close",
+    "core:window:allow-set-focus"
   ]
 }

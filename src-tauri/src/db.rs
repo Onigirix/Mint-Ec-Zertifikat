@@ -1,5 +1,3 @@
-use std::fs;
-
 use sqlx::{migrate::MigrateDatabase, Row, Sqlite, SqlitePool};
 
 const DATABASE: &str = "resources/db.sqlite";
@@ -15,6 +13,8 @@ pub async fn setup_db() {
     create_students_table().await;
     create_grades_table().await;
     create_additional_mint_activities_table().await;
+    create_additional_mint_activities_levels_table().await;
+    create_student_additional_mint_activites_table().await;
 }
 
 async fn create_students_table() {
@@ -127,7 +127,7 @@ async fn create_student_additional_mint_activites_table() {
             FOREIGN KEY (student_id) REFERENCES students(student_id),
             FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
             );"
-        )
+        )//Remove the Primary Key line, if you want to allow a student to have the same additional mint activity multiple times
         .execute(&db)
         .await
         .map_err(|e| eprintln!("Error creating student_additional_mint_activities table: {}", e));
@@ -150,43 +150,6 @@ pub async fn add_additional_mint_activity_to_student(
     .execute(&db)
     .await
     .map_err(|e|eprintln!("Error adding additional MINT activity to student: {}", e));
-}
-
-pub async fn add_fachwissenschaftliches_arbeiten(data_to_add: String, id: i32) {
-    let db = SqlitePool::connect(DATABASE).await.unwrap();
-
-    let _result = sqlx::query(
-        "UPDATE schüler
-        SET fachwissenschaftliches_arbeiten =
-            CASE
-                WHEN fachwissenschaftliches_arbeiten IS NULL THEN ?
-                ELSE fachwissenschaftliches_arbeiten || ?
-            END
-        WHERE id = ?;",
-    )
-    .bind(&data_to_add)
-    .bind(&format!("§ {}", data_to_add))
-    .bind(id)
-    .execute(&db)
-    .await
-    .map_err(|e| {
-        eprintln!(
-            "Error adding new thing to fachwissenschaftliches_arbeiten: {}",
-            e
-        )
-    });
-}
-
-pub async fn add_test_value_to_schüler() {
-    let db = SqlitePool::connect(DATABASE).await.unwrap();
-
-    let result = sqlx::query(
-        "INSERT INTO schüler (vorname, nachname, fachwissenschaftliches_arbeiten)
-        VALUES ('Max', 'Mustermann', 'test');",
-    )
-    .execute(&db)
-    .await
-    .map_err(|e| eprintln!("Error adding test value to schüler: {}", e));
 }
 
 pub async fn print_fachwissenschaftliches_arbeiten() {

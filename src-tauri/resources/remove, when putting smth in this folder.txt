@@ -1,2 +1,0 @@
-This file is here, because I already added the resource folder to the tauri.conf.json file and it won't compile without a file in the directory.
-You can safely delete this file, when you add your own files in the resource folder.
