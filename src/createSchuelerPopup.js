@@ -1,23 +1,29 @@
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM fully loaded and parsed");
-  const createSchülerButton = document.querySelector("#createSchüler");
+  const createSchülerButton = document.querySelector("#create-student");
 
-  createSchülerButton.addEventListener("click", createSchülerPopup);
+  createSchülerButton.addEventListener("click", openStudentPopup);
 });
 
-function createSchülerPopup() {
-  const schülerPopupWebview = new WebviewWindow("schuelerPopup", {
+async function openStudentPopup() {
+  //This can create multiple webviews if you click the button multiple times while the app is frozen, but that shouldn't be a problem with only async functions and commands
+  const studentPopupWebview = new WebviewWindow("studentPopup", {
     hiddenTitle: true,
     minimizable: false,
-    title: "Schüler hinzufügen",
-    url: "schueler-popup.html"
+    url: "schueler-popup.html",
   });
-  schülerPopupWebview.once("tauri://created", function () {
+  studentPopupWebview.once("tauri:// created", function () {
     console.log("webview created");
   });
-  schülerPopupWebview.once("tauri://error", function (e) {
-    console.log("webview error", e);
+  studentPopupWebview.once("tauri://error", function (e) {
+    if (e.payload != "a webview with label `studentPopup` already exists") {
+      console.log("webview error", e);
+      return;
+    }
+    console.log("webview already exists");
+    const studentPopupWindow = WebviewWindow.getByLabel("studentPopup");
+    console.log(studentPopupWindow);
+    studentPopupWindow.setFocus();
   });
 }

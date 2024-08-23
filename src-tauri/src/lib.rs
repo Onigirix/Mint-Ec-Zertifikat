@@ -1,25 +1,13 @@
 pub mod db;
+pub mod pdf;
 use std::sync::Mutex;
-use tauri::{Builder, Manager, WebviewWindowBuilder};
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-/*#[tauri::command] //FIXME: Find the WindowUrl class
-async fn openAddSchülerPopup(handle: tauri::AppHandle) {
-    let schüler_popup = WebviewWindowBuilder::new(&handle, "add-schüler", "add-schüler.html")
-        .build()
-        .unwrap();
-}*/
+use tauri::{Builder, Manager};
 
 #[derive(Default)]
 struct AppState {
     first_name: String,
     last_name: String,
-    full_name: String,
+    student_id: i32,
 }
 
 pub fn run() {
@@ -30,7 +18,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![pdf::generate_pdf])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
