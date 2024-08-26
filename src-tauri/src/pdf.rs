@@ -1,11 +1,5 @@
-use pdf::file::{File, FileOptions};
-use pdf::object::*;
-use pdf::primitive::PdfString;
-use pdf::primitive::Primitive;
+use pdf_forms::Form;
 use rfd::AsyncFileDialog;
-use std::collections::HashMap;
-use std::env::args;
-//use pdf_forms::Form;
 
 #[tauri::command]
 pub async fn generate_pdf() {
@@ -23,43 +17,7 @@ pub async fn generate_pdf() {
     };
 
     let prepare_pdf = async {
-        let mut file = FileOptions::cached()
-            .open("resources/template_v2_L.pdf")
-            .unwrap();
-        let mut to_update_field: Option<_> = None;
-
-        if let Some(ref forms) = file.get_root().forms {
-            println!("Forms:");
-            for field in forms.fields.iter().take(1) {
-                print!("  {:?} = ", field.name);
-                match field.value {
-                    Primitive::String(ref s) => println!("{}", s.to_string_lossy()),
-                    Primitive::Integer(i) => println!("{}", i),
-                    Primitive::Name(ref s) => println!("{}", s),
-                    ref p => println!("{:?}", p),
-                }
-
-                if to_update_field.is_none() {
-                    to_update_field = Some(field.clone());
-                }
-            }
-        }
-
-        if let Some(to_update_field) = to_update_field {
-            println!("\nUpdating field:");
-            println!("{:?}\n", to_update_field);
-
-            let text = "Hello World!";
-            let new_value: PdfString = PdfString::new(text.into());
-            let mut updated_field = (*to_update_field).clone();
-            updated_field.value = Primitive::String(new_value);
-
-            let reference = file
-                .update(to_update_field.get_ref().get_inner(), updated_field)
-                .unwrap();
-        }
-        return Some(file);
-        /*let mut form = Form::load("resources/template_v2_L_2.pdf").unwrap();
+        let mut form = Form::load("resources/template_v3_M.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
         let results = vec![
             form.set_text(0, String::from("Field 0")),
             form.set_text(1, String::from("Field 1")),
@@ -70,6 +28,7 @@ pub async fn generate_pdf() {
             form.set_text(6, String::from("Field 6")),
             form.set_text(7, String::from("Field 7")),
             form.set_text(8, String::from("Field 8")),
+            form.set_text(9, String::from("Field 9")),
         ];
 
         for result in results {
@@ -77,25 +36,21 @@ pub async fn generate_pdf() {
                 eprintln!("Error while filling the PDF: {}", e);
             }
         }
-
-        form*/
+        form
     };
 
-    let (path, mut file) = tokio::join!(spawn_file_dialog, prepare_pdf);
-    if path.is_none() {
-        return;
-    }
-    file.unwrap().save_to(path.unwrap().path()).unwrap();
+    let (path, mut form) = tokio::join!(spawn_file_dialog, prepare_pdf);
+    form.save(path.unwrap().path()).unwrap();
     //TODO: Add a success message (toast notification)
 }
-//text_0 = Vor und Nachname
-//text_1 = Geburtsdatum
-//text_2 = Schule
-//text_3 = Gesamteinstufung
-//text_4 = Funktionär 1
-//text_5 = Funktionär 2
-//text_6 = Ort und Datum
-//text_7 = fachliche Kompetenz
-//text_8 = fachwissenshaftliches arbeiten
+//text_8 = Vor und Nachname
+//text_0 = Geburtsdatum
+//text_1 = Schule
+//text_2 = Gesamteinstufung
+//text_3 = Funktionär 1
+//text_4 = Funktionär 2
+//text_5 = Ort und Datum
+//text_6 = fachliche Kompetenz
+//text_7 = fachwissenshaftliches arbeiten
 //text_9 = zusätzliche Mint Aktivität
 //https://pdf-lib.js.org/#examples

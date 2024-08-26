@@ -70,7 +70,7 @@ async fn create_grades_table() {
         grade_5_2 INT,
         grade_5_3 INT,
         grade_5_4 INT,
-        grade_5_avg REAL,
+        grade_5_avg REAL
     );",
     )
     .execute(&db)
@@ -102,7 +102,8 @@ async fn create_additional_mint_activities_levels_table() {
         additional_mint_activity_id INTEGER UNIQUE NOT NULL,
         level_one TEXT,
         level_two TEXT,
-        level_three TEXT
+        level_three TEXT,
+        sek INTEGER
         );",
     )
     .execute(&db)

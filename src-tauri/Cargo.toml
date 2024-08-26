@@ -23,6 +23,4 @@ sqlx = { version = "0.8.0", features = ["runtime-tokio-native-tls", "sqlite"] }
 tokio = { version = "1.39.3", features = ["full"] }
 pdf_forms = "0.3.4"
 rfd = "0.14.1"
-pdf = { path = "./pdf-master/pdf" }
-clap = { version = "*", features = ["derive"] }
 
