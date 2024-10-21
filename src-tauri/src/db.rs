@@ -98,7 +98,7 @@ async fn create_additional_mint_activities_levels_table() {
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS additional_mint_activities_levels (
-        additional_mint_activity_level_id INTEGER PRIMARY KEY
+        additional_mint_activity_level_id INTEGER PRIMARY KEY,
         additional_mint_activity_id INTEGER UNIQUE NOT NULL,
         level_one TEXT,
         level_two TEXT,

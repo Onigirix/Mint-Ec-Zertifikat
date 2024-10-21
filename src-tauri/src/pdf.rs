@@ -53,4 +53,3 @@ pub async fn generate_pdf() {
 //text_6 = fachliche Kompetenz
 //text_7 = fachwissenshaftliches arbeiten
 //text_9 = zusätzliche Mint Aktivität
-//https://pdf-lib.js.org/#examples
