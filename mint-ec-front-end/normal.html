@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo-Seite</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: hidden;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #ccc;
+  }
+  .search-box {
+    border: none;
+    padding: 5px;
+    margin-left: 45%;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    background: #0000001c;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+  }
+  .content {
+    display: flex;
+    height: 94vh;
+  }
+  .content-left {
+    display: flex;
+    width: 50vw;
+    flex-direction: column;
+    border: solid black 2px;
+  }
+  .sidebar {
+    flex: 1;
+    background: rgba(93, 153, 51, 0.6);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .main-content {
+    flex: 1;
+    background: rgba(190, 29, 29, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .footer {
+    flex: 1;
+    background: rgba(0, 129, 201, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+</style>
+<script>
+
+  var schueler = "";
+
+  
+
+
+  document.addEventListener('click', function (event) {
+      var container = document.querySelector('.footer');
+      if (container.contains(event.target) && schueler != "") {
+        window.location.href = 'af1.html?Schueler=' + schueler;
+      }
+    });
+  
+
+  function sucheSchueler() {
+
+    // Arved hier kannst du zaubern
+    var suchText = document.querySelector('.search-box').value;
+    console.log('Gesuchter Schüler: ' + suchText);
+    document.querySelector('.search-box').value = "";
+    alert("Schüler nicht gefunden!")
+    schueler = suchText;
+    
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    schueler=  new URLSearchParams(window.location.search).get("Schueler");
+    if(schueler != "null"){
+      document.querySelector('.search-box').value = schueler;
+    }
+    
+    var searchBox = document.querySelector('.search-box');
+    searchBox.addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        sucheSchueler();
+      }
+    });
+  });
+</script>
+</head>
+<body>
+
+<div class="header">
+  <input class="search-box" type="text" placeholder="Schüler...">
+  <div>
+    <a href="schueler_bearbeiten.html" class="icon" style="position: absolute; left: 57%; top: 13px; text-decoration: none;">+</a>
+    <span class="icon"  style="position: absolute; left: 95%; top: 13px">&#128424;</span> 
+    
+    <a href="settings.html" class="icon" style="position: absolute; left: 97%; top: 13px; background-color: rgb(197, 197, 197); border-color: rgba(0, 0, 0, 0); text-decoration: none;">&#9881;</a>
+  </div>
+</div>
+
+<div class="content">
+  <div class="content-left">
+    <div class="footer"></div>
+    <div class="sidebar"></div>
+  </div>
+  
+  <div class="main-content"></div>
+  
+</div>
+
+</body>
+</html>
