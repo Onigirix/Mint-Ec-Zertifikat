@@ -1,37 +1,262 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="material-icons.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mint-EC</title>
-    <script type="module" src="main.js" defer></script>
-    <script type="module" src="components/topbar.js" defer></script>
-    <script type="module" src="createSchuelerPopup.js" defer></script>
-  </head>
+    <title>Demo-Seite</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow-y: hidden;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #ccc;
+      }
+      .search-box {
+        border: none;
+        padding: 5px;
+        margin-left: 45%;
+      }
+      .icon {
+        width: 20px;
+        height: 20px;
+        background: #0000001c;
+        display: inline-block;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        height: 94vh;
+      }
+      .content-left {
+        display: flex;
+        width: 50vw;
+        flex-direction: column;
+        border: solid black 2px;
+      }
+      .sidebar {
+        flex: 1;
+        background: rgba(93, 153, 51, 0.6);
+        padding: 20px;
+        border: solid black 2px;
+      }
+      .main-content {
+        flex: 1;
+        background: rgba(190, 29, 29, 0.7);
+        padding: 20px;
+        border: solid black 2px;
+      }
+      .footer {
+        flex: 1;
+        background: rgba(0, 129, 201, 0.7);
+        padding: 20px;
+        border: solid black 2px;
+      }
 
+      .schueler {
+        position: absolute;
+        left: 30%;
+        padding: 20px;
+        background: rgba(25, 25, 25, 0.8);
+        width: 40%;
+        border: 2px solid rgba(0, 0, 0, 0.9);
+      }
+
+      .box-container-row {
+        display: flex;
+        flex-direction: row;
+      }
+      .box-container-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .box {
+        background-color: lightblue;
+        border: 1px solid blue;
+        padding: 10px;
+        margin: 5px;
+        width: calc(50% - 20px);
+      }
+      .box2 {
+        background-color: lightblue;
+        border: 1px solid blue;
+        padding: 10px;
+        margin-left: 30%;
+        margin-top: 20px;
+        width: 40%;
+      }
+
+      .box:nth-child(n + 3) {
+        margin-top: 20px;
+      }
+
+      .button {
+        margin-top: 10px;
+        color: black;
+        padding: 10px 10px;
+        border: none;
+        cursor: pointer;
+        width: 30%;
+        margin-left: 30px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
+      .button2 {
+        margin-top: 10px;
+        color: black;
+        padding: 10px 10px;
+        border: none;
+        cursor: pointer;
+        width: 30%;
+        margin-left: 130px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
+    </style>
+    <script>
+      // arved mach magie -> einfach daten speichern in datenbanb
+      function speichernDaten() {
+        console.log("Daten werden gespeichert...");
+        var nameDerSchule = document.getElementById("nameDerSchule").value;
+        var ortDerSchule = document.getElementById("ortDerSchule").value;
+        var pfad = document.getElementById("pfad").value;
+        var pos1 = document.getElementById("pos1").value;
+        var pos2 = document.getElementById("pos2").value;
+        var namePos1 = document.getElementById("namePos1").value;
+        var namePos2 = document.getElementById("namePos2").value;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputFields = document.querySelectorAll(".input-field");
+        inputFields.forEach((field) => {
+          field.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              speichernDaten();
+              field.value = "";
+            }
+          });
+        });
+
+        document.addEventListener("click", function (event) {
+          var container = document.querySelector(".schueler");
+          if (!container.contains(event.target)) {
+            window.location.href = "normal.html";
+          }
+        });
+      });
+    </script>
+  </head>
   <body>
-    <div id="sidenav" class="sidenav">
-      <a id="closeNav"><i class="material-icons">close</i></a>
-      <div id="navLinks">
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
-          >Fachliche Kompetenz</a
+    <div class="header">
+      <input class="search-box" type="text" placeholder="Schüler..." />
+      <div>
+        <span class="icon" style="position: absolute; left: 57%; top: 13px"
+          >+</span
         >
-        <a
-          href="fachwissenschaftliches-arbeiten.html"
-          id="Fachwissenschaftliches-Arbeiten"
-          >Fachwissenschaftliches Arbeiten</a
+        <span class="icon" style="position: absolute; left: 95%; top: 13px"
+          >&#128424;</span
         >
-        <a href="zusätzlich.html" id="Zusätzliche-MINT-Aktivitäten"
-          >Zusätzliche MINT-Aktivitäten</a
+        <!-- Das Schloss-Symbol -->
+        <span class="icon" style="position: absolute; left: 97%; top: 13px"
+          >&#9881;</span
         >
-        <a href="export.html" id="export">Exportieren</a>
-        <a href="settings.html" id="settings">Einstellungen</a>
+        <!-- Das Schloss-Symbol -->
       </div>
     </div>
-    <div id="main">
-      <h1>Einstellungen</h1>
+
+    <div class="content">
+      <div class="content-left">
+        <div class="footer"></div>
+        <div class="sidebar"></div>
+      </div>
+
+      <div class="main-content"></div>
+      <div class="schueler">
+        <div class="box-container-col">
+          <div class="box-container-row">
+            <h2 style="color: white; margin-left: 30%; margin-top: 0">
+              Allgemeine Angaben
+            </h2>
+          </div>
+          <div class="box-container-row">
+            <h4 style="color: white">Name der Schule</h4>
+            <input
+              class="box input-field"
+              type="text"
+              style="margin-left: 100px; margin-top: 15px; width: 300px"
+              id="nameDerSchule"
+            />
+          </div>
+          <div class="box-container-row" style="margin-top: -15px">
+            <h4 style="color: white">Ort der Schule</h4>
+            <input
+              class="box input-field"
+              type="text"
+              style="margin-left: 120px; margin-top: 15px; width: 300px"
+              id="ortDerSchule"
+            />
+          </div>
+          <div class="box-container-row" style="margin-top: -15px">
+            <h4 style="color: white">Ausgabepfad</h4>
+            <input
+              class="box input-field"
+              type="text"
+              style="margin-left: 130px; margin-top: 15px; width: 300px"
+              value="C:\zertifikate"
+              id="pfad"
+            />
+          </div>
+          <div class="box-container-row">
+            <div class="box-container-col">
+              <div class="box-container-row">
+                <h4 style="margin-left: 150px; color: white">
+                  Linksunterzeichner
+                </h4>
+                <h4 style="margin-left: 50px; color: white">
+                  Rechtsunterzeichner
+                </h4>
+              </div>
+              <div class="box-container-row" style="margin-top: -30px">
+                <h4 style="color: white">Name</h4>
+                <input
+                  class="box input-field"
+                  type="text"
+                  style="margin-left: 95px; margin-top: 15px; width: 150px"
+                  id="namePos1"
+                />
+                <input
+                  class="box input-field"
+                  type="text"
+                  style="margin-left: 25px; margin-top: 15px; width: 150px"
+                  id="namePos2"
+                />
+              </div>
+              <div class="box-container-row" style="margin-top: -15px">
+                <h4 style="color: white">Position</h4>
+                <input
+                  class="box input-field"
+                  type="text"
+                  style="margin-left: 76px; margin-top: 15px; width: 150px"
+                  value="MINT-Koordinator"
+                  id="pos1"
+                />
+                <input
+                  class="box input-field"
+                  type="text"
+                  style="margin-left: 25px; margin-top: 15px; width: 150px"
+                  value="Schulleiter"
+                  id="pos2"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
