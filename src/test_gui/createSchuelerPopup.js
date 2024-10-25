@@ -2,8 +2,13 @@ const { WebviewWindow } = window.__TAURI__.webviewWindow;
 
 window.addEventListener("DOMContentLoaded", () => {
   const createSchülerButton = document.querySelector("#create-student");
+  const startButton = document.querySelector("#startButton");
+
 
   createSchülerButton.addEventListener("click", openStudentPopup);
+  startButton.addEventListener("click", openStudentPopup);
+
+  
 });
 
 async function openStudentPopup() {
