@@ -1,0 +1,2 @@
+99% fertig muss nur noch den Hintergrund die werte einbringen, ist aber kein Problem wenn backend ferttig ist
+was noch fehlt ist relative größe und keine absolute und so kleine design Entscheidungen, hiermit solltest du aber alle feauters einfügen können
