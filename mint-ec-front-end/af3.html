@@ -136,26 +136,39 @@
   .highlighted {
     background-color: green !important; /* Hintergrundfarbe für die markierte Zeile */
   }
+
+  .highlighted_w {
+    background-color: red !important; /* Hintergrundfarbe für die markierte Zeile */
+  }
+
+  .table-container{
+    max-height: 200px;
+    overflow-y: scroll;
+  }
 </style>
 <script>
   var schueler = "";
   var removedRecentley = false;
+  var removedRecently2 = false;
   var curselected = "";
   var cursek = "";
  
 
   document.addEventListener('click', function (event) {
       var container = document.querySelector('.schueler');
-        if (!container.contains(event.target) && !removedRecentley ) {
+        if (!container.contains(event.target) && !removedRecentley && !removedRecently2) {
+        speicherSchuelerDaten(schueler);
         window.location.href = 'normal.html?Schueler=' + schueler;
         }
         removedRecentley = false;
+        removedRecently2 = false;
     });
 
   document.addEventListener('DOMContentLoaded', function() {
     schueler = new URLSearchParams(window.location.search).get("Schueler");
     if (schueler != "null") {  
       document.querySelector('.search-box').value = schueler;
+      fillData(schueler);
     }
     document.querySelectorAll(".confirmPoint1, .confirmPoint2, #confirmPoint3").forEach(row => {
     row.addEventListener("click", function() {
@@ -253,7 +266,7 @@
     
 
     window.deleteRow = function (index) {
-    removedRecently = true;
+    removedRecently2 = true;
     bwliste.splice(index, 1);
     renderTable();
   };
@@ -264,9 +277,9 @@
       "Geben Sie die Nummer ein:",
       "Geben Sie den Namen des Wettbewerbs ein:",
       "Geben Sie die Sekundarstufe ein (I oder II):",
-      "Geben Sie das erste Attribut ein:",
-      "Geben Sie das zweite Attribut ein:",
-      "Geben Sie das dritte Attribut ein:"
+      "Geben Sie die Vorrauszetzung für die Stufe 1 ein:",
+      "Geben Sie die Vorrauszetzung für die Stufe 2 ein:",
+      "Geben Sie die Vorrauszetzung für die Stufe 3 ein:"
     ];
 
     let answers = [];
@@ -340,13 +353,47 @@
         <td>${cursek}</td>
         <td>${punkt}</td>
       `;
+      newRow.addEventListener('click', function() {
+      const highlightedRows = document.querySelectorAll('.highlighted_w');
+          highlightedRows.forEach(row => {
+            row.classList.remove('highlighted_w'); // Entferne die Markierung
+          });
+          this.classList.add('highlighted_w'); // Zeile rot markieren
+          testForRemove(newRow.rowIndex);
+    });
       tbody.appendChild(newRow);
+
     }
 
-    
+    var lastRowIndex = null;
 
-   
+    function testForRemove(index){
+        if(lastRowIndex !== null && lastRowIndex === index){
+          const tableBody = document.querySelector('#table_w tbody');
+          tableBody.deleteRow(index - 1); // Lösche die Zeile basierend auf dem Index
+        lastRowIndex = null; 
+        removedRecentley = true;
+        }else {
+          lastRowIndex = index;
+        }
+    }
 
+  function fillData(schueler){
+    const tableBody = getSchuelerDaten(schueler);
+    if(tableBody == null) return;
+    document.querySelector('#table_w tbody') = tableBody;
+  }
+
+
+    function speicherSchuelerDaten(schueler){
+      const tableBody = document.querySelector('#table_w tbody');
+      // kannst du speichern, das ist die blaue tabelle rechts
+    }
+
+    function getSchuelerDaten(schueler){
+      //ich rechne damit das du mir genau die tabeölle von oben zurück gibst  
+      return null;
+    }
 
     
 
@@ -395,7 +442,7 @@
             </div>
             <div class="box3">
               <div class="table-container">
-                <table style="width: 100%; border-collapse: collapse; table-layout: fixed; overflow-x: scroll;">
+                <table id="table_w" style="width: 100%; border-collapse: collapse; table-layout: fixed; overflow-x: scroll;">
                   <thead>
                     <tr class="border highlighttabel">
                       <th style="width: 200px;">Name</th>
@@ -405,9 +452,7 @@
                   </thead>
                   <tbody>
                     <tr class="border">
-                      <td>Bundeswettbewerb Informatik</td>
-                      <td>II</td>
-                      <td>15</td>
+
                     </tr>
                   </tbody>
                 </table>
