@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo-Seite</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: hidden;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+ 
+    padding: 10px 20px;
+    background: #ccc;
+  }
+  .search-box {
+    border: none;
+    padding: 5px;
+    margin-left: 45%;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    background: #0000001c;
+    display: inline-block;
+    text-align: center;
+  }
+  .content {
+    display: flex;
+    height: 94vh;
+    
+  }
+  .content-left {
+    display: flex;
+    width: 50vw;;
+    flex-direction: column;
+    border: solid black 2px;
+  }
+  
+  .sidebar {
+    flex: 1;
+    
+    background: rgba(93, 153, 51, 0.6);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .main-content {
+    flex: 1;
+    background: rgba(190, 29, 29, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .footer {
+    flex:1;
+    background: rgba(0, 129, 201, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  
+  .schueler {
+      position: absolute;
+      left: 25%;
+      padding: 20px;
+      background: rgba(25, 25, 25, 0.8);
+      width: 50%; /* 60% Breite der Seite */
+      border: 2px solid rgba(0, 0, 0, 0.9);
+    }
+
+    .box-container-row {
+      display: flex;
+      flex-direction: row;
+    }
+    .box-container-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .box {
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 1px solid blue;
+      width: 100% /* 50% Breite der Elterncontainer minus Rand und Padding */;
+      margin-top: 10px;
+      height: 100px;
+    }
+    .boxr {
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 1px solid blue;
+      width: 100%;
+      height: 20px;
+      font-size: medium;
+      font-weight: bold;
+      text-align: center;
+      padding-top:4px;
+      cursor: default;
+    }
+    
+    
+
+
+
+</style>
+<script>
+  var schueler = "";
+  document.addEventListener('click', function (event) {
+      var container = document.querySelector('.schueler');
+      if (!container.contains(event.target)) {
+          window.location.href = 'normal.html?Schueler=' + schueler;
+      }
+  });
+
+  //sonstiges navigation
+  document.addEventListener('click', function (event) {
+      var container = document.querySelector('#sonstiges');
+      if (container.contains(event.target)) {
+          window.location.href = 'af2_sonstiges.html?Schueler=' + schueler;
+      }
+  });
+
+  //wppf navigation
+  document.addEventListener('click', function (event) {
+      var container = document.querySelector('#wppf');
+      if (container.contains(event.target)) {
+          window.location.href = 'af2_wppf.html?Schueler=' + schueler;
+      }
+  });
+
+  //jufo navigation
+  document.addEventListener('click', function (event) {
+      var container = document.querySelector('#jufo');
+      if (container.contains(event.target)) {
+          window.location.href = 'af2_jufo.html?Schueler=' + schueler;
+      }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      schueler = new URLSearchParams(window.location.search).get("Schueler");
+      if (schueler != "null") {  
+          document.querySelector('.search-box').value = schueler;
+          ladeSchuelerDaten(schueler); // Schueler-Daten laden und anzeigen
+      }
+
+      // Event-Listener zur Überprüfung des Themas und der Punkte
+      document.getElementById('thema-input').addEventListener('input', checkInputs);
+      document.getElementById('punkte-input').addEventListener('input', checkInputs);
+  });
+
+  function berechneStufe(punkte) {
+      if(punkte > 15) return "n.A";
+      if(punkte >= 13) return "ⅠⅠⅠ";
+      if(punkte >= 11) return "ⅠⅠ";
+      if(punkte >= 9) return "Ⅰ";
+      return "n.A";
+  }
+
+  function ladeSchuelerDaten(schueler){
+      schuelerdaten = getOutDataBank(schueler);
+      if(schuelerdaten == null) return;
+      const thema = document.getElementById('thema-input');
+      const punkte = document.getElementById('punkte-input');
+      const stufe = document.getElementById('stufe-output');
+      thema.value = schuelerdaten[0];
+      punkte.value = schuelerdaten[1];
+      stufe.textContent = berechneStufe(schuelerdaten[1]);
+ }
+
+ function berechneStufePu(punkte) {
+      if(punkte > 15) return 0
+      if(punkte >= 13) return 3;
+      if(punkte >= 11) return 2;
+      if(punkte >= 9) return 1;
+      return 0;
+  }
+
+  function checkInputs() {
+      const thema = document.getElementById('thema-input').value.trim();
+      const punkte = parseFloat(document.getElementById('punkte-input').value);
+      const stufeElement = document.getElementById('stufe-output');
+      
+      if (thema && punkte > 4) {
+          stufeElement.textContent = berechneStufe(punkte);
+          writeInDataBank(thema, punkte, berechneStufePu(punkte));
+      } else {
+          stufeElement.textContent = ''; // Zurücksetzen, wenn Bedingungen nicht erfüllt sind
+      }
+  }
+
+  function getOutDataBank(schueler){
+      // arved zauber mal, 2d array, an pos 0 das sonstige als string und an pos 1 die Punkte als Zahl, DIE STUFE BRAUCHE ICH NICHT!!!! du kannst sie mitgeben aber ich brauche sie NICHT
+      return null;
+  }
+
+  function writeInDataBank(thema, punkte, stufe){
+    //arved zauber mal
+    console.log("Gespeichert: " + thema + " | " + punkte + " |" + stufe);
+  }
+</script>
+</head>
+<body>
+
+<div class="header">
+  <input class="search-box" type="text" placeholder="Schüler...">
+  <div>
+      <span class="icon" style="position: absolute; left: 57%; top: 13px">+</span>
+      <span class="icon" style="position: absolute; left: 95%; top: 13px">&#128424;</span>
+      <span class="icon" style="position: absolute; left: 97%; top: 13px">&#9881;</span>
+  </div>
+</div>
+
+<div class="content">
+<div class="content-left">
+  <div class="footer"></div>
+  <div class="sidebar"></div>
+</div>
+
+<div class="main-content"></div>
+<div class="schueler">
+  <div class="box-container-col">
+    <div class="box-container-row" style="width: 100%;">
+      <div class="boxr" id="wppf">WissProPräd-Fach</div>
+      <div class="boxr" id ="jufo">Jugend Forscht</div>
+      <div class="boxr" id ="facharbeit" style="background-color: rgba(153, 255, 80, 0.5); border: 1px solid black;">Facharbeit</div>
+      <div class="boxr" id="sonstiges">sonstiges</div>
+    </div>
+    <div class="box" style="width: 740px;margin-left: 15px; background-color: rgba(173, 216, 230, 0.4); border: 2px black solid; height: 80px">
+      <div class="box-container-row">
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 20px;">Thema der Facharbeit</h4>
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 400px;">Punkte</h4>
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 37px;">Stufe</h4>
+      </div>
+      <div class="box-container-row" style="padding-top: 3px">
+        <input id="thema-input" class="box" type="text" placeholder="Eingeben..." style="width: 700px; height: 30px; margin-left: 20px; margin-top: -3px;">
+        <input id="punkte-input" class="box" type="number" placeholder="0" style="width: 100px; height: 30px; margin-left: 5px; margin-top: -3px;">
+        <div id="stufe-output" class="box" style="display: flex; justify-content: center; align-items: center; width: 100px; height: 30px; margin-left: 5px; margin-top: -3px; margin-right: 5px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
