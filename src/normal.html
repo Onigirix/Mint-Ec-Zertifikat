@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Demo-Seite</title>
 <style>
+  /* Grundlegendes Styling */
   body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -57,18 +58,54 @@
     padding: 20px;
     border: solid black 2px;
   }
+
+  /* Popup-Styling */
+  .popup {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 80%;
+    width: 200px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+    border-radius: 5px;
+    z-index: 1000;
+  }
+  .popup button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    background-color: #00ffea;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+  }
+  .popup button:hover {
+    background-color: #05ac9e;
+  }
 </style>
 <script>
 
-  var schueler = "";
-
-  
-
-
+var schueler = "";
   document.addEventListener('click', function (event) {
       var container = document.querySelector('.footer');
-      if (container.contains(event.target) && schueler != "") {
+      if (container.contains(event.target) && schueler != "" && schueler != "null" && schueler != null) {
         window.location.href = 'af1.html?Schueler=' + schueler;
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      var container = document.querySelector('.sidebar');
+      if (container.contains(event.target) && schueler != "" && schueler != "null" && schueler != null) {
+        window.location.href = 'af2.html?Schueler=' + schueler;
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      var container = document.querySelector('.main-content');
+      if (container.contains(event.target) && schueler != "" && schueler != "null" && schueler != null) {
+        window.location.href = 'af3.html?Schueler=' + schueler;
       }
     });
   
@@ -86,7 +123,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     schueler=  new URLSearchParams(window.location.search).get("Schueler");
-    if(schueler != "null"){
+    if(schueler != "null"){  
       document.querySelector('.search-box').value = schueler;
     }
     
@@ -96,7 +133,42 @@
         sucheSchueler();
       }
     });
+  
+
+    // Pop-up öffnen bei Klick auf das Icon
+    document.querySelector('.print-icon').addEventListener('click', function(event) {
+      event.stopPropagation();
+      document.getElementById('popup').style.display = 'block';
+    });
+
+    // Pop-up schließen bei Klick außerhalb
+    document.addEventListener('click', function(event) {
+      var popup = document.getElementById('popup');
+      if (popup && !popup.contains(event.target)) {
+        popup.style.display = 'none';
+      }
+    });
   });
+  function sucheSchueler() {
+    var suchText = document.querySelector('.search-box').value;
+    console.log('Gesuchter Schüler: ' + suchText);
+    document.querySelector('.search-box').value = "";
+    alert("Schüler nicht gefunden!")
+    schueler = suchText;
+  }
+
+  // Funktion für Direktdruck
+  function drucken() {
+    console.log("Druck-Funktion wird ausgeführt");
+    window.print(); // Hier kann deine erweiterte Drucklogik stehen
+  }
+
+  // Funktion zum Speichern als PDF
+  function alsPDFspeichern() {
+    console.log("PDF-Speicher-Funktion wird ausgeführt");
+    // PDF-Generierungslogik könnte hier eingefügt werden
+  }
+
 </script>
 </head>
 <body>
@@ -105,10 +177,14 @@
   <input class="search-box" type="text" placeholder="Schüler...">
   <div>
     <a href="schueler_bearbeiten.html" class="icon" style="position: absolute; left: 57%; top: 13px; text-decoration: none;">+</a>
-    <span class="icon"  style="position: absolute; left: 95%; top: 13px">&#128424;</span> 
-    
+    <span class="icon print-icon" style="position: absolute; left: 95%; top: 13px">&#128424;</span> 
     <a href="settings.html" class="icon" style="position: absolute; left: 97%; top: 13px; background-color: rgb(197, 197, 197); border-color: rgba(0, 0, 0, 0); text-decoration: none;">&#9881;</a>
   </div>
+</div>
+
+<div id="popup" class="popup">
+  <button onclick="drucken()">Drucken</button>
+  <button onclick="alsPDFspeichern()">Als PDF speichern</button>
 </div>
 
 <div class="content">
@@ -116,9 +192,7 @@
     <div class="footer"></div>
     <div class="sidebar"></div>
   </div>
-  
   <div class="main-content"></div>
-  
 </div>
 
 </body>
