@@ -120,7 +120,7 @@
         }
       </style>
       <script>
-        // arved mach magie -> einfach daten speichern in datenbanb
+        //TODO: Optimize the split into multiple functions, remove path and add the values that are already saved
         function speichernDaten() {
           console.log("Daten werden gespeichert...");
           var nameDerSchule = document.getElementById("nameDerSchule").value;
@@ -133,6 +133,76 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
+          const schoolNameField = document.getElementById("nameDerSchule");
+          schoolNameField.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              invoke("change_school_name", {
+                schoolName: schoolNameField("nameDerSchule").value,
+              });
+            }
+          });
+
+          const schoolLocationField = document.getElementById("ortDerSchule");
+          schoolLocationField.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              invoke("change_school_location", {
+                schoolLocation: schoolLocationField.value,
+              });
+            }
+          });
+
+          const schoolFunctionary1Field = document.getElementById("pos1");
+          schoolFunctionary1Field.addEventListener(
+            "keypress",
+            function (event) {
+              if (event.key === "Enter") {
+                invoke("change_school_functionary_1", {
+                  schoolFunctionary1: schoolFunctionary1Field.value,
+                });
+              }
+            }
+          );
+
+          const schoolFunctionary2Field = document.getElementById("pos2");
+          schoolFunctionary2Field.addEventListener(
+            "keypress",
+            function (event) {
+              if (event.key === "Enter") {
+                invoke("change_school_functionary_2", {
+                  schoolFunctionary2: schoolFunctionary2Field.value,
+                });
+              }
+            }
+          );
+
+          const schoolFunctionary1PositionField =
+            document.getElementById("pos1Name");
+          schoolFunctionary1PositionField.addEventListener(
+            "keypress",
+            function (event) {
+              if (event.key === "Enter") {
+                invoke("change_school_functionary_1_position", {
+                  schoolFunctionary1Position:
+                    schoolFunctionary1PositionField.value,
+                });
+              }
+            }
+          );
+
+          const schoolFunctionary2PositionField =
+            document.getElementById("pos2Name");
+          schoolFunctionary2PositionField.addEventListener(
+            "keypress",
+            function (event) {
+              if (event.key === "Enter") {
+                invoke("change_school_functionary_2_position", {
+                  schoolFunctionary2Position:
+                    schoolFunctionary2PositionField.value,
+                });
+              }
+            }
+          );
+
           const inputFields = document.querySelectorAll(".input-field");
           inputFields.forEach((field) => {
             field.addEventListener("keypress", function (event) {

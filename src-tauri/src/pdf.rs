@@ -1,13 +1,15 @@
 use pdf_forms::Form;
 use rfd::AsyncFileDialog;
 
+use crate::db;
+
 #[tauri::command]
 pub async fn generate_pdf() {
     let spawn_file_dialog = async {
         let path = AsyncFileDialog::new()
             .add_filter("PDF Dokument", &["pdf"])
-            .set_file_name("") //TODO
-            .set_directory("/")
+            .set_file_name("Mint-EC Zertifikat {}") //TODO
+            .set_directory("/") //TODO
             .save_file()
             .await;
         if path.is_none() {
@@ -19,7 +21,13 @@ pub async fn generate_pdf() {
     let prepare_pdf = async {
         let mut form = Form::load("resources/template_v3_M.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
         let results = vec![
-            form.set_text(0, String::from("Field 0")),
+            form.set_text(
+                0,
+                format!(
+                    "geboren am {}",
+                    db::get_student_birthday(student_id).unwrap()
+                ),
+            ),
             form.set_text(1, String::from("Field 1")),
             form.set_text(2, String::from("Field 2")),
             form.set_text(3, String::from("Field 3")),

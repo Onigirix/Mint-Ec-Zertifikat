@@ -1,5 +1,7 @@
 use sqlx::{migrate::MigrateDatabase, Row, Sqlite, SqlitePool};
 
+//TODO: Migrate to SQL Plugin for Tauri (https://v2.tauri.app/plugin/sql)
+
 const DATABASE: &str = "resources/db.sqlite";
 
 #[tokio::main]
@@ -10,11 +12,236 @@ pub async fn setup_db() {
             .map_err(|e| eprintln!("Error creating database: {}", e));
     }
 
+    create_settings_table().await;
     create_students_table().await;
     create_grades_table().await;
     create_additional_mint_activities_table().await;
     create_additional_mint_activities_levels_table().await;
     create_student_additional_mint_activites_table().await;
+}
+
+async fn create_settings_table() {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "CREATE TABLE IF NTO EXIST settings (
+        id INTEGER PRIMARY KEY,
+        school_name TEXT,
+        school_location TEXT,
+        school_functionary_1 TEXT,
+        school_functionary_2 TEXT,
+        school_functionary_1_position TEXT,
+        school_functionary_2_position TEXT
+        );",
+    )
+    .execute(&db)
+    .await
+    .map_err(|e| eprintln!("Error creating settings table: {}", e));
+
+    let _result = sqlx::query("INSERT INTO settings(id, school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position) VALUES (1, Musterschule, Musterstadt, Max Mustermann, Erika Musterfrau, MINT-Koordinator, Schulleiter);")
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error creating setting defaults: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_name(school_name: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query("UPDATE settings SET school_name = ? WHERE id = 1;")
+        .bind(school_name)
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error changing school name: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_location(school_location: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query("UPDATE settings SET school_location = ? WHERE id = 1;")
+        .bind(school_location)
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error changing school location: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_functionary_1(school_functionary_1: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query("UPDATE settings SET school_functionary_1 = ? WHERE id = 1;")
+        .bind(school_functionary_1)
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error changing school functionary 1: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_functionary_2(school_functionary_2: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query("UPDATE settings SET school_functionary_2 = ? WHERE id = 1;")
+        .bind(school_functionary_2)
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error changing school functionary 2: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_functionary_1_position(school_functionary_1_position: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result =
+        sqlx::query("UPDATE settings SET school_functionary_1_position = ? WHERE id = 1;")
+            .bind(school_functionary_1_position)
+            .execute(&db)
+            .await
+            .map_err(|e| eprintln!("Error changing school functionary 1 position: {}", e));
+}
+
+#[tauri::command]
+pub async fn change_school_functionary_2_position(school_functionary_2_position: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result =
+        sqlx::query("UPDATE settings SET school_functionary_2_position = ? WHERE id = 1;")
+            .bind(school_functionary_2_position)
+            .execute(&db)
+            .await
+            .map_err(|e| eprintln!("Error changing school functionary 2 position: {}", e));
+}
+
+#[tauri::command]
+pub async fn get_school_name() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_name FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!("Error fetching school name: {}", e);
+            String::from("Error")
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_school_location() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_location FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!("Error fetching school location: {}", e);
+            String::from("Error")
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_school_functionary_1() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_functionary_1 FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!("Error fetching the 1st school functionary: {}", e);
+            String::from("Error")
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_school_functionary_2() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_functionary_2 FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!("Error fetching the 2nd school functionary: {}", e);
+            String::from("Error")
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_school_functionary_1_position() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_functionary_1_position FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!(
+                "Error fetching the position of the 1st school functionary: {}",
+                e
+            );
+            String::from("Error")
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn get_school_functionary_2_position() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_functionary_2_position FROM settings WHERE id = 1;")
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!(
+                "Error fetching the position of the 2nd school functionary: {}",
+                e
+            );
+            String::from("Error")
+        }
+    }
 }
 
 async fn create_students_table() {
@@ -32,6 +259,45 @@ async fn create_students_table() {
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating students table: {}", e));
+}
+
+#[tauri::command]
+pub async fn add_student(first_name: String, last_name: String, birthday: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "INSERT INTO students(first_name, last_name, birthday, certificate) VALUES
+        (?, ?, ?, ?);",
+    )
+    .bind(first_name)
+    .bind(last_name)
+    .bind(birthday)
+    .bind("none")
+    .execute(&db)
+    .await
+    .map_err(|e| eprintln!("Error adding student: {}", e));
+}
+
+#[tauri::command]
+pub async fn get_student_birthday(student_id: i32) -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT birthday FROM students WHERE id = ?;")
+        .bind(student_id)
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(mut rows) => {
+            let row = rows.pop().unwrap();
+            let school_name: String = row.get(0);
+            school_name
+        }
+        Err(e) => {
+            eprintln!("Error fetching the birthday: {}", e);
+            String::from("Error")
+        }
+    }
 }
 
 async fn create_grades_table() {
@@ -134,6 +400,7 @@ async fn create_student_additional_mint_activites_table() {
         .map_err(|e| eprintln!("Error creating student_additional_mint_activities table: {}", e));
 }
 
+#[tauri::command]
 pub async fn add_additional_mint_activity_to_student(
     student_id: i32,
     additional_mint_activity_id: i32,

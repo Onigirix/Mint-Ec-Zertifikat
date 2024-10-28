@@ -5,8 +5,7 @@ use tauri::{Builder, Manager};
 
 #[derive(Default)]
 struct AppState {
-    first_name: String,
-    last_name: String,
+    student_name: String,
     student_id: i32,
 }
 
@@ -17,8 +16,30 @@ pub fn run() {
             app.manage(Mutex::new(AppState::default()));
             Ok(())
         })
-        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_shell::init()) //TODO: Check if this can be removed
         .invoke_handler(tauri::generate_handler![pdf::generate_pdf])
+        .invoke_handler(tauri::generate_handler![db::add_student])
+        .invoke_handler(tauri::generate_handler![
+            db::add_additional_mint_activity_to_student
+        ])
+        .invoke_handler(tauri::generate_handler![
+            //change settings
+            db::change_school_name,
+            db::change_school_location,
+            db::change_school_functionary_1,
+            db::change_school_functionary_2,
+            db::change_school_functionary_1_position,
+            db::change_school_functionary_2_position
+        ])
+        .invoke_handler(tauri::generate_handler![
+            //read settings
+            db::get_school_name,
+            db::get_school_location,
+            db::get_school_functionary_1,
+            db::get_school_functionary_2,
+            db::get_school_functionary_1_position,
+            db::get_school_functionary_2_position
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
