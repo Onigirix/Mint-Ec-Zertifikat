@@ -62,5 +62,5 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
 //text_4 = Funktionär 2
 //text_5 = Ort und Datum
 //text_6 = fachliche Kompetenz
-//text_7 = fachwissenshaftliches arbeiten
+//text_7 = fachwissenschaftliches arbeiten
 //text_9 = zusätzliche Mint Aktivität
