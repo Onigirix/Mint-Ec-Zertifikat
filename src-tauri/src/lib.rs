@@ -1,10 +1,10 @@
 pub mod db;
 pub mod pdf;
-use std::sync::Mutex;
 use tauri::{Builder, Manager};
+use tokio::sync::Mutex;
 
 #[derive(Default)]
-struct AppState {
+pub struct AppState {
     student_name: String,
     student_id: i32,
 }

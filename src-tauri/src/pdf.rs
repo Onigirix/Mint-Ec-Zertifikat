@@ -1,14 +1,19 @@
+use crate::{db, AppState};
 use pdf_forms::Form;
 use rfd::AsyncFileDialog;
-
-use crate::db;
+use tauri::State;
+use tokio::sync::Mutex;
 
 #[tauri::command]
-pub async fn generate_pdf() {
+pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
+    let state = state.lock().await;
+    let student_name = state.student_name.clone();
+    let student_id = state.student_id;
+
     let spawn_file_dialog = async {
         let path = AsyncFileDialog::new()
             .add_filter("PDF Dokument", &["pdf"])
-            .set_file_name("Mint-EC Zertifikat {}") //TODO
+            .set_file_name(format!("Mint-EC Zertifikat {}", student_name))
             .set_directory("/") //TODO
             .save_file()
             .await;
@@ -23,14 +28,11 @@ pub async fn generate_pdf() {
         let results = vec![
             form.set_text(
                 0,
-                format!(
-                    "geboren am {}",
-                    db::get_student_birthday(student_id).unwrap()
-                ),
+                format!("geboren am {}", db::get_student_birthday(student_id).await),
             ),
-            form.set_text(1, String::from("Field 1")),
+            form.set_text(1, format!("an der {}", db::get_school_name().await)),
             form.set_text(2, String::from("Field 2")),
-            form.set_text(3, String::from("Field 3")),
+            form.set_text(3, db::get_school_functionary_1().await),
             form.set_text(4, String::from("Field 4")),
             form.set_text(5, String::from("Field 5")),
             form.set_text(6, String::from("Field 6")),
@@ -49,6 +51,7 @@ pub async fn generate_pdf() {
 
     let (path, mut form) = tokio::join!(spawn_file_dialog, prepare_pdf);
     form.save(path.unwrap().path()).unwrap();
+    Ok(())
     //TODO: Add a success message (toast notification)
 }
 //text_8 = Vor und Nachname

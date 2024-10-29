@@ -1,8 +1,11 @@
 use sqlx::{migrate::MigrateDatabase, Row, Sqlite, SqlitePool};
+use std::array;
 
 //TODO: Migrate to SQL Plugin for Tauri (https://v2.tauri.app/plugin/sql)
 
 const DATABASE: &str = "resources/db.sqlite";
+
+//TODO: Change to fetch_one instead of fetch_all
 
 #[tokio::main]
 pub async fn setup_db() {
@@ -117,12 +120,11 @@ pub async fn get_school_name() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_name FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -138,12 +140,11 @@ pub async fn get_school_location() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_location FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -159,12 +160,11 @@ pub async fn get_school_functionary_1() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_functionary_1 FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -180,12 +180,11 @@ pub async fn get_school_functionary_2() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_functionary_2 FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -201,12 +200,11 @@ pub async fn get_school_functionary_1_position() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_functionary_1_position FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -225,12 +223,11 @@ pub async fn get_school_functionary_2_position() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_functionary_2_position FROM settings WHERE id = 1;")
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
+        Ok(row) => {
             let school_name: String = row.get(0);
             school_name
         }
@@ -240,6 +237,20 @@ pub async fn get_school_functionary_2_position() -> String {
                 e
             );
             String::from("Error")
+        }
+    }
+}
+
+async fn get_all_settings() -> [String; 6] {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position FROM settings WHERE id = 1;").fetch_one(&db).await;
+
+    match result {
+        Ok(row) => array::from_fn(|i| row.get(i)),
+        Err(e) => {
+            eprintln!("Error fetching all settings: {}", e);
+            array::from_fn(|_i| String::from("Error"))
         }
     }
 }
