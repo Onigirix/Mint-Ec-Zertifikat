@@ -1,4 +1,5 @@
 use crate::{db, AppState};
+use chrono::Datelike;
 use pdf_forms::Form;
 use rfd::AsyncFileDialog;
 use tauri::State;
@@ -25,16 +26,27 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
 
     let prepare_pdf = async {
         let mut form = Form::load("resources/template_v3_M.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
+        let current_date = chrono::Utc::now();
+        let settings = db::get_all_settings().await;
         let results = vec![
             form.set_text(
                 0,
                 format!("geboren am {}", db::get_student_birthday(student_id).await),
             ),
-            form.set_text(1, format!("an der {}", db::get_school_name().await)),
+            form.set_text(1, format!("an der {}", settings[0])),
             form.set_text(2, String::from("Field 2")),
             form.set_text(3, db::get_school_functionary_1().await),
             form.set_text(4, String::from("Field 4")),
-            form.set_text(5, String::from("Field 5")),
+            form.set_text(
+                5,
+                format!(
+                    "{} den {}.{}.{}",
+                    settings[1],
+                    current_date.day(),
+                    current_date.month(),
+                    current_date.year()
+                ),
+            ),
             form.set_text(6, String::from("Field 6")),
             form.set_text(7, String::from("Field 7")),
             form.set_text(8, String::from("Field 8")),

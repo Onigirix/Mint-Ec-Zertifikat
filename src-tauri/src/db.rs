@@ -26,25 +26,27 @@ pub async fn setup_db() {
 async fn create_settings_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let _result = sqlx::query(
-        "CREATE TABLE IF NTO EXIST settings (
-        id INTEGER PRIMARY KEY,
-        school_name TEXT,
-        school_location TEXT,
-        school_functionary_1 TEXT,
-        school_functionary_2 TEXT,
-        school_functionary_1_position TEXT,
-        school_functionary_2_position TEXT
+    // Create the settings table with default values
+    let _creation_result = sqlx::query(
+        "CREATE TABLE IF NOT EXISTS settings (
+            id INTEGER PRIMARY KEY DEFAULT 1,
+            school_name TEXT DEFAULT 'Musterschule',
+            school_location TEXT DEFAULT 'Musterstadt',
+            school_functionary_1 TEXT DEFAULT 'Max Mustermann',
+            school_functionary_2 TEXT DEFAULT 'Erika Musterfrau',
+            school_functionary_1_position TEXT DEFAULT 'MINT-Koordinator',
+            school_functionary_2_position TEXT DEFAULT 'Schulleiter'
         );",
     )
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating settings table: {}", e));
 
-    let _result = sqlx::query("INSERT INTO settings(id, school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position) VALUES (1, Musterschule, Musterstadt, Max Mustermann, Erika Musterfrau, MINT-Koordinator, Schulleiter);")
+    // Insert the default row if it doesn't exist
+    let _insert_result = sqlx::query("INSERT OR IGNORE INTO settings (id) VALUES (1);")
         .execute(&db)
         .await
-        .map_err(|e| eprintln!("Error creating setting defaults: {}", e));
+        .map_err(|e| eprintln!("Error inserting default settings: {}", e));
 }
 
 #[tauri::command]
@@ -241,7 +243,7 @@ pub async fn get_school_functionary_2_position() -> String {
     }
 }
 
-async fn get_all_settings() -> [String; 6] {
+pub async fn get_all_settings() -> [String; 6] {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query("SELECT school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position FROM settings WHERE id = 1;").fetch_one(&db).await;

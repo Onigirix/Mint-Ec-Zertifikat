@@ -16,22 +16,17 @@ pub fn run() {
             app.manage(Mutex::new(AppState::default()));
             Ok(())
         })
-        .plugin(tauri_plugin_shell::init()) //TODO: Check if this can be removed
-        .invoke_handler(tauri::generate_handler![pdf::generate_pdf])
-        .invoke_handler(tauri::generate_handler![db::add_student])
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            db::add_additional_mint_activity_to_student
-        ])
-        .invoke_handler(tauri::generate_handler![
+            pdf::generate_pdf,
+            db::add_student,
             //change settings
             db::change_school_name,
             db::change_school_location,
             db::change_school_functionary_1,
             db::change_school_functionary_2,
             db::change_school_functionary_1_position,
-            db::change_school_functionary_2_position
-        ])
-        .invoke_handler(tauri::generate_handler![
+            db::change_school_functionary_2_position,
             //read settings
             db::get_school_name,
             db::get_school_location,
