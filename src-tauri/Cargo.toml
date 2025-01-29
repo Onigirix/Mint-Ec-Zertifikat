@@ -12,17 +12,17 @@ name = "mint_ec_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.5", features = [] }
+tauri-build = { version = "2.0.3", features = [] }
 
 [dependencies]
-tauri = { version = "2.2.5", features = [] }
-tauri-plugin-shell = "2.2.0"
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.138"
-sqlx = { version = "0.8.3", features = ["runtime-tokio-native-tls", "sqlite"] }
-tokio = { version = "1.43.0", features = ["full"] }
+tauri = { version = "2.0.6", features = [] }
+tauri-plugin-shell = "2.0.2"
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+sqlx = { version = "0.8.2", features = ["runtime-tokio-native-tls", "sqlite"] }
+tokio = { version = "1.41.1", features = ["full"] }
 pdf_forms = "0.3.4"
-rfd = "0.15.2"
-chrono = "0.4.39"
-tauri-plugin-sql = { version = "2.2.0", features = ["sqlite"] }
+rfd = "0.15.1"
+chrono = "0.4.38"
+tauri-plugin-sql = { version = "2.0.2", features = ["sqlite"] }
 
