@@ -1,0 +1,3 @@
+resources\db.sqlite
+src-tauri\resources\db.sqlite-shm
+src-tauri\resources\db.sqlite-wal

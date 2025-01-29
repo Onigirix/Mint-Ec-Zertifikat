@@ -35,7 +35,8 @@ async fn create_settings_table() {
             school_functionary_1 TEXT DEFAULT 'Max Mustermann',
             school_functionary_2 TEXT DEFAULT 'Erika Musterfrau',
             school_functionary_1_position TEXT DEFAULT 'MINT-Koordinator',
-            school_functionary_2_position TEXT DEFAULT 'Schulleiter'
+            school_functionary_2_position TEXT DEFAULT 'Schulleiter',
+            default_file_path TEXT DEFAULT '/'
         );",
     )
     .execute(&db)
@@ -118,6 +119,17 @@ pub async fn change_school_functionary_2_position(school_functionary_2_position:
 }
 
 #[tauri::command]
+pub async fn change_default_file_path(new_default_file_path: String) {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query("UPDATE settings SET default_file_path = ? WHERE id = 1;")
+        .bind(new_default_file_path)
+        .execute(&db)
+        .await
+        .map_err(|e| eprintln!("Error changing default file path: {}", e));
+}
+
+#[tauri::command]
 pub async fn get_school_name() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -147,8 +159,8 @@ pub async fn get_school_location() -> String {
 
     match result {
         Ok(row) => {
-            let school_name: String = row.get(0);
-            school_name
+            let school_location: String = row.get(0);
+            school_location
         }
         Err(e) => {
             eprintln!("Error fetching school location: {}", e);
@@ -167,8 +179,8 @@ pub async fn get_school_functionary_1() -> String {
 
     match result {
         Ok(row) => {
-            let school_name: String = row.get(0);
-            school_name
+            let school_functionary_1: String = row.get(0);
+            school_functionary_1
         }
         Err(e) => {
             eprintln!("Error fetching the 1st school functionary: {}", e);
@@ -230,12 +242,34 @@ pub async fn get_school_functionary_2_position() -> String {
 
     match result {
         Ok(row) => {
-            let school_name: String = row.get(0);
-            school_name
+            let school_functionary_2_position: String = row.get(0);
+            school_functionary_2_position
         }
         Err(e) => {
             eprintln!(
                 "Error fetching the position of the 2nd school functionary: {}",
+                e
+            );
+            String::from("Error")
+        }
+    }
+}
+
+pub async fn get_default_file_path() -> String {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT default_file_path FROM settings WHERE id = 1;")
+        .fetch_one(&db)
+        .await;
+
+    match result {
+        Ok(row) => {
+            let default_file_path: String = row.get(0);
+            default_file_path
+        }
+        Err(e) => {
+            eprintln!(
+                "Error fetching the position of the default file path: {}",
                 e
             );
             String::from("Error")
@@ -266,7 +300,38 @@ async fn create_students_table() {
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL,
         birthday TEXT,
-        certificate TEXT
+        certificate TEXT,
+        subject_1 TEXT,
+        grade_1_1 INT,
+        grade_1_2 INT,
+        grade_1_3 INT,
+        grade_1_4 INT,
+        grade_1_avg REAL,
+        subject_2 TEXT,
+        highered_subject BOOL,
+        grade_2_1 INT,
+        grade_2_2 INT,
+        grade_2_3 INT,
+        grade_2_4 INT,
+        grade_2_avg REAL,
+        subject_3 TEXT,
+        grade_3_1 INT,
+        grade_3_2 INT,
+        grade_3_3 INT,
+        grade_3_4 INT,
+        grade_3_avg REAL,
+        subject_4 TEXT,
+        grade_4_1 INT,
+        grade_4_2 INT,
+        grade_4_3 INT,
+        grade_4_4 INT,
+        grade_4_avg REAL,
+        subject_5 TEXT,
+        grade_5_1 INT,
+        grade_5_2 INT,
+        grade_5_3 INT,
+        grade_5_4 INT,
+        grade_5_avg REAL
     );",
     )
     .execute(&db)

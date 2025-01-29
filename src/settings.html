@@ -119,108 +119,132 @@
           border: 1px solid black;
         }
       </style>
-      <script>
-        //TODO: Optimize the split into multiple functions, remove path and add the values that are already saved
-        function speichernDaten() {
+      <script type="module">
+        const Database = window.__TAURI__.sql;
+        const db = await Database.load("sqlite://resources/db.sqlite");
+
+        async function saveAllSettings() {
           console.log("Daten werden gespeichert...");
-          var nameDerSchule = document.getElementById("nameDerSchule").value;
-          var ortDerSchule = document.getElementById("ortDerSchule").value;
-          var pfad = document.getElementById("pfad").value;
-          var pos1 = document.getElementById("pos1").value;
-          var pos2 = document.getElementById("pos2").value;
-          var namePos1 = document.getElementById("namePos1").value;
-          var namePos2 = document.getElementById("namePos2").value;
+          const res1 = await db.execute(
+            "UPDATE settings SET school_name = $1 WHERE id = 1",
+            [schoolNameField.value]
+          );
+          console.log("Schulname wurde gespeichert");
+          const res2 = await db.execute(
+            "UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
+            [schoolFunctionary1Field.value]
+          );
+          const res3 = await db.execute(
+            "UPDATE settings SET school_location = $1 WHERE id = 1",
+            [schoolLocationField.value]
+          );
+          const res4 = await db.execute(
+            "UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
+            [schoolFunctionary1Field.value]
+          );
+          const res5 = await db.execute(
+            "UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
+            [schoolFunctionary2Field.value]
+          );
+          const res6 = await db.execute(
+            "UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
+            [schoolFunctionary1PositionField.value]
+          );
+          const res7 = await db.execute(
+            "UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
+            [schoolFunctionary2PositionField.value]
+          );
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-          const schoolNameField = document.getElementById("nameDerSchule");
-          schoolNameField.addEventListener("keypress", function (event) {
-            if (event.key === "Enter") {
-              invoke("change_school_name", {
-                schoolName: schoolNameField("nameDerSchule").value,
-              });
+        const schoolNameField = document.getElementById("nameDerSchule");
+        schoolNameField.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_name = $1 WHERE id = 1",
+                [schoolNameField.value]
+              );
             }
-          });
+          },
+          false
+        );
 
-          const schoolLocationField = document.getElementById("ortDerSchule");
-          schoolLocationField.addEventListener("keypress", function (event) {
-            if (event.key === "Enter") {
-              invoke("change_school_location", {
-                schoolLocation: schoolLocationField.value,
-              });
+        const schoolLocationField = document.getElementById("ortDerSchule");
+        schoolLocationField.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_location = $1 WHERE id = 1",
+                [schoolLocationField.value]
+              );
             }
-          });
+          },
+          false
+        );
 
-          const schoolFunctionary1Field = document.getElementById("pos1");
-          schoolFunctionary1Field.addEventListener(
-            "keypress",
-            function (event) {
-              if (event.key === "Enter") {
-                invoke("change_school_functionary_1", {
-                  schoolFunctionary1: schoolFunctionary1Field.value,
-                });
-              }
+        const schoolFunctionary1Field = document.getElementById("namePos1");
+        schoolFunctionary1Field.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
+                [schoolFunctionary1Field.value]
+              );
             }
-          );
+          },
+          false
+        );
 
-          const schoolFunctionary2Field = document.getElementById("pos2");
-          schoolFunctionary2Field.addEventListener(
-            "keypress",
-            function (event) {
-              if (event.key === "Enter") {
-                invoke("change_school_functionary_2", {
-                  schoolFunctionary2: schoolFunctionary2Field.value,
-                });
-              }
+        const schoolFunctionary2Field = document.getElementById("namePos2");
+        schoolFunctionary2Field.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
+                [schoolFunctionary2Field.value]
+              );
             }
-          );
+          },
+          false
+        );
 
-          const schoolFunctionary1PositionField =
-            document.getElementById("pos1Name");
-          schoolFunctionary1PositionField.addEventListener(
-            "keypress",
-            function (event) {
-              if (event.key === "Enter") {
-                invoke("change_school_functionary_1_position", {
-                  schoolFunctionary1Position:
-                    schoolFunctionary1PositionField.value,
-                });
-              }
+        const schoolFunctionary1PositionField = document.getElementById("pos1");
+        schoolFunctionary1PositionField.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
+                [schoolFunctionary1PositionField.value]
+              );
             }
-          );
+          },
+          false
+        );
 
-          const schoolFunctionary2PositionField =
-            document.getElementById("pos2Name");
-          schoolFunctionary2PositionField.addEventListener(
-            "keypress",
-            function (event) {
-              if (event.key === "Enter") {
-                invoke("change_school_functionary_2_position", {
-                  schoolFunctionary2Position:
-                    schoolFunctionary2PositionField.value,
-                });
-              }
+        const schoolFunctionary2PositionField = document.getElementById("pos2");
+        schoolFunctionary2PositionField.addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
+                [schoolFunctionary2PositionField.value]
+              );
             }
-          );
-
-          const inputFields = document.querySelectorAll(".input-field");
-          inputFields.forEach((field) => {
-            field.addEventListener("keypress", function (event) {
-              if (event.key === "Enter") {
-                speichernDaten();
-                field.value = "";
-              }
-            });
-          });
-
-          
-        });
-        document.addEventListener("click", function (event) {
-            var container = document.querySelector(".schueler");
-            if (!container.contains(event.target)) {
-              window.location.href = "index.html";
-            }
-          });
+          },
+          false
+        );
       </script>
     </head>
     <body>

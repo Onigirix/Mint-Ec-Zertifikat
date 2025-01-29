@@ -17,6 +17,8 @@
     "core:webview:allow-create-webview",
     "core:window:allow-create",
     "core:window:allow-close",
-    "core:window:allow-set-focus"
+    "core:window:allow-set-focus",
+    "sql:default",
+    "sql:allow-execute"
   ]
 }

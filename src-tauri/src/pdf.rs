@@ -12,16 +12,16 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     let student_id = state.student_id;
 
     let spawn_file_dialog = async {
-        let path = AsyncFileDialog::new()
+        let file_handle = AsyncFileDialog::new()
             .add_filter("PDF Dokument", &["pdf"])
             .set_file_name(format!("Mint-EC Zertifikat {}", student_name))
-            .set_directory("/") //TODO
+            .set_directory(db::get_default_file_path().await) //TODO
             .save_file()
             .await;
-        if path.is_none() {
+        if file_handle.is_none() {
             return None;
         }
-        path
+        file_handle
     };
 
     let prepare_pdf = async {
