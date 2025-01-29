@@ -18,6 +18,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
+        .plugin(prevent_default())
         .invoke_handler(tauri::generate_handler![
             pdf::generate_pdf,
             db::add_student,
@@ -38,4 +39,27 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(debug_assertions)]
+fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+    use tauri_plugin_prevent_default::Flags;
+
+    tauri_plugin_prevent_default::Builder::new()
+        .with_flags(Flags::all().difference(Flags::DEV_TOOLS | Flags::RELOAD))
+        .general_autofill(false)
+        .password_autosave(false)
+        .build()
+}
+
+#[cfg(not(debug_assertions))]
+fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+    tauri_plugin_prevent_default::Builder::new()
+        // Whether general form information should be saved and autofilled.
+        // Defaults to `true`.
+        .general_autofill(false)
+        // Whether password information should be autosaved.
+        // Defaults to `false`.
+        .password_autosave(false)
+        .build()
 }

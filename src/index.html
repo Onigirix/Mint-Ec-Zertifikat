@@ -124,6 +124,20 @@
         }
       });
 
+      .addEventListener(
+          "keyup",
+          async (e) => {
+            if (e.keyCode === 13 || e.keyCode === 9) {
+              //Enter or Tab
+              const res1 = await db.execute(
+                "UPDATE settings SET school_name = $1 WHERE id = 1",
+                [schoolNameField.value]
+              );
+            }
+          },
+          false
+        );
+
       function sucheSchueler() {
         // Arved hier kannst du zaubern
         var suchText = document.querySelector(".search-box").value;
@@ -191,7 +205,7 @@
   </head>
   <body>
     <div class="header">
-      <input class="search-box" type="text" placeholder="Schüler..." />
+      <input class="search-box" type="text" id="" placeholder="Schüler..." />
       <div>
         <a
           href="schueler_bearbeiten.html"
