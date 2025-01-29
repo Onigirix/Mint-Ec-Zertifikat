@@ -87,6 +87,9 @@
     </style>
     <script>
       const invoke = window.__TAURI__.core.invoke;
+      const Database = window.__TAURI__.sql;
+      const db = await Database.load("sqlite://resources/db.sqlite");
+
       var schueler = "";
       document.addEventListener("click", function (event) {
         var container = document.querySelector(".footer");
@@ -124,7 +127,8 @@
         }
       });
 
-      .addEventListener(
+      const searchBar = document.getElementById("student-search");
+      student-search.addEventListener(
           "keyup",
           async (e) => {
             if (e.keyCode === 13 || e.keyCode === 9) {
@@ -205,7 +209,12 @@
   </head>
   <body>
     <div class="header">
-      <input class="search-box" type="text" id="" placeholder="Schüler..." />
+      <input
+        class="search-box"
+        type="text"
+        id="student-search"
+        placeholder="Schüler..."
+      />
       <div>
         <a
           href="schueler_bearbeiten.html"
