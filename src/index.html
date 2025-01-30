@@ -84,8 +84,36 @@
       .popup button:hover {
         background-color: #05ac9e;
       }
+
+      /* Suggestions list styling */
+      .suggestions-list {
+        position: absolute;
+        top: 40px;
+        left: 45%;
+        width: 200px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+      }
+
+      .suggestions-list li {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .suggestions-list li:hover {
+        background-color: #f0f0f0;
+      }
     </style>
-    <script>
+    <script type="module">
       const invoke = window.__TAURI__.core.invoke;
       const Database = window.__TAURI__.sql;
       const db = await Database.load("sqlite://resources/db.sqlite");
@@ -127,42 +155,11 @@
         }
       });
 
-      const searchBar = document.getElementById("student-search");
-      student-search.addEventListener(
-          "keyup",
-          async (e) => {
-            if (e.keyCode === 13 || e.keyCode === 9) {
-              //Enter or Tab
-              const res1 = await db.execute(
-                "UPDATE settings SET school_name = $1 WHERE id = 1",
-                [schoolNameField.value]
-              );
-            }
-          },
-          false
-        );
-
-      function sucheSchueler() {
-        // Arved hier kannst du zaubern
-        var suchText = document.querySelector(".search-box").value;
-        console.log("Gesuchter Schüler: " + suchText);
-        document.querySelector(".search-box").value = "";
-        alert("Schüler nicht gefunden!");
-        schueler = suchText;
-      }
-
       document.addEventListener("DOMContentLoaded", function () {
         schueler = new URLSearchParams(window.location.search).get("Schueler");
         if (schueler != "null") {
           document.querySelector(".search-box").value = schueler;
         }
-
-        var searchBox = document.querySelector(".search-box");
-        searchBox.addEventListener("keyup", function (event) {
-          if (event.key === "Enter") {
-            sucheSchueler();
-          }
-        });
 
         // Pop-up öffnen bei Klick auf das Icon
         document
@@ -205,6 +202,46 @@
         }
         // PDF-Generierungslogik könnte hier eingefügt werden
       }
+
+      const searchBox = document.getElementById("student-search");
+      const list = document.getElementById("suggestions");
+      searchBox.addEventListener(
+        "keyup",
+        async (e) => {
+          if (
+            (e.keyCode >= 65 && e.keyCode <= 90) ||
+            (e.keyCode >= 97 && e.keyCode <= 122)
+          ) {
+            //only letters
+            const suggestionResults = await db.select(
+              "SELECT * FROM students WHERE name like $1",
+              [`%${searchBox.value}%`]
+            );
+            console.log(suggestionResults);
+            list.innerHTML = "";
+            for (let i = 0; i < suggestionResults.length; i++) {
+              let item = document.createElement("li");
+              item.textContent = suggestionResults[i].name;
+              item.addEventListener("click", () => {
+                searchBox.value = item.textContent;
+                list.style.display = "none";
+              });
+              list.appendChild(item);
+            }
+            if (list.childNodes.length == 0) {
+              list.style.display = "none";
+            } else {
+              list.style.display = "block";
+            }
+          } else {
+            console.log(searchBox.value);
+            if (searchBox.value == "" || searchBox.value == null) {
+              document.getElementById("suggestions").style.display = "none";
+            }
+          }
+        },
+        false
+      );
     </script>
   </head>
   <body>
@@ -214,7 +251,9 @@
         type="text"
         id="student-search"
         placeholder="Schüler..."
+        value=""
       />
+      <ul id="suggestions" class="suggestions-list"></ul>
       <div>
         <a
           href="schueler_bearbeiten.html"

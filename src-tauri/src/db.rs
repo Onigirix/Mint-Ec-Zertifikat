@@ -297,8 +297,7 @@ async fn create_students_table() {
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS students (
         student_id INTEGER PRIMARY KEY,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
+        name TEXT NOT NULL,
         birthday TEXT,
         certificate TEXT,
         subject_1 TEXT,
@@ -337,6 +336,17 @@ async fn create_students_table() {
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating students table: {}", e));
+}
+
+pub async fn fill_students_table() {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let _result = sqlx::query(
+        "INSERT INTO students (student_id, name) VALUES (NULL, 'John Doe'), (NULL, 'Max Mustermann');",
+    )
+    .execute(&db)
+    .await
+    .map_err(|e| eprintln!("Error changing school location: {}", e));
 }
 
 #[tauri::command]

@@ -124,34 +124,31 @@
         border: 1px solid black;
       }
     </style>
-    <script>
-      var schueler = "";
+    <script type="module">
+      const Database = window.__TAURI__.sql;
+      const db = await Database.load("sqlite://resources/db.sqlite");
+      document.getElementById("geburtsdatum").value = getDefaultDate();
 
       document.addEventListener("DOMContentLoaded", function () {
         schueler = new URLSearchParams(window.location.search).get("Schueler");
       });
 
-      function schuelerDatenSpeichern() {
-        var vorname = document.getElementById("vorname").value;
-        var nachname = document.getElementById("nachname").value;
-        var geburtsdatum = document.getElementById("geburtsdatum").value;
-        var geschlecht = document.getElementById("geschlecht").value;
-
+      async function schuelerDatenSpeichern() {
+        const res = await db.execute(
+          "INSERT INTO students (student_id, name, birthday) VALUES (NULL, $1, $2)",
+          [
+            "'" +
+              document.getElementById("vorname").value +
+              " " +
+              document.getElementById("nachname").value +
+              "'",
+            document.getElementById("geburtsdatum").value,
+          ]
+        );
         if (vorname == "" || nachname == "") {
           alert("Fehlerhafte Eingabe!");
           return;
         }
-
-        // Speichern in tauri ->, falls schon vorhanden aktualisieren
-        console.log("Vorname:", vorname);
-        console.log("Nachname:", nachname);
-        console.log("Geburtsdatum:", geburtsdatum);
-        console.log("Geschlecht:", geschlecht);
-
-        document.getElementById("vorname").value = "";
-        document.getElementById("nachname").value = "";
-        document.getElementById("geburtsdatum").value = "";
-        document.getElementById("geschlecht").value = "Männlich";
       }
 
       function schuelerSuchen() {
@@ -205,6 +202,17 @@
           }
         });
       });
+
+      function getDefaultDate() {
+        const today = new Date();
+        today.setFullYear(today.getFullYear() - 17);
+
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+      }
     </script>
   </head>
   <body>
@@ -247,8 +255,7 @@
           <div class="box-container-row">
             <div class="box">
               <label for="geburtsdatum">Geburtsdatum</label>
-              <input type="date" id="geburtsdatum" /> //TODO: Make the default
-              smth like current date - 17years (value="yyyy-mm-dd")
+              <input type="date" id="geburtsdatum" />
             </div>
             <div class="box">
               <label for="geschlecht">Geschlecht</label>

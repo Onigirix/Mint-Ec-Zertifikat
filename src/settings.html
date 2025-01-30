@@ -175,7 +175,7 @@
         }
 
         schoolNameField.addEventListener(
-          "keyup",
+          "keydown",
           async (e) => {
             if (e.keyCode === 13 || e.keyCode === 9) {
               //Enter or Tab
@@ -183,6 +183,11 @@
                 "UPDATE settings SET school_name = $1 WHERE id = 1",
                 [schoolNameField.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -197,6 +202,11 @@
                 "UPDATE settings SET school_location = $1 WHERE id = 1",
                 [schoolLocationField.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -211,6 +221,11 @@
                 "UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
                 [schoolFunctionary1Field.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -225,6 +240,11 @@
                 "UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
                 [schoolFunctionary2Field.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -239,6 +259,11 @@
                 "UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
                 [schoolFunctionary1PositionField.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -253,6 +278,11 @@
                 "UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
                 [schoolFunctionary2PositionField.value]
               );
+              schoolNameField.style.border = "1px solid blue";
+              schoolNameField.style.backgroundColor = "lightblue";
+            } else {
+              schoolNameField.style.border = "1px solid red";
+              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -350,14 +380,12 @@
                     class="box input-field"
                     type="text"
                     style="margin-left: 76px; margin-top: 15px; width: 150px"
-                    value="MINT-Koordinator"
                     id="pos1"
                   />
                   <input
                     class="box input-field"
                     type="text"
                     style="margin-left: 25px; margin-top: 15px; width: 150px"
-                    value="Schulleiter"
                     id="pos2"
                   />
                 </div>
