@@ -117,8 +117,15 @@
       const invoke = window.__TAURI__.core.invoke;
       const Database = window.__TAURI__.sql;
       const db = await Database.load("sqlite://resources/db.sqlite");
+      let schueler = new URLSearchParams(window.location.search).get(
+        "Schueler"
+      );
+      if (schueler != null && schueler != "null") {
+        document.getElementById("student-search").value = schueler;
+      } else {
+        schueler = "";
+      }
 
-      var schueler = "";
       document.addEventListener("click", function (event) {
         var container = document.querySelector(".footer");
         if (
@@ -156,11 +163,6 @@
       });
 
       document.addEventListener("DOMContentLoaded", function () {
-        schueler = new URLSearchParams(window.location.search).get("Schueler");
-        if (schueler != "null") {
-          document.querySelector(".search-box").value = schueler;
-        }
-
         // Pop-up öffnen bei Klick auf das Icon
         document
           .querySelector(".print-icon")
@@ -217,7 +219,6 @@
               "SELECT * FROM students WHERE name like $1",
               [`%${searchBox.value}%`]
             );
-            console.log(suggestionResults);
             list.innerHTML = "";
             for (let i = 0; i < suggestionResults.length; i++) {
               let item = document.createElement("li");
@@ -225,6 +226,7 @@
               item.addEventListener("click", () => {
                 searchBox.value = item.textContent;
                 list.style.display = "none";
+                schueler = item.textContent;
               });
               list.appendChild(item);
             }
@@ -233,8 +235,16 @@
             } else {
               list.style.display = "block";
             }
+          } else if (e.keyCode === 13) {
+            const firstResult = list.firstElementChild;
+            if (firstResult != null) {
+              list.style.display = "none";
+              searchBox.value = firstResult.textContent;
+              schueler = firstResult.textContent;
+            } else {
+              alert("Kein Schüler gefunden");
+            }
           } else {
-            console.log(searchBox.value);
             if (searchBox.value == "" || searchBox.value == null) {
               document.getElementById("suggestions").style.display = "none";
             }
@@ -242,6 +252,16 @@
         },
         false
       );
+      searchBox.addEventListener("click", () => {
+        if (searchBox.value.trim() == schueler) {
+          searchBox.value = "";
+        }
+      });
+      searchBox.addEventListener("blur", () => {
+        if (searchBox.value.trim() == "") {
+          searchBox.value = schueler;
+        }
+      });
     </script>
   </head>
   <body>

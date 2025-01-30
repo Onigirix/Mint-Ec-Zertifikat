@@ -17,7 +17,6 @@ pub async fn setup_db() {
 
     create_settings_table().await;
     create_students_table().await;
-    create_grades_table().await;
     create_additional_mint_activities_table().await;
     create_additional_mint_activities_levels_table().await;
     create_student_additional_mint_activites_table().await;

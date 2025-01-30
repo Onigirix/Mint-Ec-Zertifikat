@@ -134,18 +134,24 @@
       });
 
       export async function schuelerDatenSpeichern() {
-        const res = await db.execute(
-          "INSERT INTO students (student_id, name, birthday) VALUES (NULL, $1, $2)",
-          [
-            document.getElementById("vorname").value +
-              " " +
-              document.getElementById("nachname").value,
-            document.getElementById("geburtsdatum").value,
-          ]
-        );
         if (vorname == "" || nachname == "") {
           alert("Fehlerhafte Eingabe!");
           return;
+        } else {
+          const res = await db.execute(
+            "INSERT INTO students (student_id, name, birthday) VALUES (NULL, $1, $2)",
+            [
+              document.getElementById("vorname").value +
+                " " +
+                document.getElementById("nachname").value,
+              document.getElementById("geburtsdatum").value,
+            ]
+          );
+          window.location.href =
+            "index.html?Schueler=" +
+            document.getElementById("vorname").value +
+            " " +
+            document.getElementById("nachname").value;
         }
       }
 
