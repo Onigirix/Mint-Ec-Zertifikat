@@ -220,9 +220,9 @@
       </div>
     </div>
     <script>
+      const sections = document.querySelectorAll(".section-item");
       // Funktion, um sicherzustellen, dass nur eine Sektion gleichzeitig aktiv ist
       function setActiveSection(selectedSection) {
-        const sections = document.querySelectorAll(".section-item");
         sections.forEach((section) => {
           section.classList.remove("active"); // Entfernen der aktiven Klasse von allen Sektionen
         });
