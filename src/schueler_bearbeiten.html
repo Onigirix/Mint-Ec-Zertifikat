@@ -155,7 +155,7 @@
         },
       ];
 
-      function generateTable() {
+      async function generateTable() {
         let table = "<table>";
         table += "<thead>";
         table += "<tr><th>Name</th><th>Stufe</th><th>Geburtsdatum</th></tr>";
@@ -176,7 +176,7 @@
         document.getElementById("table-container").innerHTML = table;
       }
 
-      function addStudent() {
+      async function addStudent() {
         const vorname = prompt("Vorname des Schülers:");
         const nachname = prompt("Nachname des Schülers:");
         const stufe = prompt("Stufe des Schülers:");
@@ -199,7 +199,7 @@
         }
       }
 
-      function deleteSelectedStudents() {
+      async function deleteSelectedStudents() {
         const selectedIds = [];
         document.querySelectorAll(".student-row.selected").forEach((row) => {
           selectedIds.push(parseInt(row.getAttribute("data-id")));
@@ -215,7 +215,7 @@
         }
       }
 
-      function selectStudent(event, studentId) {
+      async function selectStudent(event, studentId) {
         const row = event.currentTarget;
         const isSelected = row.classList.contains("selected");
 
@@ -250,7 +250,7 @@
         }
       }
 
-      function editStudent() {
+      async function editStudent() {
         const selectedRow = document.querySelector(".student-row.selected");
         if (selectedRow) {
           const studentId = selectedRow.getAttribute("data-id");
@@ -273,7 +273,7 @@
         }
       }
 
-      window.onload = function () {
+      window.onload = async function () {
         generateTable();
 
         // Prüfen, ob eine Schüler-ID im localStorage gespeichert ist

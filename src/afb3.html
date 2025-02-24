@@ -112,7 +112,7 @@
     ];
 
     // Funktion zum Befüllen der Wettbewerbstabelle
-    function populateWettbewerbeTable() {
+    async function populateWettbewerbeTable() {
       const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
       wettbewerbeTable.innerHTML = ''; // Tabelle zurücksetzen
 
@@ -157,7 +157,7 @@
     }
 
     // Funktion zum Befüllen der Stufentabelle
-    function updateStufenTable(stufen) {
+    async function updateStufenTable(stufen) {
       const stufenTable = document.getElementById('stufen-table').getElementsByTagName('tbody')[0];
       stufenTable.innerHTML = ''; // Zuerst alle Zeilen löschen
 
@@ -186,7 +186,7 @@
     }
 
     // Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
-    function addToErreichteWettbewerbe(row, stufe) {
+    async function addToErreichteWettbewerbe(row, stufe) {
       const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
       const activeRow = wettbewerbeTable.querySelector('.active-row');
       const wettbewerbName = activeRow.cells[1].textContent;
@@ -212,7 +212,7 @@
     }
 
     // Funktion zum Hinzufügen eines neuen Wettbewerbs
-    function showAddWettbewerbForm() {
+    async function showAddWettbewerbForm() {
       const name = prompt("Geben Sie den Namen des neuen Wettbewerbs ein:");
       if (name) {
         const newId = wettbewerbeData.length + 1;

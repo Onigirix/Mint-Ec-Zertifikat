@@ -222,7 +222,7 @@
     <script>
       const sections = document.querySelectorAll(".section-item");
       // Funktion, um sicherzustellen, dass nur eine Sektion gleichzeitig aktiv ist
-      function setActiveSection(selectedSection) {
+      async function setActiveSection(selectedSection) {
         sections.forEach((section) => {
           section.classList.remove("active"); // Entfernen der aktiven Klasse von allen Sektionen
         });
@@ -230,7 +230,7 @@
       }
 
       // Diese Funktion wird beim Laden der Seite aufgerufen
-      function loadStudentData() {
+      async function loadStudentData() {
         const studentId = localStorage.getItem("selectedStudentId"); // Schüler ID aus localStorage holen
         if (studentId) {
           console.log("Schüler ID:", studentId); // Deine Logik, um Daten zu laden, hier ein Platzhalter
@@ -284,7 +284,7 @@
       }
 
       // Beispiel-Funktion, die mit einer ID Schülerdaten zurückgibt (logik später hinzufügen)
-      function getStudentData(studentId) {
+      async function getStudentData(studentId) {
         // Deine Logik zum Abrufen der Daten für den Schüler basierend auf der ID
         // Dies ist nur ein Beispiel, dass du später mit echter Logik ersetzen kannst
         if (studentId == "1") {
@@ -299,7 +299,7 @@
       }
 
       // Funktion, um beim Verlassen der Seite die Daten zu speichern
-      function saveStudentData() {
+      async function saveStudentData() {
         const studentId = localStorage.getItem("schueler");
         if (studentId) {
           const studentData = {
@@ -326,17 +326,9 @@
 
       // Lade die Daten, wenn die Seite geladen wird
       window.onload = loadStudentData;
-      // Funktion, um sicherzustellen, dass nur eine Sektion gleichzeitig aktiv ist
-      function setActiveSection(selectedSection) {
-        const sections = document.querySelectorAll(".section-item");
-        sections.forEach((section) => {
-          section.classList.remove("active"); // Entfernen der aktiven Klasse von allen Sektionen
-        });
-        selectedSection.classList.add("active"); // Hinzufügen der aktiven Klasse zur ausgewählten Sektion
-      }
 
       // Funktion, die die Stufe basierend auf der Punktzahl festlegt
-      function updateMiddle(inputElement, stufeElement) {
+      async function updateMiddle(inputElement, stufeElement) {
         const p1 = parseInt(document.querySelector("#p1").value);
         const p2 = parseInt(document.querySelector("#p2").value);
         const p3 = parseInt(document.querySelector("#p3").value);
@@ -357,7 +349,7 @@
         }
       }
 
-      function updateStufe(outputElement, stufeElement) {
+      async function updateStufe(outputElement, stufeElement) {
         const punkte = parseInt(inputElement.value);
 
         if (punkte > 13) {

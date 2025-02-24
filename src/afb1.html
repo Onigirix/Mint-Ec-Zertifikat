@@ -85,7 +85,7 @@
 
     <script>
       // Funktion, die Beispieldaten zurückgibt
-      function getCourseData() {
+      async function getCourseData() {
         return [
           { kurs: "Mathematik", punktzahlen: [12, 14, 10, 15], erhoeht: false },
           { kurs: "Deutsch", punktzahlen: [8, 7, 9, 6], erhoeht: false },
@@ -95,7 +95,7 @@
       }
 
       // Funktion zur Berechnung des Durchschnitts
-      function calculateAverage(punktzahlen) {
+      async function calculateAverage(punktzahlen) {
         const validScores = punktzahlen.filter((p) => p >= 0 && p <= 15);
         if (validScores.length > 0) {
           const sum = validScores.reduce((acc, score) => acc + score, 0);
@@ -105,7 +105,7 @@
       }
 
       // Funktion zum Generieren der Tabelle mit Beispieldaten
-      function generateGradesTable() {
+      async function generateGradesTable() {
         const courses = getCourseData();
         const tbody = document.getElementById("grades-tbody");
 
@@ -144,7 +144,7 @@
       }
 
       // Funktion, um den Durchschnitt neu zu berechnen
-      function updateAverage(input, index) {
+      async function updateAverage(input, index) {
         const row = input.closest("tr");
         const punktzahlen = Array.from(
           row.querySelectorAll('input[type="number"]')
@@ -157,19 +157,19 @@
       }
 
       // Funktion zum Kursnamen aktualisieren
-      function updateCourseName(index, newName) {
+      async function updateCourseName(index, newName) {
         const courses = getCourseData();
         courses[index].kurs = newName;
       }
 
       // Funktion, um "Erhöht" zu aktualisieren
-      function updateErhoeht(index, isErhoeht) {
+      async function updateErhoeht(index, isErhoeht) {
         const courses = getCourseData();
         courses[index].erhoeht = isErhoeht;
       }
 
       // Funktion, um eine neue Zeile hinzuzufügen
-      function addRow() {
+      async function addRow() {
         const tbody = document.getElementById("grades-tbody");
         const newRow = document.createElement("tr");
         newRow.innerHTML = `
@@ -186,13 +186,13 @@
       }
 
       // Funktion zum Löschen einer Zeile
-      function deleteRow(button) {
+      async function deleteRow(button) {
         const row = button.closest("tr"); // Zeile der geklickten Schaltfläche finden
         row.remove(); // Zeile entfernen
       }
 
       // Funktion zum Laden der Schüler-ID aus dem localStorage (Simulation)
-      function loadStudentId() {
+      async function loadStudentId() {
         const studentId = localStorage.getItem("selectedStudentId");
         if (studentId) {
           console.log(`Schüler-ID geladen: ${studentId}`);
@@ -201,7 +201,7 @@
       }
 
       // Funktion zum Speichern der Tabelle beim Verlassen der Seite (Simulation)
-      window.onbeforeunload = function () {
+      window.onbeforeunload = async function () {
         const studentId = localStorage.getItem("selectedStudentId");
         if (studentId) {
           console.log(
@@ -211,7 +211,7 @@
       };
 
       // Tabelle bei Seitenladen generieren
-      window.onload = function () {
+      window.onload = async function () {
         generateGradesTable();
         loadStudentId(); // Schüler-ID beim Laden laden
       };
