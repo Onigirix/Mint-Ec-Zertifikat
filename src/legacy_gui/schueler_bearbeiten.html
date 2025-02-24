@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!--TODO: Change this to a second pop-up window-->
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schüler bearbeiten</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow-y: hidden;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #ccc;
+      }
+      .search-box {
+        border: none;
+        padding: 5px;
+        margin-left: 45%;
+      }
+      .icon {
+        width: 20px;
+        height: 20px;
+        background: #0000001c;
+        display: inline-block;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        height: 94vh;
+      }
+      .content-left {
+        display: flex;
+        width: 50vw;
+        flex-direction: column;
+        border: solid black 2px;
+      }
+      .sidebar {
+        flex: 1;
+        background: rgba(93, 153, 51, 0.6);
+        padding: 20px;
+        border: solid black 2px;
+      }
+      .main-content {
+        flex: 1;
+        background: rgba(190, 29, 29, 0.7);
+        padding: 20px;
+        border: solid black 2px;
+      }
+      .footer {
+        flex: 1;
+        background: rgba(0, 129, 201, 0.7);
+        padding: 20px;
+        border: solid black 2px;
+      }
+
+      .schueler {
+        position: absolute;
+        left: 35%;
+        padding: 20px;
+        background: rgba(25, 25, 25, 0.8);
+        width: 30%;
+        border: 2px solid rgba(0, 0, 0, 0.9);
+      }
+
+      .box-container-row {
+        display: flex;
+        flex-direction: row;
+      }
+      .box-container-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .box {
+        background-color: lightblue;
+        border: 1px solid blue;
+        padding: 10px;
+        margin: 5px;
+        width: calc(50% - 20px);
+        display: flex;
+        flex-direction: column;
+      }
+      .box input,
+      .box select {
+        padding: 5px;
+        margin-top: 5px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .box2 {
+        background-color: lightblue;
+        border: 1px solid blue;
+        padding: 10px;
+        margin-left: 30%;
+        margin-top: 20px;
+        width: 40%;
+      }
+
+      .button {
+        margin-top: 10px;
+        color: black;
+        padding: 10px 10px;
+        border: none;
+        cursor: pointer;
+        width: 30%;
+        margin-left: 30px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
+      .button2 {
+        margin-top: 10px;
+        color: black;
+        padding: 10px 10px;
+        border: none;
+        cursor: pointer;
+        width: 30%;
+        margin-left: 130px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
+    </style>
+    <script type="module">
+      const Database = window.__TAURI__.sql;
+      const db = await Database.load("sqlite://resources/db.sqlite");
+      document.getElementById("geburtsdatum").value = getDefaultDate();
+
+      document.addEventListener("DOMContentLoaded", function () {
+        schueler = new URLSearchParams(window.location.search).get("Schueler");
+      });
+
+      export async function schuelerDatenSpeichern() {
+        if (vorname == "" || nachname == "") {
+          alert("Fehlerhafte Eingabe!");
+          return;
+        } else {
+          const res = await db.execute(
+            "INSERT INTO students (student_id, name, birthday) VALUES (NULL, $1, $2)",
+            [
+              document.getElementById("vorname").value +
+                " " +
+                document.getElementById("nachname").value,
+              document.getElementById("geburtsdatum").value,
+            ]
+          );
+          window.location.href =
+            "index.html?Schueler=" +
+            document.getElementById("vorname").value +
+            " " +
+            document.getElementById("nachname").value;
+        }
+      }
+
+      function schuelerSuchen() {
+        var schuelerName = document.getElementById("schuelerSuche").value;
+
+        // tauri zeug suchen ->
+        if (schuelerName === "Max Mustermann") {
+          document.getElementById("vorname").value = "Max";
+          document.getElementById("nachname").value = "Mustermann";
+          document.getElementById("geburtsdatum").value = "2000-01-01";
+          document.getElementById("geschlecht").value = "Männlich";
+        } else {
+          console.log("Schüler nicht gefunden");
+          alert("Schüler nicht gefunden!");
+        }
+      }
+
+      function schuelerLoeschen() {
+        var vorname = document.getElementById("vorname").value;
+        var nachname = document.getElementById("nachname").value;
+
+        if (vorname == "" || nachname == "") {
+          alert("Fehlerhafte Eingabe!");
+          return;
+        }
+
+        //tauri schueler löschen
+        console.log("Schüler wird gelöscht:", vorname, nachname);
+        alert("Schüler gelöscht!");
+
+        document.getElementById("vorname").value = "";
+        document.getElementById("nachname").value = "";
+        document.getElementById("geburtsdatum").value = "";
+        document.getElementById("geschlecht").value = "Männlich";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("schuelerSuche")
+          .addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              schuelerSuchen();
+            }
+          });
+
+        // Klick-Event außerhalb des schwarzen Fensters
+        document.addEventListener("click", function (event) {
+          var schuelerBox = document.querySelector(".schueler");
+          if (!schuelerBox.contains(event.target)) {
+            window.location.href = "index.html?Schueler=" + schueler; // Weiterleitung zur gewünschten Seite
+          }
+        });
+      });
+
+      function getDefaultDate() {
+        const today = new Date();
+        today.setFullYear(today.getFullYear() - 17);
+
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+      }
+      window.schuelerDatenSpeichern = schuelerDatenSpeichern;
+    </script>
+  </head>
+  <body>
+    <div class="header">
+      <input class="search-box" type="text" placeholder="Schüler..." />
+      <div>
+        <span class="icon" style="position: absolute; left: 57%; top: 13px"
+          >+</span
+        >
+        <span class="icon" style="position: absolute; left: 95%; top: 13px"
+          >&#128424;</span
+        >
+        <span class="icon" style="position: absolute; left: 97%; top: 13px"
+          >&#9881;</span
+        >
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-left">
+        <div class="footer"></div>
+        <div class="sidebar"></div>
+      </div>
+
+      <div class="main-content"></div>
+
+      <div class="schueler">
+        <div class="box-container-col">
+          <div class="box-container-row">
+            <div class="box">
+              <label for="vorname">Vorname</label>
+              <input type="text" id="vorname" placeholder="Vorname" />
+            </div>
+            <div class="box">
+              <label for="nachname">Nachname</label>
+              <input type="text" id="nachname" placeholder="Nachname" />
+            </div>
+          </div>
+
+          <div class="box-container-row">
+            <div class="box">
+              <label for="geburtsdatum">Geburtsdatum</label>
+              <input type="date" id="geburtsdatum" />
+            </div>
+            <div class="box">
+              <label for="geschlecht">Geschlecht</label>
+              <select id="geschlecht">
+                <option value="männlich">Männlich</option>
+                <option value="weiblich">Weiblich</option>
+                <option value="divers">Divers</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="box2">
+            <label for="schuelerSuche">Schüler suche...</label>
+            <input
+              type="text"
+              id="schuelerSuche"
+              placeholder="Schülername eingeben"
+            />
+          </div>
+        </div>
+
+        <div class="box-container-row">
+          <button
+            class="button"
+            style="background: greenyellow"
+            onclick="schuelerDatenSpeichern()"
+          >
+            Bestätigen
+          </button>
+          <button
+            class="button2"
+            style="background: red"
+            onclick="schuelerLoeschen()"
+          >
+            Löschen
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,304 +1,302 @@
 <!DOCTYPE html>
-<!--TODO: Change this to a second pop-up window-->
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Schüler bearbeiten</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        overflow-y: hidden;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 20px;
-        background: #ccc;
-      }
-      .search-box {
-        border: none;
-        padding: 5px;
-        margin-left: 45%;
-      }
-      .icon {
-        width: 20px;
-        height: 20px;
-        background: #0000001c;
-        display: inline-block;
-        text-align: center;
-      }
-      .content {
-        display: flex;
-        height: 94vh;
-      }
-      .content-left {
-        display: flex;
-        width: 50vw;
-        flex-direction: column;
-        border: solid black 2px;
-      }
-      .sidebar {
-        flex: 1;
-        background: rgba(93, 153, 51, 0.6);
-        padding: 20px;
-        border: solid black 2px;
-      }
-      .main-content {
-        flex: 1;
-        background: rgba(190, 29, 29, 0.7);
-        padding: 20px;
-        border: solid black 2px;
-      }
-      .footer {
-        flex: 1;
-        background: rgba(0, 129, 201, 0.7);
-        padding: 20px;
-        border: solid black 2px;
-      }
-
-      .schueler {
-        position: absolute;
-        left: 35%;
-        padding: 20px;
-        background: rgba(25, 25, 25, 0.8);
-        width: 30%;
-        border: 2px solid rgba(0, 0, 0, 0.9);
-      }
-
-      .box-container-row {
-        display: flex;
-        flex-direction: row;
-      }
-      .box-container-col {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .box {
-        background-color: lightblue;
-        border: 1px solid blue;
-        padding: 10px;
-        margin: 5px;
-        width: calc(50% - 20px);
-        display: flex;
-        flex-direction: column;
-      }
-      .box input,
-      .box select {
-        padding: 5px;
-        margin-top: 5px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .box2 {
-        background-color: lightblue;
-        border: 1px solid blue;
-        padding: 10px;
-        margin-left: 30%;
-        margin-top: 20px;
-        width: 40%;
-      }
-
-      .button {
-        margin-top: 10px;
-        color: black;
-        padding: 10px 10px;
-        border: none;
-        cursor: pointer;
-        width: 30%;
-        margin-left: 30px;
-        font-weight: bold;
-        border: 1px solid black;
-      }
-      .button2 {
-        margin-top: 10px;
-        color: black;
-        padding: 10px 10px;
-        border: none;
-        cursor: pointer;
-        width: 30%;
-        margin-left: 130px;
-        font-weight: bold;
-        border: 1px solid black;
-      }
-    </style>
-    <script type="module">
-      const Database = window.__TAURI__.sql;
-      const db = await Database.load("sqlite://resources/db.sqlite");
-      document.getElementById("geburtsdatum").value = getDefaultDate();
-
-      document.addEventListener("DOMContentLoaded", function () {
-        schueler = new URLSearchParams(window.location.search).get("Schueler");
-      });
-
-      export async function schuelerDatenSpeichern() {
-        if (vorname == "" || nachname == "") {
-          alert("Fehlerhafte Eingabe!");
-          return;
-        } else {
-          const res = await db.execute(
-            "INSERT INTO students (student_id, name, birthday) VALUES (NULL, $1, $2)",
-            [
-              document.getElementById("vorname").value +
-                " " +
-                document.getElementById("nachname").value,
-              document.getElementById("geburtsdatum").value,
-            ]
-          );
-          window.location.href =
-            "index.html?Schueler=" +
-            document.getElementById("vorname").value +
-            " " +
-            document.getElementById("nachname").value;
-        }
-      }
-
-      function schuelerSuchen() {
-        var schuelerName = document.getElementById("schuelerSuche").value;
-
-        // tauri zeug suchen ->
-        if (schuelerName === "Max Mustermann") {
-          document.getElementById("vorname").value = "Max";
-          document.getElementById("nachname").value = "Mustermann";
-          document.getElementById("geburtsdatum").value = "2000-01-01";
-          document.getElementById("geschlecht").value = "Männlich";
-        } else {
-          console.log("Schüler nicht gefunden");
-          alert("Schüler nicht gefunden!");
-        }
-      }
-
-      function schuelerLoeschen() {
-        var vorname = document.getElementById("vorname").value;
-        var nachname = document.getElementById("nachname").value;
-
-        if (vorname == "" || nachname == "") {
-          alert("Fehlerhafte Eingabe!");
-          return;
-        }
-
-        //tauri schueler löschen
-        console.log("Schüler wird gelöscht:", vorname, nachname);
-        alert("Schüler gelöscht!");
-
-        document.getElementById("vorname").value = "";
-        document.getElementById("nachname").value = "";
-        document.getElementById("geburtsdatum").value = "";
-        document.getElementById("geschlecht").value = "Männlich";
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("schuelerSuche")
-          .addEventListener("keypress", function (event) {
-            if (event.key === "Enter") {
-              schuelerSuchen();
-            }
-          });
-
-        // Klick-Event außerhalb des schwarzen Fensters
-        document.addEventListener("click", function (event) {
-          var schuelerBox = document.querySelector(".schueler");
-          if (!schuelerBox.contains(event.target)) {
-            window.location.href = "index.html?Schueler=" + schueler; // Weiterleitung zur gewünschten Seite
-          }
-        });
-      });
-
-      function getDefaultDate() {
-        const today = new Date();
-        today.setFullYear(today.getFullYear() - 17);
-
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0");
-        const day = String(today.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-      }
-      window.schuelerDatenSpeichern = schuelerDatenSpeichern;
-    </script>
+    <title>Mint Ec</title>
+    <link rel="stylesheet" href="style_sb.css" />
+    <style></style>
   </head>
   <body>
-    <div class="header">
-      <input class="search-box" type="text" placeholder="Schüler..." />
-      <div>
-        <span class="icon" style="position: absolute; left: 57%; top: 13px"
-          >+</span
-        >
-        <span class="icon" style="position: absolute; left: 95%; top: 13px"
-          >&#128424;</span
-        >
-        <span class="icon" style="position: absolute; left: 97%; top: 13px"
-          >&#9881;</span
-        >
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="content-left">
-        <div class="footer"></div>
-        <div class="sidebar"></div>
+    <div class="container">
+      <!-- Menü -->
+      <div class="menu">
+        <a href="index.html" class="menu-item">Dashboard</a>
+        <a href="#" class="menu-item active">Schüler bearbeiten</a>
+        <a href="afb1.html" class="menu-item">Bereich 1</a>
+        <a href="afb2.html" class="menu-item">Bereich 2</a>
+        <a href="afb3.html" class="menu-item">Bereich 3</a>
+        <a href="#" class="menu-item">Einstellungen</a>
       </div>
 
-      <div class="main-content"></div>
+      <!-- Hauptinhalt -->
+      <div class="main-content">
+        <h2>Schülerliste</h2>
 
-      <div class="schueler">
-        <div class="box-container-col">
-          <div class="box-container-row">
-            <div class="box">
-              <label for="vorname">Vorname</label>
-              <input type="text" id="vorname" placeholder="Vorname" />
-            </div>
-            <div class="box">
-              <label for="nachname">Nachname</label>
-              <input type="text" id="nachname" placeholder="Nachname" />
-            </div>
-          </div>
+        <!-- Hier wird die Tabelle dynamisch eingefügt -->
+        <div id="table-container"></div>
 
-          <div class="box-container-row">
-            <div class="box">
-              <label for="geburtsdatum">Geburtsdatum</label>
-              <input type="date" id="geburtsdatum" />
-            </div>
-            <div class="box">
-              <label for="geschlecht">Geschlecht</label>
-              <select id="geschlecht">
-                <option value="männlich">Männlich</option>
-                <option value="weiblich">Weiblich</option>
-                <option value="divers">Divers</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="box2">
-            <label for="schuelerSuche">Schüler suche...</label>
-            <input
-              type="text"
-              id="schuelerSuche"
-              placeholder="Schülername eingeben"
-            />
-          </div>
-        </div>
-
-        <div class="box-container-row">
-          <button
-            class="button"
-            style="background: greenyellow"
-            onclick="schuelerDatenSpeichern()"
-          >
-            Bestätigen
+        <!-- Buttons zum Hinzufügen, Löschen und Bearbeiten -->
+        <div class="button-container">
+          <button class="add-button" onclick="addStudent()">
+            Neuen Schüler hinzufügen
           </button>
-          <button
-            class="button2"
-            style="background: red"
-            onclick="schuelerLoeschen()"
-          >
-            Löschen
+          <button id="deleteButton" onclick="deleteSelectedStudents()" disabled>
+            Ausgewählte Schüler löschen
+          </button>
+          <button id="editButton" onclick="editStudent()" disabled>
+            Schüler bearbeiten
           </button>
         </div>
       </div>
     </div>
+
+    <script>
+      let studentData = [
+        {
+          id: 1,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 2,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        { id: 3, name: "Hans Müller", stufe: "Q3", geburtsdatum: "2004-07-30" },
+        {
+          id: 4,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+        {
+          id: 5,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 6,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        { id: 7, name: "Hans Müller", stufe: "Q3", geburtsdatum: "2004-07-30" },
+        {
+          id: 8,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+        {
+          id: 9,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 10,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        {
+          id: 11,
+          name: "Hans Müller",
+          stufe: "Q3",
+          geburtsdatum: "2004-07-30",
+        },
+        {
+          id: 12,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+        {
+          id: 13,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 14,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        {
+          id: 15,
+          name: "Hans Müller",
+          stufe: "Q3",
+          geburtsdatum: "2004-07-30",
+        },
+        {
+          id: 16,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+        {
+          id: 17,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 18,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        {
+          id: 19,
+          name: "Hans Müller",
+          stufe: "Q3",
+          geburtsdatum: "2004-07-30",
+        },
+        {
+          id: 20,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+      ];
+
+      function generateTable() {
+        let table = "<table>";
+        table += "<thead>";
+        table += "<tr><th>Name</th><th>Stufe</th><th>Geburtsdatum</th></tr>";
+        table += "</thead>";
+        table += "<tbody>";
+
+        studentData.forEach((student) => {
+          table += `<tr class="student-row" data-id="${student.id}" onclick="selectStudent(event, ${student.id})">
+                    <td>${student.name}</td>
+                    <td>${student.stufe}</td>
+                    <td>${student.geburtsdatum}</td>
+                  </tr>`;
+        });
+
+        table += "</tbody>";
+        table += "</table>";
+
+        document.getElementById("table-container").innerHTML = table;
+      }
+
+      function addStudent() {
+        const vorname = prompt("Vorname des Schülers:");
+        const nachname = prompt("Nachname des Schülers:");
+        const stufe = prompt("Stufe des Schülers:");
+        const geburtsdatum = prompt("Geburtsdatum des Schülers (YYYY-MM-DD):");
+
+        if (vorname && nachname && stufe && geburtsdatum) {
+          const name = vorname + " " + nachname; // Vorname und Nachname zusammenfügen
+
+          const newStudent = {
+            id: studentData.length + 1,
+            name: name, // Speichern des zusammengefügten Namens
+            stufe: stufe,
+            geburtsdatum: geburtsdatum,
+          };
+
+          studentData.push(newStudent);
+          generateTable();
+        } else {
+          alert("Alle Felder müssen ausgefüllt werden!");
+        }
+      }
+
+      function deleteSelectedStudents() {
+        const selectedIds = [];
+        document.querySelectorAll(".student-row.selected").forEach((row) => {
+          selectedIds.push(parseInt(row.getAttribute("data-id")));
+        });
+
+        if (selectedIds.length > 0) {
+          studentData = studentData.filter(
+            (student) => !selectedIds.includes(student.id)
+          );
+          generateTable();
+        } else {
+          alert("Es wurde kein Schüler ausgewählt.");
+        }
+      }
+
+      function selectStudent(event, studentId) {
+        const row = event.currentTarget;
+        const isSelected = row.classList.contains("selected");
+
+        document
+          .querySelectorAll(".student-row")
+          .forEach((r) => r.classList.remove("selected"));
+
+        if (!isSelected) {
+          row.classList.add("selected");
+          console.log("Ausgewählter Schüler ID: " + studentId);
+          // Speichern der ID im localStorage
+          localStorage.setItem("selectedStudentId", studentId);
+        }
+
+        // Schalter für die Buttons (Bearbeiten und Löschen)
+        const selectedRows = document.querySelectorAll(".student-row.selected");
+        const deleteButton = document.getElementById("deleteButton");
+        const editButton = document.getElementById("editButton");
+
+        if (selectedRows.length > 0) {
+          deleteButton.removeAttribute("disabled");
+          editButton.removeAttribute("disabled");
+
+          deleteButton.classList.add("selected");
+          editButton.classList.add("selected");
+        } else {
+          deleteButton.setAttribute("disabled", "true");
+          editButton.setAttribute("disabled", "true");
+
+          deleteButton.classList.remove("selected");
+          editButton.classList.remove("selected");
+        }
+      }
+
+      function editStudent() {
+        const selectedRow = document.querySelector(".student-row.selected");
+        if (selectedRow) {
+          const studentId = selectedRow.getAttribute("data-id");
+          const student = studentData.find((s) => s.id == studentId);
+          if (student) {
+            const newName = prompt("Neuen Namen eingeben:", student.name);
+            const newstufe = prompt("Neue stufe eingeben:", student.stufe);
+            const newGeburtsdatum = prompt(
+              "Neues Geburtsdatum eingeben (YYYY-MM-DD):",
+              student.geburtsdatum
+            );
+
+            if (newName && newstufe && newGeburtsdatum) {
+              student.name = newName;
+              student.stufe = newstufe;
+              student.geburtsdatum = newGeburtsdatum;
+              generateTable();
+            }
+          }
+        }
+      }
+
+      window.onload = function () {
+        generateTable();
+
+        // Prüfen, ob eine Schüler-ID im localStorage gespeichert ist
+        const selectedStudentId = localStorage.getItem("selectedStudentId");
+        if (selectedStudentId) {
+          // Schüler mit dieser ID auswählen
+          const selectedRow = document.querySelector(
+            `.student-row[data-id="${selectedStudentId}"]`
+          );
+          if (selectedRow) {
+            selectedRow.classList.add("selected");
+            // Schalter für die Buttons
+            const deleteButton = document.getElementById("deleteButton");
+            const editButton = document.getElementById("editButton");
+
+            deleteButton.removeAttribute("disabled");
+            editButton.removeAttribute("disabled");
+
+            deleteButton.classList.add("selected");
+            editButton.classList.add("selected");
+          }
+        }
+      };
+    </script>
   </body>
 </html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mint Ec</title>
+    <link rel="stylesheet" href="style_afb1.css" />
+    <style>
+      /* Stil für den Plus-Button */
+      .add-row-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+      .add-row-btn:hover {
+        background-color: #45a049;
+      }
+
+      /* Stil für den Löschen-Button */
+      .delete-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .delete-btn:hover {
+        background-color: #d32f2f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Menü -->
+      <div class="menu">
+        <a href="index.html" class="menu-item">Dashboard</a>
+        <a href="schueler_bearbeiten.html" class="menu-item"
+          >Schüler bearbeiten</a
+        >
+        <a href="#" class="menu-item active">Bereich 1</a>
+        <a href="afb2.html" class="menu-item">Bereich 2</a>
+        <a href="afb3.html" class="menu-item">Bereich 3</a>
+        <a href="#" class="menu-item">Einstellungen</a>
+      </div>
+
+      <!-- Hauptinhalt -->
+      <div class="main-content">
+        <h2>Schülerliste</h2>
+
+        <!-- Noten Tabelle -->
+        <h3>Notenübersicht</h3>
+        <div id="table-container">
+          <table id="grades-table">
+            <thead>
+              <tr>
+                <th>Erhöht</th>
+                <th>Kurs</th>
+                <th>1. Punktzahl</th>
+                <th>2. Punktzahl</th>
+                <th>3. Punktzahl</th>
+                <th>4. Punktzahl</th>
+                <th>Durchschnitt</th>
+                <th>Aktionen</th>
+                <!-- Neue Spalte für die Löschen-Schaltfläche -->
+              </tr>
+            </thead>
+            <tbody id="grades-tbody">
+              <!-- Die Zeilen werden dynamisch von der Funktion hinzugefügt -->
+            </tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" onclick="addRow()">
+          + Neue Zeile hinzufügen
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Funktion, die Beispieldaten zurückgibt
+      function getCourseData() {
+        return [
+          { kurs: "Mathematik", punktzahlen: [12, 14, 10, 15], erhoeht: false },
+          { kurs: "Deutsch", punktzahlen: [8, 7, 9, 6], erhoeht: false },
+          { kurs: "Englisch", punktzahlen: [15, 14, 13, 12], erhoeht: true },
+          { kurs: "Biologie", punktzahlen: [10, 10, 8, 9], erhoeht: false },
+        ];
+      }
+
+      // Funktion zur Berechnung des Durchschnitts
+      function calculateAverage(punktzahlen) {
+        const validScores = punktzahlen.filter((p) => p >= 0 && p <= 15);
+        if (validScores.length > 0) {
+          const sum = validScores.reduce((acc, score) => acc + score, 0);
+          return (sum / validScores.length).toFixed(2);
+        }
+        return "-";
+      }
+
+      // Funktion zum Generieren der Tabelle mit Beispieldaten
+      function generateGradesTable() {
+        const courses = getCourseData();
+        const tbody = document.getElementById("grades-tbody");
+
+        tbody.innerHTML = "";
+
+        courses.forEach((course, index) => {
+          const average = calculateAverage(course.punktzahlen);
+
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+          <td><input type="checkbox" ${
+            course.erhoeht ? "checked" : ""
+          } onchange="updateErhoeht(${index}, this.checked)"></td>
+          <td><input type="text" value="${
+            course.kurs
+          }" onchange="updateCourseName(${index}, this.value)"></td>
+          <td><input type="number" value="${
+            course.punktzahlen[0]
+          }" min="0" max="15" oninput="updateAverage(this, ${index})"></td>
+          <td><input type="number" value="${
+            course.punktzahlen[1]
+          }" min="0" max="15" oninput="updateAverage(this, ${index})"></td>
+          <td><input type="number" value="${
+            course.punktzahlen[2]
+          }" min="0" max="15" oninput="updateAverage(this, ${index})"></td>
+          <td><input type="number" value="${
+            course.punktzahlen[3]
+          }" min="0" max="15" oninput="updateAverage(this, ${index})"></td>
+          <td><span class="average">${average}</span></td>
+          <td><button class="delete-btn" onclick="deleteRow(this)">Löschen</button></td> <!-- Löschen-Button -->
+        `;
+
+          tbody.appendChild(row);
+        });
+      }
+
+      // Funktion, um den Durchschnitt neu zu berechnen
+      function updateAverage(input, index) {
+        const row = input.closest("tr");
+        const punktzahlen = Array.from(
+          row.querySelectorAll('input[type="number"]')
+        ).map((input) => parseFloat(input.value) || 0);
+        const average = calculateAverage(punktzahlen);
+        row.querySelector(".average").textContent = average;
+
+        const courses = getCourseData();
+        courses[index].punktzahlen = punktzahlen;
+      }
+
+      // Funktion zum Kursnamen aktualisieren
+      function updateCourseName(index, newName) {
+        const courses = getCourseData();
+        courses[index].kurs = newName;
+      }
+
+      // Funktion, um "Erhöht" zu aktualisieren
+      function updateErhoeht(index, isErhoeht) {
+        const courses = getCourseData();
+        courses[index].erhoeht = isErhoeht;
+      }
+
+      // Funktion, um eine neue Zeile hinzuzufügen
+      function addRow() {
+        const tbody = document.getElementById("grades-tbody");
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+        <td><input type="checkbox" onchange="updateErhoeht(-1, this.checked)"></td>
+        <td><input type="text" value="Neuer Kurs" onchange="updateCourseName(-1, this.value)"></td>
+        <td><input type="number" value="0" min="0" max="15" oninput="updateAverage(this, -1)"></td>
+        <td><input type="number" value="0" min="0" max="15" oninput="updateAverage(this, -1)"></td>
+        <td><input type="number" value="0" min="0" max="15" oninput="updateAverage(this, -1)"></td>
+        <td><input type="number" value="0" min="0" max="15" oninput="updateAverage(this, -1)"></td>
+        <td><span class="average">0.00</span></td>
+        <td><button class="delete-btn" onclick="deleteRow(this)">Löschen</button></td>
+      `;
+        tbody.appendChild(newRow);
+      }
+
+      // Funktion zum Löschen einer Zeile
+      function deleteRow(button) {
+        const row = button.closest("tr"); // Zeile der geklickten Schaltfläche finden
+        row.remove(); // Zeile entfernen
+      }
+
+      // Funktion zum Laden der Schüler-ID aus dem localStorage (Simulation)
+      function loadStudentId() {
+        const studentId = localStorage.getItem("selectedStudentId");
+        if (studentId) {
+          console.log(`Schüler-ID geladen: ${studentId}`);
+          // Hier könnte die Tabelle gespeichert werden, z.B. durch API-Aufruf
+        }
+      }
+
+      // Funktion zum Speichern der Tabelle beim Verlassen der Seite (Simulation)
+      window.onbeforeunload = function () {
+        const studentId = localStorage.getItem("selectedStudentId");
+        if (studentId) {
+          console.log(
+            `Tabelle für Schüler-ID ${studentId} wird gespeichert...`
+          );
+        }
+      };
+
+      // Tabelle bei Seitenladen generieren
+      window.onload = function () {
+        generateGradesTable();
+        loadStudentId(); // Schüler-ID beim Laden laden
+      };
+    </script>
+  </body>
+</html>
