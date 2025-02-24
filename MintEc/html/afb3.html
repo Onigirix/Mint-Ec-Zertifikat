@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mint Ec</title>
+  <link rel="stylesheet" href="../css/style_afb3.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Menü -->
+    <div class="menu">
+      <div class="menu-item"><a href="index.html">Dashboard</a></div>
+      <div class="menu-item"><a href="schueler_bearbeiten.html">Schüler bearbeiten</a></div>
+      <div class="menu-item"><a href="afb1.html">Bereich 1</a></div>
+      <div class="menu-item"><a href="afb2.html">Bereich 2</a></div>
+      <div class="menu-item active">Bereich 3</div>
+      <div class="menu-item"><a href="schueler_bearbeiten.html">Einstellungen</a></div>
+    </div>
+
+    <!-- Hauptinhalt -->
+    <div class="main-content">
+      <h1>Willkommen beim Mint-Ec PDF Generator</h1>
+
+      <!-- Button zum Hinzufügen eines neuen Wettbewerbs -->
+      <button class="btn" onclick="showAddWettbewerbForm()" style="margin-top: 10px; margin-bottom: 10px;">Wettbewerb hinzufügen</button>
+
+      <!-- Tabellen nebeneinander -->
+      <div class="tables-container">
+        <!-- Tabelle 1: Wettbewerbe -->
+        <div class="table-container scrollable-table">
+          <h2>Wettbewerbe</h2>
+          <table id="wettbewerbe-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tabelle 2: Stufen -->
+        <div class="table-container scrollable-table">
+          <h2>Erreichte Stufen</h2>
+          <table id="stufen-table">
+            <thead>
+              <tr>
+                <th>Stufe</th>
+                <th>Vorraussetzung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamische Inhalte werden hier eingefügt -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
+      <h2>Erreichte Wettbewerbe</h2>
+      <div id="erreichte-wettbewerbe-table-wrapper"></div>
+      <table id="erreichte-wettbewerbe-table">
+        <thead>
+          <tr>
+            <th>Wettbewerb</th>
+            <th>Stufe</th>
+            <th>Aktion</th> <!-- Spalte für Löschen-Button -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamische Inhalte werden hier eingefügt -->
+        </tbody>
+      </table>
+    </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Datenstruktur für die Wettbewerbe und Stufen
+    let wettbewerbeData = [
+      { id: 1, name: "Mathematik Olympiade" },
+      { id: 2, name: "Informatik Wettbewerb" },
+      { id: 3, name: "Chemie Wettbewerb" }
+    ];
+
+    let stufenData = {
+      1: [
+        { stufe: 1, beschreibung: "Runde 1" },
+        { stufe: 2, beschreibung: "Runde 2" },
+        { stufe: 3, beschreibung: "Finale" }
+      ],
+      2: [
+        { stufe: 1, beschreibung: "Code Challenge 1" },
+        { stufe: 2, beschreibung: "Code Challenge 2" },
+        { stufe: 3, beschreibung: "Code Challenge 3" }
+      ],
+      3: [
+        { stufe: 1, beschreibung: "Praktische Übung 1" },
+        { stufe: 2, beschreibung: "Praktische Übung 2" },
+        { stufe: 3, beschreibung: "Finale Experiment" }
+      ]
+    };
+
+    let erreichteWettbewerbe = [
+      { id: 1, name: "Mathematik Olympiade", stufe: 2 },
+      { id: 2, name: "Informatik Wettbewerb", stufe: 3 }
+    ];
+
+    // Funktion zum Befüllen der Wettbewerbstabelle
+    function populateWettbewerbeTable() {
+      const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
+      wettbewerbeTable.innerHTML = ''; // Tabelle zurücksetzen
+
+      wettbewerbeData.forEach((wettbewerb) => {
+        const row = wettbewerbeTable.insertRow();
+        row.insertCell(0).textContent = wettbewerb.id;
+        const nameCell = row.insertCell(1);
+        nameCell.textContent = wettbewerb.name;
+
+        // Doppelklick-Event zum Bearbeiten der Wettbewerbsnamen
+        nameCell.addEventListener('dblclick', () => {
+          if (row.classList.contains('active-row')) {
+            const newName = prompt("Wettbewerbsnamen bearbeiten:", wettbewerb.name);
+            if (newName) {
+              wettbewerb.name = newName;
+              nameCell.textContent = newName;
+            }
+          }
+        });
+
+        row.addEventListener('click', () => {
+          // Alle Zeilen zurücksetzen
+          const rows = wettbewerbeTable.getElementsByTagName('tr');
+          for (let r of rows) {
+            r.classList.remove('active-row');
+          }
+
+          // Die angeklickte Zeile hervorheben
+          row.classList.add('active-row');
+
+          // Tabelle 2 basierend auf dem ausgewählten Wettbewerb anpassen
+          updateStufenTable(stufenData[wettbewerb.id]);
+        });
+      });
+
+      // Das erste Element automatisch auswählen
+      const firstRow = wettbewerbeTable.querySelector('tr');
+      if (firstRow) {
+        firstRow.classList.add('active-row');
+        updateStufenTable(stufenData[wettbewerbeData[0].id]);
+      }
+    }
+
+    // Funktion zum Befüllen der Stufentabelle
+    function updateStufenTable(stufen) {
+      const stufenTable = document.getElementById('stufen-table').getElementsByTagName('tbody')[0];
+      stufenTable.innerHTML = ''; // Zuerst alle Zeilen löschen
+
+      stufen.forEach((stufe) => {
+        const row = stufenTable.insertRow();
+        const stufeCell = row.insertCell(0);
+        stufeCell.textContent = stufe.stufe;
+        const beschreibungCell = row.insertCell(1);
+        beschreibungCell.textContent = stufe.beschreibung;
+
+        // Doppelklick-Event zum Bearbeiten der Stufenbeschreibungen
+        beschreibungCell.addEventListener('dblclick', () => {
+          const newBeschreibung = prompt("Stufenbeschreibung bearbeiten:", stufe.beschreibung);
+          if (newBeschreibung) {
+            stufe.beschreibung = newBeschreibung;
+            beschreibungCell.textContent = newBeschreibung;
+          }
+        });
+
+        row.classList.add('clickable');
+        row.addEventListener('click', () => {
+          // Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
+          addToErreichteWettbewerbe(row, stufe);
+        });
+      });
+    }
+
+    // Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
+    function addToErreichteWettbewerbe(row, stufe) {
+      const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
+      const activeRow = wettbewerbeTable.querySelector('.active-row');
+      const wettbewerbName = activeRow.cells[1].textContent;
+
+      const erreichteWettbewerbeTable = document.getElementById('erreichte-wettbewerbe-table').getElementsByTagName('tbody')[0];
+      const newRow = erreichteWettbewerbeTable.insertRow();
+      newRow.insertCell(0).textContent = wettbewerbName;
+      newRow.insertCell(1).textContent = `${stufe.stufe}: ${stufe.beschreibung}`;
+
+      // Löschen-Button hinzufügen
+      const deleteCell = newRow.insertCell(2);
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Löschen';
+      deleteButton.classList.add('delete-btn'); // Anwendung des neuen Stils
+      deleteButton.addEventListener('click', (e) => {
+        const confirmation = confirm('Möchten Sie diesen Eintrag wirklich löschen?');
+        if (confirmation) {
+          newRow.remove();
+        }
+        e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
+      });
+      deleteCell.appendChild(deleteButton);
+    }
+
+    // Funktion zum Hinzufügen eines neuen Wettbewerbs
+    function showAddWettbewerbForm() {
+      const name = prompt("Geben Sie den Namen des neuen Wettbewerbs ein:");
+      if (name) {
+        const newId = wettbewerbeData.length + 1;
+
+        // Stufeninformationen abfragen
+        let stufen = [];
+        for (let i = 1; i <= 3; i++) {
+          const beschreibung = prompt(`Geben Sie die Beschreibung für Stufe ${i} ein:`);
+          stufen.push({ stufe: i, beschreibung: beschreibung });
+        }
+
+        // Den neuen Wettbewerb und die Stufen speichern
+        wettbewerbeData.push({ id: newId, name: name });
+        stufenData[newId] = stufen;
+
+        populateWettbewerbeTable();
+      }
+    }
+
+    // Tabellen befüllen, wenn die Seite geladen wird
+    window.onload = populateWettbewerbeTable;
+  </script>
+</body>
+</html>
