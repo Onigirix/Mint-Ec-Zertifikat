@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mint Ec</title>
+  <link rel="stylesheet" href="../css/style_afb2.css">
+  <style>
+    /* Hinzufügen einer shimmernden grünen Farbe für die aktive Sektion */
+    .active {
+      background-color: #d3f8e0;  /* Grünlich schimmernder Hintergrund */
+      transition: background-color 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Menü -->
+    <div class="menu">
+      <div class="menu-item"><a href="index.html">Dashboard</a></div>
+      <div class="menu-item"><a href="schueler_bearbeiten.html">Schüler bearbeiten</a></div>
+      <div class="menu-item"><a href="afb1.html">Bereich 1</a></div>
+      <div class="menu-item active">Bereich 2</div>
+      <div class="menu-item"><a href="afb3.html">Bereich 3</a></div>
+      <div class="menu-item"><a href="schueler_bearbeiten.html">Einstellungen</a></div>
+    </div>
+
+    <!-- Hauptinhalt -->
+    <div class="main-content">
+      <h2>Sonderleistung auswählen</h2>
+
+      <!-- Abschnitt 1: Jugendforscht -->
+      <div class="section section-item" id="1" onclick="setActiveSection(this)">
+        <div class="section-header">
+          <h3>Jugendforscht</h3>
+        </div>
+        <div class="form-container">
+          <h4>Name des Projektes</h4>
+          <h4 style="padding-left: 1025px;">Stufe</h4>
+        </div>
+        <div class="form-container">
+          <input type="text" class="input-field-t" id="projekt_name1" placeholder="Rückkopplungs entfernung mit KI" />
+          <input type="number" class="input-field-n" id="projekt_stufe1" placeholder="1" min="1" max="3" />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Abschnitt 2: Facharbeit -->
+      <div class="section section-item" id="2" onclick="setActiveSection(this)">
+        <div class="section-header">
+          <h3>Facharbeit</h3>
+        </div>
+        <div class="form-container">
+          <h4>Name der Facharbeit</h4>
+          <h4 style="padding-left: 950px;">Punkte</h4>
+          <h4 style="padding-left: 20px;">Stufe</h4>
+        </div>
+        <div class="form-container">
+          <input type="text" class="input-field-t" id="projekt_name2" placeholder="Untersuchung von Krokodilen im Bezug auf Chaotische Systeme" />
+          <input type="number" class="input-field-n" id="projekt_punkt2" placeholder="1" min="1" max="15" 
+                 oninput="updateStufe(this, document.querySelector('#stufe_facharbeit'))" />
+          <input type="number" class="input-field-n" id="stufe_facharbeit projekt_stufe2" placeholder="" min="1" max="3" readonly />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Abschnitt 3: Fach -->
+      <div class="section section-item" id="3" onclick="setActiveSection(this)">
+        <div class="section-header">
+          <h3>WissProPräd Fach</h3>
+        </div>
+        <div class="form-container">
+          <h4>Name des Faches</h4>
+          <h4 style="padding-left: 800px;">Punkte je Halbjahr</h4>
+          <h4 style="padding-left: 70px;">Stufe</h4>
+        </div>
+        <div class="form-container">
+          <input type="text" class="input-field-t" id="projekt_name3" placeholder="Mathematik" />
+          <input type="number" id="p1 projekt_punkt31" class="input-field-n" placeholder="1" min="1" max="15" oninput="updateMiddle(document.querySelector('#durch_fach'), document.querySelector('#stufe_fach'))"/>
+          <input type="number" id="p2 projekt_punkt32" class="input-field-n" placeholder="1" min="1" max="15" oninput="updateMiddle(document.querySelector('#durch_fach'), document.querySelector('#stufe_fach'))"/> 
+          <input type="number" id="p3 projekt_punkt33" class="input-field-n" placeholder="1" min="1" max="15"oninput="updateMiddle(document.querySelector('#durch_fach'), document.querySelector('#stufe_fach'))"/>
+          <input type="number" id="p4 projekt_punkt34" class="input-field-n" placeholder="1" min="1" max="15" 
+                 oninput="updateMiddle(document.querySelector('#durch_fach'), document.querySelector('#stufe_fach'))" />
+           <input type="number" class="input-field-n" placeholder="1" min="1" max="15" readonly/>
+          <input type="number" class="input-field-n" id="stufe_fach projekt_stufe3" placeholder="" min="1" max="3" readonly />
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Abschnitt 4: Sonstiges -->
+      <div class="section section-item" id="4" onclick="setActiveSection(this)">
+        <div class="section-header">
+          <h3>Sonstige Leistung</h3>
+        </div>
+        <div class="form-container">
+          <h4>Name</h4>
+          <h4 style="padding-left: 1025px;">Stufe</h4>
+        </div>
+        <div class="form-container">
+          <input type="text" class="input-field-t" id="projekt_name4"placeholder="Frühstudium Physik" />
+          <input type="number" class="input-field-n" id="projekt_stufe4" placeholder="1" min="1" max="3" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Funktion, um sicherzustellen, dass nur eine Sektion gleichzeitig aktiv ist
+    function setActiveSection(selectedSection) {
+      const sections = document.querySelectorAll('.section-item');
+      sections.forEach(section => {
+        section.classList.remove('active'); // Entfernen der aktiven Klasse von allen Sektionen
+      });
+      selectedSection.classList.add('active'); // Hinzufügen der aktiven Klasse zur ausgewählten Sektion
+    }
+
+    // Diese Funktion wird beim Laden der Seite aufgerufen
+    function loadStudentData() {
+      const studentId = localStorage.getItem('selectedStudentId'); // Schüler ID aus localStorage holen
+      if (studentId) {
+        console.log('Schüler ID:', studentId);  // Deine Logik, um Daten zu laden, hier ein Platzhalter
+        // Beispiel: Abrufen der Schülerdaten (dies musst du später durch deine API oder Logik ersetzen)
+        const studentData = getStudentData(studentId);
+        
+        // Beispielwerte: Du kannst später diese Logik anpassen, um echte Daten zu laden
+        if (studentData) {
+          if(studentData.selectedSection == 1){
+            document.getElementById('projekt_name1').value = studentData.projektName || "";
+            document.getElementById('projekt_stufe1').value = studentData.projektStufe || "";
+          }else if(studentData.selectedSection == 2){
+            document.getElementById('projekt_name2').value = studentData.projektName || "";
+            document.getElementById('projekt_punkt2').value = studentData.projektPunkt || "";
+            document.getElementById('projekt_stufe2').value = studentData.projektStufe || "";
+          }else if(studentData.selectedSection == 3){
+            document.getElementById('projekt_name3').value = studentData.projektName || "";
+            document.getElementById('projekt_punkt31').value = studentData.projektPunkt1 || "";
+            document.getElementById('projekt_punkt32').value = studentData.projektPunkt2 || "";
+            document.getElementById('projekt_punkt33').value = studentData.projektPunkt3 || "";
+            document.getElementById('projekt_punkt34').value = studentData.projektPunkt4 || "";
+            document.getElementById('projekt_stufe3').value = studentData.projektStufe || "";
+          }else if(studentData.selectedSection == 4){
+            document.getElementById('projekt_name4').value = studentData.projektName || "";
+            document.getElementById('projekt_stufe4').value = studentData.projektStufe || "";
+          }
+
+
+          
+
+            const selectedSection = document.getElementById(studentData.selectedSection);
+            if (selectedSection) {
+              setActiveSection(selectedSection);
+            }
+          
+        }
+      } else {
+        console.log('Keine Schüler ID gefunden!');
+      }
+    }
+
+    // Beispiel-Funktion, die mit einer ID Schülerdaten zurückgibt (logik später hinzufügen)
+    function getStudentData(studentId) {
+      // Deine Logik zum Abrufen der Daten für den Schüler basierend auf der ID
+      // Dies ist nur ein Beispiel, dass du später mit echter Logik ersetzen kannst
+      if (studentId == "1") {
+        return {
+          projektName: "Mashalla Idee",
+          projektStufe: 3,
+          selectedSection: 2,
+          projektPunkt: 15  // Der Index des ausgewählten Abschnitts
+        };
+      }
+      return null;
+    }
+
+    // Funktion, um beim Verlassen der Seite die Daten zu speichern
+    function saveStudentData() {
+      const studentId = localStorage.getItem('schueler');
+      if (studentId) {
+        const studentData = {
+          projektName: document.getElementById('projekt_name').value,
+          projektStufe: document.getElementById('projekt_stufe').value,
+          selectedSection: Array.from(document.querySelectorAll('.section-item')).findIndex(section => section.classList.contains('active')) + 1
+        };
+        
+        console.log('Daten gespeichert für Schüler ID:', studentId, studentData);  // Deine Logik zum Speichern der Daten
+        // speicher die Daten hier arved
+        //localStorage.setItem('studentData', JSON.stringify(studentData));
+        
+      }
+    }
+
+    // Event Listener, um die Daten beim Verlassen der Seite zu speichern
+    window.addEventListener('beforeunload', saveStudentData);
+
+    // Lade die Daten, wenn die Seite geladen wird
+    window.onload = loadStudentData;
+  // Funktion, um sicherzustellen, dass nur eine Sektion gleichzeitig aktiv ist
+  function setActiveSection(selectedSection) {
+      const sections = document.querySelectorAll('.section-item');
+      sections.forEach(section => {
+        section.classList.remove('active'); // Entfernen der aktiven Klasse von allen Sektionen
+      });
+      selectedSection.classList.add('active'); // Hinzufügen der aktiven Klasse zur ausgewählten Sektion
+    }
+
+    // Funktion, die die Stufe basierend auf der Punktzahl festlegt
+    function updateMiddle(inputElement, stufeElement) {
+      const p1 = parseInt(document.querySelector('#p1').value);
+      const p2 = parseInt(document.querySelector('#p2').value);
+      const p3 = parseInt(document.querySelector('#p3').value);
+      const p4 = parseInt(document.querySelector('#p4').value);
+      
+      const punkte = (p1 + p2 + p3 + p4) / 4;
+
+      inputElement.value = punkte;
+
+      if (punkte > 13) {
+        stufeElement.value = 3;  // Stufe 3, wenn mehr als 13 Punkte
+      } else if (punkte > 10) {
+        stufeElement.value = 2;  // Stufe 2, wenn mehr als 10 Punkte
+      } else if (punkte > 7) {
+        stufeElement.value = 1;  // Stufe 1, wenn mehr als 7 Punkte
+      } else {
+        stufeElement.value = '';  // Leeren, wenn Punkte 7 oder weniger sind
+      }
+    }
+
+    function updateStufe(outputElement ,stufeElement) {
+      const punkte = parseInt(inputElement.value);
+      
+      if (punkte > 13) {
+        stufeElement.value = 3;  // Stufe 3, wenn mehr als 13 Punkte
+      } else if (punkte > 10) {
+        stufeElement.value = 2;  // Stufe 2, wenn mehr als 10 Punkte
+      } else if (punkte > 7) {
+        stufeElement.value = 1;  // Stufe 1, wenn mehr als 7 Punkte
+      } else {
+        stufeElement.value = '';  // Leeren, wenn Punkte 7 oder weniger sind
+      }
+    }
+  </script>
+</body>
+</html>
