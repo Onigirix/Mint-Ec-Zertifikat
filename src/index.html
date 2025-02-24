@@ -162,22 +162,18 @@
         }
       });
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // Pop-up öffnen bei Klick auf das Icon
-        document
-          .querySelector(".print-icon")
-          .addEventListener("click", function (event) {
-            event.stopPropagation();
-            document.getElementById("popup").style.display = "block";
-          });
-
-        // Pop-up schließen bei Klick außerhalb
-        document.addEventListener("click", function (event) {
-          var popup = document.getElementById("popup");
-          if (popup && !popup.contains(event.target)) {
-            popup.style.display = "none";
-          }
+      document
+        .querySelector(".print-icon")
+        .addEventListener("click", function (event) {
+          alsPDFspeichern();
         });
+
+      // Pop-up schließen bei Klick außerhalb
+      document.addEventListener("click", function (event) {
+        var popup = document.getElementById("popup");
+        if (popup && !popup.contains(event.target)) {
+          popup.style.display = "none";
+        }
       });
       function sucheSchueler() {
         var suchText = document.querySelector(".search-box").value;
@@ -288,6 +284,7 @@
         >
         <span
           class="icon print-icon"
+          id="print"
           style="position: absolute; left: 95%; top: 13px"
           >&#128424;</span
         >

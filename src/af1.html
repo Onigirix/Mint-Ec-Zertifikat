@@ -84,7 +84,7 @@
         border: 1px solid blue;
         padding: 10px;
         margin: 5px;
-        width: 150px;
+        width: 110px;
       }
 
       .boxzens {
@@ -198,7 +198,12 @@
               style="margin-right: 10px"
               onchange="updateGesamtdurchschnitt()"
             />
-            <input class="box" type="text" placeholder="Text eingeben" />
+            <input
+              class="box"
+              type="text"
+              id="subject_1"
+              placeholder="Text eingeben"
+            />
             <input
               class="boxzens"
               type="number"
@@ -248,7 +253,7 @@
 
     <script type="module">
       const Database = window.__TAURI__.sql;
-      const db = await Database.load("sqlite://resources/db.sqlite");
+      const db = await Database.load("sqlite://resources//db.sqlite");
       var currentRows = 1;
 
       let schueler = new URLSearchParams(window.location.search).get(
@@ -268,6 +273,9 @@
           "SELECT * FROM students WHERE name = $1",
           [schueler]
         );
+        if (data.subject_1 != null) {
+          document.getElementById("subject_1").value = data.subject_1;
+        }
         if (data.grade_1_1 != null) {
           document.getElementById("grade_1_1").value = data.grade_1_1;
         }
@@ -495,6 +503,26 @@
         row.remove();
         //updateGesamtdurchschnitt();
       }
+
+      const subject_1 = document.getElementById("subject_1");
+      subject_1.addEventListener(
+        "keyup",
+        async (e) => {
+          if (e.keyCode === 13 || e.keyCode === 9) {
+            //Enter or Tab
+            const res1 = await db.execute(
+              `UPDATE students SET subject_1 = $1 WHERE name = $2`,
+              [subject_1.value, schueler]
+            );
+            subject_1.style.border = "1px solid blue";
+            subject_1.style.backgroundColor = "lightblue";
+          } else {
+            subject_1.style.border = "1px solid red";
+            subject_1.style.backgroundColor = "rgb(255, 150, 150)";
+          }
+        },
+        false
+      );
 
       export function calculateAverage(input) {
         const row = input.parentElement;

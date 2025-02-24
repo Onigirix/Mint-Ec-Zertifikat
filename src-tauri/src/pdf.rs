@@ -35,8 +35,8 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             ),
             form.set_text(1, format!("an der {}", settings[0])),
             form.set_text(2, String::from("Field 2")),
-            form.set_text(3, db::get_school_functionary_1().await),
-            form.set_text(4, String::from("Field 4")),
+            form.set_text(3, format!("{} \n \n{}", settings[2], settings[4])),
+            form.set_text(4, format!("{}\n \n{}", settings[3], settings[5])),
             form.set_text(
                 5,
                 format!(

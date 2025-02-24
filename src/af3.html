@@ -1,487 +1,500 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demo-Seite</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    overflow-y: hidden;
-  }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: #ccc;
-  }
-  .search-box {
-    border: none;
-    padding: 5px;
-    margin-left: 45%;
-  }
-  .icon {
-    width: 20px;
-    height: 20px;
-    background: #0000001c;
-    display: inline-block;
-    text-align: center;
-  }
-  .content {
-    display: flex;
-    height: 94vh;
-  }
-  .content-left {
-    display: flex;
-    width: 50vw;
-    flex-direction: column;
-    border: solid black 2px;
-  }
-  .sidebar, .footer, .main-content {
-    flex: 1;
-    padding: 20px;
-    border: solid black 2px;
-  }
-  .sidebar {
-    background: rgba(93, 153, 51, 0.6);
-  }
-  .main-content {
-    background: rgba(190, 29, 29, 0.7);
-  }
-  .footer {
-    background: rgba(0, 129, 201, 0.7);
-  }
-  .schueler {
-    position: absolute;
-    left: 25%;
-    padding: 20px;
-    background: rgba(25, 25, 25, 0.8);
-    width: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.9);
-  }
-  .box-container-row {
-    display: flex;
-    flex-direction: row;
-  }
-  .box-container-col {
-    display: flex;
-    flex-direction: column;
-  }
-  .box, .box3, .box2 {
-    background-color: rgba(173, 216, 230, 0.689);
-    border: 1px solid blue;
-    padding: 10px;
-    margin: 5px;
-  }
-  .box3 {
-    border: 3px solid blue;
-    margin-left: 50px;
-    margin-top: 20px;
-    height: 200px;
-    width: 400px;
-  }
-  .button {
-    margin-top: 10px;
-    color: white;
-    background-color: #007BFF; /* Blau */
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    width: 30%;
-    font-weight: bold;
-    border-radius: 5px; /* Abgerundete Ecken */
-    transition: background-color 0.3s;
-  }
-  .button:hover {
-    background-color: #0056b3; /* Dunkleres Blau bei Hover */
-  }
-  .schueler-tabelle {
-    margin-top: 20px;
-    width: 100%;
-    max-width: 450px;
-    max-height: 200px;
-    overflow-y: auto;
-    display: block;
-  }
-  .schueler-tabelle table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .schueler-tabelle td, .schueler-tabelle th {
-    border: 1px solid black;
-    padding: 8px;
-  }
-  .dunne-spalte {
-    width: 10%;
-  }
-  .circle-with-minus {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #000;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    margin-left: 12px;
-    cursor: pointer;
-  }
-  .input-row {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-  }
-  .highlighted {
-    background-color: green !important; /* Hintergrundfarbe für die markierte Zeile */
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo-Seite</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow-y: hidden;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: #ccc;
+      }
+      .search-box {
+        border: none;
+        padding: 5px;
+        margin-left: 45%;
+      }
+      .icon {
+        width: 20px;
+        height: 20px;
+        background: #0000001c;
+        display: inline-block;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        height: 94vh;
+      }
+      .content-left {
+        display: flex;
+        width: 50vw;
+        flex-direction: column;
+        border: solid black 2px;
+      }
+      .sidebar,
+      .footer,
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        border: solid black 2px;
+      }
+      .sidebar {
+        background: rgba(93, 153, 51, 0.6);
+      }
+      .main-content {
+        background: rgba(190, 29, 29, 0.7);
+      }
+      .footer {
+        background: rgba(0, 129, 201, 0.7);
+      }
+      .schueler {
+        position: absolute;
+        left: 25%;
+        padding: 20px;
+        background: rgba(25, 25, 25, 0.8);
+        width: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.9);
+      }
+      .box-container-row {
+        display: flex;
+        flex-direction: row;
+      }
+      .box-container-col {
+        display: flex;
+        flex-direction: column;
+      }
+      .box,
+      .box3,
+      .box2 {
+        background-color: rgba(173, 216, 230, 0.689);
+        border: 1px solid blue;
+        padding: 10px;
+        margin: 5px;
+      }
+      .box3 {
+        border: 3px solid blue;
+        margin-left: 50px;
+        margin-top: 20px;
+        height: 200px;
+        width: 400px;
+      }
+      .button {
+        margin-top: 10px;
+        color: white;
+        background-color: #007bff; /* Blau */
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        width: 30%;
+        font-weight: bold;
+        border-radius: 5px; /* Abgerundete Ecken */
+        transition: background-color 0.3s;
+      }
+      .button:hover {
+        background-color: #0056b3; /* Dunkleres Blau bei Hover */
+      }
+      .schueler-tabelle {
+        margin-top: 20px;
+        width: 100%;
+        max-width: 450px;
+        max-height: 200px;
+        overflow-y: auto;
+        display: block;
+      }
+      .schueler-tabelle table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .schueler-tabelle td,
+      .schueler-tabelle th {
+        border: 1px solid black;
+        padding: 8px;
+      }
+      .dunne-spalte {
+        width: 10%;
+      }
+      .circle-with-minus {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        margin-left: 12px;
+        cursor: pointer;
+      }
+      .input-row {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+      }
+      .highlighted {
+        background-color: green !important; /* Hintergrundfarbe für die markierte Zeile */
+      }
 
-  .highlighted_w {
-    background-color: red !important; /* Hintergrundfarbe für die markierte Zeile */
-  }
+      .highlighted_w {
+        background-color: red !important; /* Hintergrundfarbe für die markierte Zeile */
+      }
 
-  .table-container{
-    max-height: 200px;
-    overflow-y: scroll;
-  }
-</style>
-<script>
-  var schueler = "";
-  var removedRecentley = false;
-  var removedRecently2 = false;
-  var curselected = "";
-  var cursek = "";
- 
+      .table-container {
+        max-height: 200px;
+        overflow-y: scroll;
+      }
+    </style>
+    <script>
+        var schueler = "";
+        var removedRecentley = false;
+        var removedRecently2 = false;
+        var curselected = "";
+        var cursek = "";
 
-  document.addEventListener('click', function (event) {
-      var container = document.querySelector('.schueler');
-        if (!container.contains(event.target) && !removedRecentley && !removedRecently2) {
-        speicherSchuelerDaten(schueler);
-        window.location.href = 'index.html?Schueler=' + schueler;
-        }
-        removedRecentley = false;
-        removedRecently2 = false;
-    });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    schueler = new URLSearchParams(window.location.search).get("Schueler");
-    if (schueler != "null") {  
-      document.querySelector('.search-box').value = schueler;
-      fillData(schueler);
-    }
-    document.querySelectorAll(".confirmPoint1, .confirmPoint2, #confirmPoint3").forEach(row => {
-    row.addEventListener("click", function() {
-        // Zugriff auf den Textinhalt der ersten Spalte (Text) und zweiten Spalte (Nummer)
-        const textContent = this.cells[0].textContent;
-        const numberContent = this.cells[1].textContent;
-        
-        addRow(textContent, numberContent);
-    });
-});
-  });
-
-  
-  //arved hier die wunderschöne datenbank
-  const wettbewerbe = [
-    { nr: 1, name: 'Praktikum im MINT+ Bereich', sek: 'I' },
-    { nr: 2, name: 'Bundeswettbewerb Informatik', sek: 'II' },
-    { nr: 3, name: 'Internationale Chemie Olympiade', sek: 'II' }
-    ];
-
-    function getWettbewerbe() {
-        return wettbewerbe;
-    }
-
-    function addWettbewerb(nr, name, sek) {
-        // Prüfen, ob die 'nr' bereits existiert, um doppelte Einträge zu vermeiden
-        const exists = wettbewerbe.some(wettbewerb => wettbewerb.nr === nr);
-        
-        if (!exists) {
-            // Nur hinzufügen, wenn 'nr' nicht existiert
-            wettbewerbe.push({ nr, name, sek });
-        } else {
-            console.log(`Wettbewerb mit Nummer ${nr} existiert bereits.`);
-        }
-    }
-
-  //arved die dreiu dinger sind obv für dich
-  const data = {
-    'Praktikum im MINT+ Bereich': ["schlecht", "mittel", "Mashaölla"],
-    'Bundeswettbewerb Informatik': ["1 Runde teilgenommen", "2 Runde gewonnen", "3 Runde gewonnen"],
-    'Internationale Chemie Olympiade': ["Kack Fach", "Naja", "Philip"]
-    };
-
-    function getDataForPoints(name) {
-        return data[name] || ["-", "-", "-"];
-    }
-
-    function addDataForPoints(name, newEntries) {
-            data[name] = newEntries;
-
-    }
-  document.addEventListener('DOMContentLoaded', function () {
-    let bwliste = getWettbewerbe();
-
-    const tableBody = document.querySelector('.schueler-tabelle tbody');
-    const resultRows = document.querySelectorAll('.box-container-col .identifier table tr');
-
-    function renderTable() {
-      tableBody.innerHTML = ''; // Tabelle leeren
-      bwliste.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <th class="dunne-spalte">${item.nr}</th>
-          <td>${item.name}</td>
-          <th class="dunne-spalte">${item.sek}</th>
-          <td>
-            <div class="circle-with-minus" onclick="deleteRow(${index})">&#8722;</div>
-          </td>
-        `;
-        tr.addEventListener('click', function() {
-          const highlightedRows = document.querySelectorAll('.highlighted');
-          highlightedRows.forEach(row => {
-            row.classList.remove('highlighted'); // Entferne die Markierung
+        document.addEventListener('click', function (event) {
+            var container = document.querySelector('.schueler');
+              if (!container.contains(event.target) && !removedRecentley && !removedRecently2) {
+              speicherSchuelerDaten(schueler);
+              window.location.href = 'index.html?Schueler=' + schueler;
+              }
+              removedRecentley = false;
+              removedRecently2 = false;
           });
-          this.classList.add('highlighted'); // Zeile grün markieren
-          updateResultTable(getDataForPoints(item.name));
-          curselected = item.name;
-          cursek = item.sek;
-        });
-        tableBody.appendChild(tr);
+
+        document.addEventListener('DOMContentLoaded', function() {
+          schueler = new URLSearchParams(window.location.search).get("Schueler");
+          if (schueler != "null") {
+            document.querySelector('.search-box').value = schueler;
+            fillData(schueler);
+          }
+          document.querySelectorAll(".confirmPoint1, .confirmPoint2, #confirmPoint3").forEach(row => {
+          row.addEventListener("click", function() {
+              // Zugriff auf den Textinhalt der ersten Spalte (Text) und zweiten Spalte (Nummer)
+              const textContent = this.cells[0].textContent;
+              const numberContent = this.cells[1].textContent;
+
+              addRow(textContent, numberContent);
+          });
       });
-    }
+        });
 
-    
 
-    function updateResultTable(data) {
-      console.log("resultRows:", resultRows);
-      resultRows[0].querySelector('td').textContent = data[0]; 
-      resultRows[1].querySelector('td').textContent = data[1]; 
-      resultRows[2].querySelector('td').textContent = data[2];
-    }
+        //arved hier die wunderschöne datenbank
+        const wettbewerbe = [
+          { nr: 1, name: 'Praktikum im MINT+ Bereich', sek: 'I' },
+          { nr: 2, name: 'Bundeswettbewerb Informatik', sek: 'II' },
+          { nr: 3, name: 'Internationale Chemie Olympiade', sek: 'II' }
+          ];
 
-    renderTable();
+          function getWettbewerbe() {
+              return wettbewerbe;
+          }
 
-    
+          function addWettbewerb(nr, name, sek) {
+              // Prüfen, ob die 'nr' bereits existiert, um doppelte Einträge zu vermeiden
+              const exists = wettbewerbe.some(wettbewerb => wettbewerb.nr === nr);
 
-    window.deleteRow = function (index) {
-    removedRecently2 = true;
-    bwliste.splice(index, 1);
-    renderTable();
-  };
-  });
-  function askQuestions() {
-    // Fragen, die gestellt werden sollen
-    const questions = [
-      "Geben Sie die Nummer ein:",
-      "Geben Sie den Namen des Wettbewerbs ein:",
-      "Geben Sie die Sekundarstufe ein (I oder II):",
-      "Geben Sie die Vorrauszetzung für die Stufe 1 ein:",
-      "Geben Sie die Vorrauszetzung für die Stufe 2 ein:",
-      "Geben Sie die Vorrauszetzung für die Stufe 3 ein:"
-    ];
+              if (!exists) {
+                  // Nur hinzufügen, wenn 'nr' nicht existiert
+                  wettbewerbe.push({ nr, name, sek });
+              } else {
+                  console.log(`Wettbewerb mit Nummer ${nr} existiert bereits.`);
+              }
+          }
 
-    let answers = [];
+        //arved die dreiu dinger sind obv für dich
+        const data = {
+          'Praktikum im MINT+ Bereich': ["Schlecht", "Mittel", "Perfekt"],
+          'Bundeswettbewerb Informatik': ["1 Runde teilgenommen", "2 Runde gewonnen", "3 Runde gewonnen"],
+          'Internationale Chemie Olympiade': ["Nicht so gut", "Naja", "Sehr Gut"]
+          };
 
-    // Fragen nacheinander stellen
-    for (let i = 0; i < questions.length; i++) {
-      let answer = prompt(questions[i]);
-      if (answer === null) return; // Abbrechen, wenn der Nutzer abbricht
-      answers.push(answer);
-    }
+          function getDataForPoints(name) {
+              return data[name] || ["-", "-", "-"];
+          }
 
-    // Eingaben zur Bestätigung anzeigen
-    let confirmation = confirm(
-      `Bitte bestätigen Sie die Eingaben:\n
-      Nummer: ${answers[0]}\n
-      Name: ${answers[1]}\n
-      Sekundarstufe: ${answers[2]}\n
-      Attribut 1: ${answers[3]}\n
-      Attribut 2: ${answers[4]}\n
-      Attribut 3: ${answers[5]}`
-    );
+          function addDataForPoints(name, newEntries) {
+                  data[name] = newEntries;
 
-    // Eintrag hinzufügen, wenn bestätigt
-    if (confirmation) {
-      addNewEntryToTable(answers[0], answers[1], answers[2], [answers[3], answers[4], answers[5]]);
-    }
-  }
+          }
+        document.addEventListener('DOMContentLoaded', function () {
+          let bwliste = getWettbewerbe();
 
-  // Funktion zum Hinzufügen eines neuen Eintrags zur Tabelle
-  function addNewEntryToTable(nr, name, sek, attributes) {
-    const tableBody = document.querySelector('.schueler-tabelle tbody');
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-      <th class="dunne-spalte">${nr}</th>
-      <td>${name}</td>
-      <th class="dunne-spalte">${sek}</th>
-      <td>
-        <div class="circle-with-minus" onclick="deleteRow(${tableBody.rows.length})">&#8722;</div>
-      </td>
-    `;
+          const tableBody = document.querySelector('.schueler-tabelle tbody');
+          const resultRows = document.querySelectorAll('.box-container-col .identifier table tr');
 
-    newRow.addEventListener('click', function() {
-      const highlightedRows = document.querySelectorAll('.highlighted');
-          highlightedRows.forEach(row => {
-            row.classList.remove('highlighted'); // Entferne die Markierung
-          });
-          this.classList.add('highlighted'); // Zeile grün markieren
-          updateResultTable(getDataForPoints(name));
-          curselected = name;
-          cursek = sek;
-    });
-    updateResultTable(attributes);
-    addDataForPoints(name, attributes);
-    tableBody.appendChild(newRow);
-  }
+          function renderTable() {
+            tableBody.innerHTML = ''; // Tabelle leeren
+            bwliste.forEach((item, index) => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <th class="dunne-spalte">${item.nr}</th>
+                <td>${item.name}</td>
+                <th class="dunne-spalte">${item.sek}</th>
+                <td>
+                  <div class="circle-with-minus" onclick="deleteRow(${index})">&#8722;</div>
+                </td>
+              `;
+              tr.addEventListener('click', function() {
+                const highlightedRows = document.querySelectorAll('.highlighted');
+                highlightedRows.forEach(row => {
+                  row.classList.remove('highlighted'); // Entferne die Markierung
+                });
+                this.classList.add('highlighted'); // Zeile grün markieren
+                updateResultTable(getDataForPoints(item.name));
+                curselected = item.name;
+                cursek = item.sek;
+              });
+              tableBody.appendChild(tr);
+            });
+          }
 
-  // Funktion zur Aktualisierung der unteren Tabelle
-  function updateResultTable(data) {
-    const resultRows = document.querySelectorAll('.box-container-col .identifier table tr');
-    resultRows[0].querySelector('td').textContent = data[0];
-    resultRows[1].querySelector('td').textContent = data[1];
-    resultRows[2].querySelector('td').textContent = data[2];
-  }
-  
-  // Neue Funktion zum Hinzufügen einer Zeile
-  function addRow(text, punkt) {
-      const tbody = document.querySelector('.box3 tbody');
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-        <td>${curselected}</td>
-        <td>${cursek}</td>
-        <td>${punkt}</td>
-      `;
-      newRow.addEventListener('click', function() {
-      const highlightedRows = document.querySelectorAll('.highlighted_w');
-          highlightedRows.forEach(row => {
-            row.classList.remove('highlighted_w'); // Entferne die Markierung
-          });
-          this.classList.add('highlighted_w'); // Zeile rot markieren
-          testForRemove(newRow.rowIndex);
-    });
-      tbody.appendChild(newRow);
 
-    }
 
-    var lastRowIndex = null;
+          function updateResultTable(data) {
+            console.log("resultRows:", resultRows);
+            resultRows[0].querySelector('td').textContent = data[0];
+            resultRows[1].querySelector('td').textContent = data[1];
+            resultRows[2].querySelector('td').textContent = data[2];
+          }
 
-    function testForRemove(index){
-        if(lastRowIndex !== null && lastRowIndex === index){
-          const tableBody = document.querySelector('#table_w tbody');
-          tableBody.deleteRow(index - 1); // Lösche die Zeile basierend auf dem Index
-        lastRowIndex = null; 
-        removedRecentley = true;
-        }else {
-          lastRowIndex = index;
+          renderTable();
+
+
+
+          window.deleteRow = function (index) {
+          removedRecently2 = true;
+          bwliste.splice(index, 1);
+          renderTable();
+        };
+        });
+        function askQuestions() {
+          // Fragen, die gestellt werden sollen
+          const questions = [
+            "Geben Sie die Nummer ein:",
+            "Geben Sie den Namen des Wettbewerbs ein:",
+            "Geben Sie die Sekundarstufe ein (I oder II):",
+            "Geben Sie die Vorrauszetzung für die Stufe 1 ein:",
+            "Geben Sie die Vorrauszetzung für die Stufe 2 ein:",
+            "Geben Sie die Vorrauszetzung für die Stufe 3 ein:"
+          ];
+
+          let answers = [];
+
+          // Fragen nacheinander stellen
+          for (let i = 0; i < questions.length; i++) {
+            let answer = prompt(questions[i]);
+            if (answer === null) return; // Abbrechen, wenn der Nutzer abbricht
+            answers.push(answer);
+          }
+
+          // Eingaben zur Bestätigung anzeigen
+          let confirmation = confirm(
+            `Bitte bestätigen Sie die Eingaben:\n
+            Nummer: ${answers[0]}\n
+            Name: ${answers[1]}\n
+            Sekundarstufe: ${answers[2]}\n
+            Attribut 1: ${answers[3]}\n
+            Attribut 2: ${answers[4]}\n
+            Attribut 3: ${answers[5]}`
+          );
+
+          // Eintrag hinzufügen, wenn bestätigt
+          if (confirmation) {
+            addNewEntryToTable(answers[0], answers[1], answers[2], [answers[3], answers[4], answers[5]]);
+          }
         }
-    }
 
-  function fillData(schueler){
-    const tableBody = getSchuelerDaten(schueler);
-    if(tableBody == null) return;
-    document.querySelector('#table_w tbody') = tableBody;
-  }
+        // Funktion zum Hinzufügen eines neuen Eintrags zur Tabelle
+        function addNewEntryToTable(nr, name, sek, attributes) {
+          const tableBody = document.querySelector('.schueler-tabelle tbody');
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+            <th class="dunne-spalte">${nr}</th>
+            <td>${name}</td>
+            <th class="dunne-spalte">${sek}</th>
+            <td>
+              <div class="circle-with-minus" onclick="deleteRow(${tableBody.rows.length})">&#8722;</div>
+            </td>
+          `;
+
+          newRow.addEventListener('click', function() {
+            const highlightedRows = document.querySelectorAll('.highlighted');
+                highlightedRows.forEach(row => {
+                  row.classList.remove('highlighted'); // Entferne die Markierung
+                });
+                this.classList.add('highlighted'); // Zeile grün markieren
+                updateResultTable(getDataForPoints(name));
+                curselected = name;
+                cursek = sek;
+          });
+          updateResultTable(attributes);
+          addDataForPoints(name, attributes);
+          tableBody.appendChild(newRow);
+        }
+
+        // Funktion zur Aktualisierung der unteren Tabelle
+        function updateResultTable(data) {
+          const resultRows = document.querySelectorAll('.box-container-col .identifier table tr');
+          resultRows[0].querySelector('td').textContent = data[0];
+          resultRows[1].querySelector('td').textContent = data[1];
+          resultRows[2].querySelector('td').textContent = data[2];
+        }
+
+        // Neue Funktion zum Hinzufügen einer Zeile
+        function addRow(text, punkt) {
+            const tbody = document.querySelector('.box3 tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+              <td>${curselected}</td>
+              <td>${cursek}</td>
+              <td>${punkt}</td>
+            `;
+            newRow.addEventListener('click', function() {
+            const highlightedRows = document.querySelectorAll('.highlighted_w');
+                highlightedRows.forEach(row => {
+                  row.classList.remove('highlighted_w'); // Entferne die Markierung
+                });
+                this.classList.add('highlighted_w'); // Zeile rot markieren
+                testForRemove(newRow.rowIndex);
+          });
+            tbody.appendChild(newRow);
+
+          }
+
+          var lastRowIndex = null;
+
+          function testForRemove(index){
+              if(lastRowIndex !== null && lastRowIndex === index){
+                const tableBody = document.querySelector('#table_w tbody');
+                tableBody.deleteRow(index - 1); // Lösche die Zeile basierend auf dem Index
+              lastRowIndex = null;
+              removedRecentley = true;
+              }else {
+                lastRowIndex = index;
+              }
+          }
+
+        function fillData(schueler){
+          const tableBody = getSchuelerDaten(schueler);
+          if(tableBody == null) return;
+          document.querySelector('#table_w tbody') = tableBody;
+        }
 
 
-    function speicherSchuelerDaten(schueler){
-      const tableBody = document.querySelector('#table_w tbody');
-      // kannst du speichern, das ist die blaue tabelle rechts
-    }
+          function speicherSchuelerDaten(schueler){
+            const tableBody = document.querySelector('#table_w tbody');
+            // kannst du speichern, das ist die blaue tabelle rechts
+          }
 
-    function getSchuelerDaten(schueler){
-      //ich rechne damit das du mir genau die tabeölle von oben zurück gibst  
-      return null;
-    }
-
-    
-
-
-
-
-
-</script>
-</head>
-<body>
-
-  <div class="header">
-    <input class="search-box" type="text" placeholder="Schüler...">
-    <div>
-      <span class="icon" style="position: absolute; left: 57%; top: 13px">+</span>
-      <span class="icon" style="position: absolute; left: 95%; top: 13px">&#128424;</span>
-      <span class="icon" style="position: absolute; left: 97%; top: 13px">&#9881;</span>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="content-left">
-      <div class="footer"></div>
-      <div class="sidebar"></div>
-    </div>
-    <div class="main-content"></div>
-    <div class="schueler">
+          function getSchuelerDaten(schueler){
+            //ich rechne damit das du mir genau die tabeölle von oben zurück gibst
+            return null;
+          }
+    </script>
+  </head>
+  <body>
+    <div class="header">
+      <input class="search-box" type="text" placeholder="Schüler..." />
       <div>
-        <div class="box" style="height: 10px; width: 300px;">Suche...</div>
-        <div class="box-container-col">
-          <div class="box-container-row">
-            <div class="schueler-tabelle">
-              <table>
-                <thead>
-                  <tr>
-                    <th class="dunne-spalte">Nr.</th>
-                    <td>Name</td>
-                    <th class="dunne-spalte">Sek</th>
-                    <td>Aktion</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Zeilen werden hier per JS hinzugefügt -->
-                </tbody>
-              </table>
-            </div>
-            <div class="box3">
-              <div class="table-container">
-                <table id="table_w" style="width: 100%; border-collapse: collapse; table-layout: fixed; overflow-x: scroll;">
+        <span class="icon" style="position: absolute; left: 57%; top: 13px"
+          >+</span
+        >
+        <span class="icon" style="position: absolute; left: 95%; top: 13px"
+          >&#128424;</span
+        >
+        <span class="icon" style="position: absolute; left: 97%; top: 13px"
+          >&#9881;</span
+        >
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-left">
+        <div class="footer"></div>
+        <div class="sidebar"></div>
+      </div>
+      <div class="main-content"></div>
+      <div class="schueler">
+        <div>
+          <div class="box" style="height: 10px; width: 300px">Suche...</div>
+          <div class="box-container-col">
+            <div class="box-container-row">
+              <div class="schueler-tabelle">
+                <table>
                   <thead>
-                    <tr class="border highlighttabel">
-                      <th style="width: 200px;">Name</th>
-                      <th style="width: 10px;">S</th>
-                      <th style="width: 20px;">P</th>
+                    <tr>
+                      <th class="dunne-spalte">Nr.</th>
+                      <td>Name</td>
+                      <th class="dunne-spalte">Sek</th>
+                      <td>Aktion</td>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr class="border">
-
-                    </tr>
+                    <!-- Zeilen werden hier per JS hinzugefügt -->
                   </tbody>
                 </table>
               </div>
+              <div class="box3">
+                <div class="table-container">
+                  <table
+                    id="table_w"
+                    style="
+                      width: 100%;
+                      border-collapse: collapse;
+                      table-layout: fixed;
+                      overflow-x: scroll;
+                    "
+                  >
+                    <thead>
+                      <tr class="border highlighttabel">
+                        <th style="width: 200px">Name</th>
+                        <th style="width: 10px">S</th>
+                        <th style="width: 20px">P</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="border"></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <button class="button" onclick="askQuestions()">Neuen Eintrag erstellen</button>
-          
-          <div class="box-container-col identifier">
-            <table class="schueler-tabelle" style="color: rgba(252, 252, 252, 0.8);">
-              <tr class="confirmPoint1">
-                <td style="font-size: small;">ernsthafte Teilnahme</td>
-                <th class="dunne-spalte">5</th>
-              </tr>
-              <tr class="confirmPoint2">
-                <td style="font-size: small;">Qualifikation für Runde 2</td>
-                <th class="dunne-spalte">10</th>
-              </tr>
-              <tr id="confirmPoint3">
-                <td style="font-size: small;">Qualifikation für Runde 3</td>
-                <th class="dunne-spalte">15</th>
-              </tr>
-            </table>
+            <button class="button" onclick="askQuestions()">
+              Neuen Eintrag erstellen
+            </button>
+
+            <div class="box-container-col identifier">
+              <table
+                class="schueler-tabelle"
+                style="color: rgba(252, 252, 252, 0.8)"
+              >
+                <tr class="confirmPoint1">
+                  <td style="font-size: small">ernsthafte Teilnahme</td>
+                  <th class="dunne-spalte">5</th>
+                </tr>
+                <tr class="confirmPoint2">
+                  <td style="font-size: small">Qualifikation für Runde 2</td>
+                  <th class="dunne-spalte">10</th>
+                </tr>
+                <tr id="confirmPoint3">
+                  <td style="font-size: small">Qualifikation für Runde 3</td>
+                  <th class="dunne-spalte">15</th>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-</body>
+  </body>
 </html>

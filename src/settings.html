@@ -140,6 +140,16 @@
           settings.school_functionary_1_position;
         schoolFunctionary2PositionField.value =
           settings.school_functionary_2_position;
+        let schueler = new URLSearchParams(window.location.search).get(
+          "Schueler"
+        );
+
+        document.addEventListener("click", function (event) {
+          var container = document.querySelector(".schueler");
+          if (!container.contains(event.target)) {
+            window.location.href = "index.html?Schueler=" + schueler;
+          }
+        });
 
         async function saveAllSettings() {
           console.log("Daten werden gespeichert...");
@@ -202,11 +212,11 @@
                 "UPDATE settings SET school_location = $1 WHERE id = 1",
                 [schoolLocationField.value]
               );
-              schoolNameField.style.border = "1px solid blue";
-              schoolNameField.style.backgroundColor = "lightblue";
+              schoolLocationField.style.border = "1px solid blue";
+              schoolLocationField.style.backgroundColor = "lightblue";
             } else {
-              schoolNameField.style.border = "1px solid red";
-              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
+              schoolLocationField.style.border = "1px solid red";
+              schoolLocationField.style.backgroundColor = "rgb(255, 150, 150)";
             }
           },
           false
@@ -221,11 +231,12 @@
                 "UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
                 [schoolFunctionary1Field.value]
               );
-              schoolNameField.style.border = "1px solid blue";
-              schoolNameField.style.backgroundColor = "lightblue";
+              schoolFunctionary1Field.style.border = "1px solid blue";
+              schoolFunctionary1Field.style.backgroundColor = "lightblue";
             } else {
-              schoolNameField.style.border = "1px solid red";
-              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
+              schoolFunctionary1Field.style.border = "1px solid red";
+              schoolFunctionary1Field.style.backgroundColor =
+                "rgb(255, 150, 150)";
             }
           },
           false
@@ -240,11 +251,12 @@
                 "UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
                 [schoolFunctionary2Field.value]
               );
-              schoolNameField.style.border = "1px solid blue";
-              schoolNameField.style.backgroundColor = "lightblue";
+              schoolFunctionary2Field.style.border = "1px solid blue";
+              schoolFunctionary2Field.style.backgroundColor = "lightblue";
             } else {
-              schoolNameField.style.border = "1px solid red";
-              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
+              schoolFunctionary2Field.style.border = "1px solid red";
+              schoolFunctionary2Field.style.backgroundColor =
+                "rgb(255, 150, 150)";
             }
           },
           false
@@ -259,11 +271,13 @@
                 "UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
                 [schoolFunctionary1PositionField.value]
               );
-              schoolNameField.style.border = "1px solid blue";
-              schoolNameField.style.backgroundColor = "lightblue";
+              schoolFunctionary1PositionField.style.border = "1px solid blue";
+              schoolFunctionary1PositionField.style.backgroundColor =
+                "lightblue";
             } else {
-              schoolNameField.style.border = "1px solid red";
-              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
+              schoolFunctionary1PositionField.style.border = "1px solid red";
+              schoolFunctionary1PositionField.style.backgroundColor =
+                "rgb(255, 150, 150)";
             }
           },
           false
@@ -278,11 +292,13 @@
                 "UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
                 [schoolFunctionary2PositionField.value]
               );
-              schoolNameField.style.border = "1px solid blue";
-              schoolNameField.style.backgroundColor = "lightblue";
+              schoolFunctionary2PositionField.style.border = "1px solid blue";
+              schoolFunctionary2PositionField.style.backgroundColor =
+                "lightblue";
             } else {
-              schoolNameField.style.border = "1px solid red";
-              schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
+              schoolFunctionary2PositionField.style.border = "1px solid red";
+              schoolFunctionary2PositionField.style.backgroundColor =
+                "rgb(255, 150, 150)";
             }
           },
           false

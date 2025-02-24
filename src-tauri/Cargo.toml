@@ -15,7 +15,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 tauri-build = { version = "2.0.3", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.6", features = [] }
+tauri = { version = "2.0.6", features = ["devtools"] }
 tauri-plugin-shell = "2.0.2"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_json = "1.0.133"
@@ -24,6 +24,6 @@ tokio = { version = "1.41.1", features = ["full"] }
 pdf_forms = "0.3.4"
 rfd = "0.15.1"
 chrono = "0.4.38"
-tauri-plugin-sql = { version = "2.0.2", features = ["sqlite"] }
-tauri-plugin-prevent-default = { version = "1.0", features = ["unstable-native-windows"] }
+tauri-plugin-sql = { version = "2.2.0", features = ["sqlite"] }
+# tauri-plugin-prevent-default = { version = "1.0", features = ["unstable-native-windows"] }
 

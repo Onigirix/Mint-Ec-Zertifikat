@@ -49,7 +49,6 @@ async fn create_settings_table() {
         .map_err(|e| eprintln!("Error inserting default settings: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_name(school_name: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -60,7 +59,6 @@ pub async fn change_school_name(school_name: String) {
         .map_err(|e| eprintln!("Error changing school name: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_location(school_location: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -71,7 +69,6 @@ pub async fn change_school_location(school_location: String) {
         .map_err(|e| eprintln!("Error changing school location: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_functionary_1(school_functionary_1: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -82,7 +79,6 @@ pub async fn change_school_functionary_1(school_functionary_1: String) {
         .map_err(|e| eprintln!("Error changing school functionary 1: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_functionary_2(school_functionary_2: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -93,7 +89,6 @@ pub async fn change_school_functionary_2(school_functionary_2: String) {
         .map_err(|e| eprintln!("Error changing school functionary 2: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_functionary_1_position(school_functionary_1_position: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -105,7 +100,6 @@ pub async fn change_school_functionary_1_position(school_functionary_1_position:
             .map_err(|e| eprintln!("Error changing school functionary 1 position: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_school_functionary_2_position(school_functionary_2_position: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -117,7 +111,6 @@ pub async fn change_school_functionary_2_position(school_functionary_2_position:
             .map_err(|e| eprintln!("Error changing school functionary 2 position: {}", e));
 }
 
-#[tauri::command]
 pub async fn change_default_file_path(new_default_file_path: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -128,7 +121,6 @@ pub async fn change_default_file_path(new_default_file_path: String) {
         .map_err(|e| eprintln!("Error changing default file path: {}", e));
 }
 
-#[tauri::command]
 pub async fn get_school_name() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -148,7 +140,6 @@ pub async fn get_school_name() -> String {
     }
 }
 
-#[tauri::command]
 pub async fn get_school_location() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -168,7 +159,6 @@ pub async fn get_school_location() -> String {
     }
 }
 
-#[tauri::command]
 pub async fn get_school_functionary_1() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -188,7 +178,6 @@ pub async fn get_school_functionary_1() -> String {
     }
 }
 
-#[tauri::command]
 pub async fn get_school_functionary_2() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -208,7 +197,6 @@ pub async fn get_school_functionary_2() -> String {
     }
 }
 
-#[tauri::command]
 pub async fn get_school_functionary_1_position() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -231,7 +219,6 @@ pub async fn get_school_functionary_1_position() -> String {
     }
 }
 
-#[tauri::command]
 pub async fn get_school_functionary_2_position() -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -276,6 +263,12 @@ pub async fn get_default_file_path() -> String {
     }
 }
 
+#[doc = "- `0`: School Name
+- `1`: School Location
+- `2`: School Functionary 1
+- `3`: School Functionary 2
+- `4`: School Functionary 1 Position
+- `5`: School Functionary 2 Position"]
 pub async fn get_all_settings() -> [String; 6] {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -289,6 +282,13 @@ pub async fn get_all_settings() -> [String; 6] {
         }
     }
 }
+///Returns all six settings
+/// - `0`: Setting A
+/// - `1`: Setting B
+/// - `2`: Setting C
+/// - `3`: Setting D
+/// - `4`: Setting E
+/// - `5`: Setting F
 
 async fn create_students_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
@@ -348,7 +348,6 @@ pub async fn fill_students_table() {
     .map_err(|e| eprintln!("Error changing school location: {}", e));
 }
 
-#[tauri::command]
 pub async fn add_student(first_name: String, last_name: String, birthday: String) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -365,7 +364,6 @@ pub async fn add_student(first_name: String, last_name: String, birthday: String
     .map_err(|e| eprintln!("Error adding student: {}", e));
 }
 
-#[tauri::command]
 pub async fn get_student_birthday(student_id: i32) -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
@@ -385,50 +383,6 @@ pub async fn get_student_birthday(student_id: i32) -> String {
             String::from("Error")
         }
     }
-}
-
-async fn create_grades_table() {
-    let db = SqlitePool::connect(DATABASE).await.unwrap();
-
-    let _result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS grades (
-        id INTEGER PRIMARY KEY,
-        subject_1 TEXT,
-        grade_1_1 INT,
-        grade_1_2 INT,
-        grade_1_3 INT,
-        grade_1_4 INT,
-        grade_1_avg REAL,
-        subject_2 TEXT,
-        highered_subject BOOL,
-        grade_2_1 INT,
-        grade_2_2 INT,
-        grade_2_3 INT,
-        grade_2_4 INT,
-        grade_2_avg REAL,
-        subject_3 TEXT,
-        grade_3_1 INT,
-        grade_3_2 INT,
-        grade_3_3 INT,
-        grade_3_4 INT,
-        grade_3_avg REAL,
-        subject_4 TEXT,
-        grade_4_1 INT,
-        grade_4_2 INT,
-        grade_4_3 INT,
-        grade_4_4 INT,
-        grade_4_avg REAL,
-        subject_5 TEXT,
-        grade_5_1 INT,
-        grade_5_2 INT,
-        grade_5_3 INT,
-        grade_5_4 INT,
-        grade_5_avg REAL
-    );",
-    )
-    .execute(&db)
-    .await
-    .map_err(|e| eprintln!("Error creating grades table: {}", e));
 }
 
 async fn create_additional_mint_activities_table() {
@@ -487,7 +441,6 @@ async fn create_student_additional_mint_activites_table() {
         .map_err(|e| eprintln!("Error creating student_additional_mint_activities table: {}", e));
 }
 
-#[tauri::command]
 pub async fn add_additional_mint_activity_to_student(
     student_id: i32,
     additional_mint_activity_id: i32,
