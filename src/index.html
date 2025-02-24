@@ -17,9 +17,13 @@
         <a href="afb1.html" class="menu-item">Bereich 1</a>
         <a href="afb2.html" class="menu-item">Bereich 2</a>
         <a href="afb3.html" class="menu-item">Bereich 3</a>
-        <a href="schueler_bearbeiten.html" class="menu-item">Einstellungen</a>
+        <a href="settings.html" class="menu-item">Einstellungen</a>
+        <div id="selected-student" class="selected-student">
+          
+          <h3 id="student-name">Kein Schüler ausgewählt</h3>
+        </div>
       </div>
-
+      
       <!-- Hauptinhalt -->
       <div class="main-content">
         <h1>Willkommen beim Mint-Ec PDF Generator</h1>
@@ -27,3 +31,14 @@
     </div>
   </body>
 </html>
+<script>
+        async function updatePersonName() {
+
+//id zu name
+
+    document.getElementById("student-name").textContent = "";
+  }
+  window.onload = async function () {
+        updatePersonName();
+      };
+</script>

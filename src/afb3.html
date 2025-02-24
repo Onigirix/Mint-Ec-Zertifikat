@@ -15,7 +15,11 @@
       <a href="afb1.html" class="menu-item">Bereich 1</a>
       <a href="afb2.html" class="menu-item">Bereich 2</a>
       <a href="#" class="menu-item active">Bereich 3</a>
-      <a href="#" class="menu-item">Einstellungen</a>
+      <a href="settings.html" class="menu-item">Einstellungen</a>
+      <div id="selected-student" class="selected-student">
+          
+        <h3 id="student-name">Kein Schüler ausgewählt</h3>
+      </div>
     </div>
 
     <!-- Hauptinhalt -->
@@ -231,9 +235,17 @@
         populateWettbewerbeTable();
       }
     }
+    async function updatePersonName() {
 
-    // Tabellen befüllen, wenn die Seite geladen wird
-    window.onload = populateWettbewerbeTable;
+//id zu name
+
+    document.getElementById("student-name").textContent = "";
+  }
+    window.onload = async function () {
+        
+        updatePersonName();
+        populateWettbewerbeTable();
+      };
   </script>
 </body>
 </html>

@@ -48,7 +48,11 @@
         <a href="#" class="menu-item active">Bereich 1</a>
         <a href="afb2.html" class="menu-item">Bereich 2</a>
         <a href="afb3.html" class="menu-item">Bereich 3</a>
-        <a href="#" class="menu-item">Einstellungen</a>
+        <a href="settings.html" class="menu-item">Einstellungen</a>
+        <div id="selected-student" class="selected-student">
+          
+          <h3 id="student-name" style="margin: 0;">Kein Schüler ausgewählt</h3>
+        </div>
       </div>
 
       <!-- Hauptinhalt -->
@@ -143,6 +147,13 @@
         });
       }
 
+      async function updatePersonName() {
+
+    //id zu name
+
+        document.getElementById("student-name").textContent = "";
+      }
+
       // Funktion, um den Durchschnitt neu zu berechnen
       async function updateAverage(input, index) {
         const row = input.closest("tr");
@@ -214,6 +225,7 @@
       window.onload = async function () {
         generateGradesTable();
         loadStudentId(); // Schüler-ID beim Laden laden
+        updatePersonName();
       };
     </script>
   </body>

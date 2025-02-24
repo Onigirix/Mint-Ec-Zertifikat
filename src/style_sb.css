@@ -51,6 +51,20 @@ a {
   color: #121212;
 }
 
+ /* Optionales CSS für den Bereich, der den Namen anzeigt */
+ .selected-student {
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #121212;
+  justify-content: center;
+  background-color: #aa00ff;
+  width: 100%;
+  border-radius: 10px; /* Abgerundete Ecken */
+  padding: 10px;
+}
+
 /* Hauptinhalt */
 .main-content {
   flex-grow: 1;

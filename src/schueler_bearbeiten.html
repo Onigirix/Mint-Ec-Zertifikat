@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint Ec</title>
     <link rel="stylesheet" href="style_sb.css" />
-    <style></style>
   </head>
   <body>
     <div class="container">
@@ -16,7 +15,13 @@
         <a href="afb1.html" class="menu-item">Bereich 1</a>
         <a href="afb2.html" class="menu-item">Bereich 2</a>
         <a href="afb3.html" class="menu-item">Bereich 3</a>
-        <a href="#" class="menu-item">Einstellungen</a>
+        <a href="settings.html" class="menu-item">Einstellungen</a>
+
+        <!-- Name des ausgewählten Schülers wird hier angezeigt -->
+        <div id="selected-student" class="selected-student">
+          
+          <h3 id="student-name">Kein Schüler ausgewählt</h3>
+        </div>
       </div>
 
       <!-- Hauptinhalt -->
@@ -176,45 +181,6 @@
         document.getElementById("table-container").innerHTML = table;
       }
 
-      async function addStudent() {
-        const vorname = prompt("Vorname des Schülers:");
-        const nachname = prompt("Nachname des Schülers:");
-        const stufe = prompt("Stufe des Schülers:");
-        const geburtsdatum = prompt("Geburtsdatum des Schülers (YYYY-MM-DD):");
-
-        if (vorname && nachname && stufe && geburtsdatum) {
-          const name = vorname + " " + nachname; // Vorname und Nachname zusammenfügen
-
-          const newStudent = {
-            id: studentData.length + 1,
-            name: name, // Speichern des zusammengefügten Namens
-            stufe: stufe,
-            geburtsdatum: geburtsdatum,
-          };
-
-          studentData.push(newStudent);
-          generateTable();
-        } else {
-          alert("Alle Felder müssen ausgefüllt werden!");
-        }
-      }
-
-      async function deleteSelectedStudents() {
-        const selectedIds = [];
-        document.querySelectorAll(".student-row.selected").forEach((row) => {
-          selectedIds.push(parseInt(row.getAttribute("data-id")));
-        });
-
-        if (selectedIds.length > 0) {
-          studentData = studentData.filter(
-            (student) => !selectedIds.includes(student.id)
-          );
-          generateTable();
-        } else {
-          alert("Es wurde kein Schüler ausgewählt.");
-        }
-      }
-
       async function selectStudent(event, studentId) {
         const row = event.currentTarget;
         const isSelected = row.classList.contains("selected");
@@ -247,6 +213,12 @@
 
           deleteButton.classList.remove("selected");
           editButton.classList.remove("selected");
+        }
+
+        // Den Namen des ausgewählten Schülers anzeigen
+        const selectedStudent = studentData.find((student) => student.id == studentId);
+        if (selectedStudent) {
+          document.getElementById("student-name").textContent = selectedStudent.name;
         }
       }
 
@@ -285,6 +257,12 @@
           );
           if (selectedRow) {
             selectedRow.classList.add("selected");
+            // Den Namen des ausgewählten Schülers anzeigen
+            const selectedStudent = studentData.find((student) => student.id == selectedStudentId);
+            if (selectedStudent) {
+              document.getElementById("student-name").textContent = selectedStudent.name;
+            }
+
             // Schalter für die Buttons
             const deleteButton = document.getElementById("deleteButton");
             const editButton = document.getElementById("editButton");

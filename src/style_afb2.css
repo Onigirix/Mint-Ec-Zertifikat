@@ -26,6 +26,8 @@ body {
   position: relative;
 }
 
+
+
 .menu-item {
   padding: 15px;
   text-align: center;
@@ -193,4 +195,17 @@ label {
 .active {
   background-color: rgb(166, 235, 156);
   transition: background-color 0.3s ease;
+}
+
+.selected-student {
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #121212;
+  justify-content: center;
+  background-color: #aa00ff;
+  width: 100%;
+  border-radius: 10px; /* Abgerundete Ecken */
+  padding: 10px;
 }

@@ -24,7 +24,11 @@
         <a href="afb1.html" class="menu-item">Bereich 1</a>
         <a href="#" class="menu-item active">Bereich 2</a>
         <a href="afb3.html" class="menu-item">Bereich 3</a>
-        <a href="schueler_bearbeiten.html" class="menu-item">Einstellungen</a>
+        <a href="settings.html" class="menu-item">Einstellungen</a>
+        <div id="selected-student" class="selected-student">
+          
+          <h3 id="student-name" style="margin: 0;">Kein Schüler ausgewählt</h3>
+        </div>
       </div>
 
       <!-- Hauptinhalt -->
@@ -228,7 +232,12 @@
         });
         selectedSection.classList.add("active"); // Hinzufügen der aktiven Klasse zur ausgewählten Sektion
       }
+      async function updatePersonName() {
 
+//id zu name
+
+    document.getElementById("student-name").textContent = "";
+  }
       // Diese Funktion wird beim Laden der Seite aufgerufen
       async function loadStudentData() {
         const studentId = localStorage.getItem("selectedStudentId"); // Schüler ID aus localStorage holen
@@ -325,7 +334,11 @@
       window.addEventListener("beforeunload", saveStudentData);
 
       // Lade die Daten, wenn die Seite geladen wird
-      window.onload = loadStudentData;
+
+      window.onload = async function () {
+        loadStudentData();
+        updatePersonName();
+      };
 
       // Funktion, die die Stufe basierend auf der Punktzahl festlegt
       async function updateMiddle(inputElement, stufeElement) {
