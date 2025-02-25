@@ -3,38 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="material-icons.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-    <script type="module" src="components/topbar.js" defer></script>
-    
+
     <script type="module" src="fachlicheKompetenz.js" defer></script>
   </head>
 
   <body>
-    
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
         <i class="material-icons">menu</i>
       </button>
-        <button id="create-student" class="blauerButton">Schüler erstellen</button>
-        <h1 class="rightHeading">Mint-EC Zertifikat</h1>
-        <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
-      </header>
-      
-
-    
+      <div id="schülerEingabe">
+        <input
+          class="search-box"
+          type="text"
+          id="student-search"
+          placeholder="Schüler..."
+          value=""
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
+        <button id="create-student" class="blauerButton">
+          Schüler erstellen
+        </button>
+      </div>
+      <h1 class="rightHeading">Mint-EC Zertifikat</h1>
+      <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
+    </header>
 
     <!-- Sidenavigation with close Button -->
     <div id="sidenav" class="sidenav">
       <a id="closeNav"><i class="material-icons">close</i></a>
       <div id="navLinks">
         <a href="index.html" id="Startseite">Startseite</a>
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
-        <a href="fachwissenschaftliches-arbeiten.html" id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches Arbeiten</a>
-        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
+          >Fachliche Kompetenz</a
+        >
+        <a
+          href="fachwissenschaftliches-arbeiten.html"
+          id="Fachwissenschaftliches-Arbeiten"
+          >Fachwissenschaftliches Arbeiten</a
+        >
+        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten"
+          >Zusätzliche MINT-Aktivitäten</a
+        >
         <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
       </div>
@@ -42,9 +56,8 @@
 
     <!--Main Content-->
     <div id="main">
-      
       <main id="content">
-        <h1> Fachliche Kompetenz </h1>
+        <h1>Fachliche Kompetenz</h1>
 
         <form id="notenForm">
           <table>
@@ -63,74 +76,218 @@
               <!-- Erhöhtes Niveau -->
               <tr>
                 <td>Erhöhtes Niveau 1</td>
-                <td><input type="text" placeholder="Fachname" /></td> <!-- Eingabefeld für Fach -->
-                <td><input type="number" class="note" data-course="1" data-semester="1" /></td>
-                <td><input type="number" class="note" data-course="1" data-semester="2" /></td>
-                <td><input type="number" class="note" data-course="1" data-semester="3" /></td>
-                <td><input type="number" class="note" data-course="1" data-semester="4" /></td>
+                <td><input type="text" placeholder="Fachname" /></td>
+                <!-- Eingabefeld für Fach -->
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="1"
+                    data-semester="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="1"
+                    data-semester="2"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="1"
+                    data-semester="3"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="1"
+                    data-semester="4"
+                  />
+                </td>
                 <td><span id="avg-1">0.00</span></td>
               </tr>
               <tr>
                 <td>Erhöhtes Niveau 2</td>
-                <td><input type="text" placeholder="Fachname" /></td> <!-- Eingabefeld für Fach -->
-                <td><input type="number" class="note" data-course="2" data-semester="1" /></td>
-                <td><input type="number" class="note" data-course="2" data-semester="2" /></td>
-                <td><input type="number" class="note" data-course="2" data-semester="3" /></td>
-                <td><input type="number" class="note" data-course="2" data-semester="4" /></td>
+                <td><input type="text" placeholder="Fachname" /></td>
+                <!-- Eingabefeld für Fach -->
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="2"
+                    data-semester="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="2"
+                    data-semester="2"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="2"
+                    data-semester="3"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="2"
+                    data-semester="4"
+                  />
+                </td>
                 <td><span id="avg-2">0.00</span></td>
               </tr>
               <!-- Grundlegendes Niveau -->
               <tr>
                 <td>Grundlegendes Niveau 1</td>
-                <td><input type="text" placeholder="Fachname" /></td> <!-- Eingabefeld für Fach -->
-                <td><input type="number" class="note" data-course="3" data-semester="1" /></td>
-                <td><input type="number" class="note" data-course="3" data-semester="2" /></td>
-                <td><input type="number" class="note" data-course="3" data-semester="3" /></td>
-                <td><input type="number" class="note" data-course="3" data-semester="4" /></td>
+                <td><input type="text" placeholder="Fachname" /></td>
+                <!-- Eingabefeld für Fach -->
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="3"
+                    data-semester="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="3"
+                    data-semester="2"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="3"
+                    data-semester="3"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="3"
+                    data-semester="4"
+                  />
+                </td>
                 <td><span id="avg-3">0.00</span></td>
               </tr>
               <tr>
                 <td>Grundlegendes Niveau 2</td>
-                <td><input type="text" placeholder="Fachname" /></td> <!-- Eingabefeld für Fach -->
-                <td><input type="number" class="note" data-course="4" data-semester="1" /></td>
-                <td><input type="number" class="note" data-course="4" data-semester="2" /></td>
-                <td><input type="number" class="note" data-course="4" data-semester="3" /></td>
-                <td><input type="number" class="note" data-course="4" data-semester="4" /></td>
+                <td><input type="text" placeholder="Fachname" /></td>
+                <!-- Eingabefeld für Fach -->
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="4"
+                    data-semester="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="4"
+                    data-semester="2"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="4"
+                    data-semester="3"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="4"
+                    data-semester="4"
+                  />
+                </td>
                 <td><span id="avg-4">0.00</span></td>
               </tr>
               <tr>
                 <td>Grundlegendes Niveau 3</td>
-                <td><input type="text" placeholder="Fachname" /></td> <!-- Eingabefeld für Fach -->
-                <td><input type="number" class="note" data-course="5" data-semester="1" /></td>
-                <td><input type="number" class="note" data-course="5" data-semester="2" /></td>
-                <td><input type="number" class="note" data-course="5" data-semester="3" /></td>
-                <td><input type="number" class="note" data-course="5" data-semester="4" /></td>
+                <td><input type="text" placeholder="Fachname" /></td>
+                <!-- Eingabefeld für Fach -->
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="5"
+                    data-semester="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="5"
+                    data-semester="2"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="5"
+                    data-semester="3"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="note"
+                    data-course="5"
+                    data-semester="4"
+                  />
+                </td>
                 <td><span id="avg-5">0.00</span></td>
               </tr>
             </tbody>
           </table>
-         
-    
+
           <div class="gesamt-durchschnitt">
             <label>Gesamtdurchschnitt: </label>
             <span id="gesamtDurchschnitt">0.00</span>
           </div>
-          <button type="submit" id="submitNotenButton" class="blauerButton zentriert">Speichern</button>
-          
+          <button
+            type="submit"
+            id="submitNotenButton"
+            class="blauerButton zentriert"
+          >
+            Speichern
+          </button>
         </form>
 
         <a class="blauerButton" href="fachwissenschaftliches-arbeiten.html">
           Weiter
         </a>
-
-        
       </main>
     </div>
-      
-    
   </body>
 </html>
-
 
 <!--TODO: Make the Sidenav closable by clicking back on main-->
 <!--TODO: Light and Dark mode toggle-->

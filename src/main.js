@@ -1,26 +1,15 @@
 const { invoke } = window.__TAURI__.core;
 
-
-
-
 window.addEventListener("DOMContentLoaded", () => {
   const openNavButton = document.querySelector("#openNav");
   const closeNavButton = document.querySelector("#closeNav");
   const savePdfButton = document.querySelector("#save-pdf");
   const mainContent = document.querySelector("#main");
 
-  
-
   openNavButton.addEventListener("click", openNav);
   closeNavButton.addEventListener("click", closeNav);
   mainContent.addEventListener("click", closeNav);
   // savePdfButton.addEventListener("click", generatePdf);
-
-  // Dark Mode aktivieren
-  document.getElementById('darkModeToggle').addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.getElementById('sidenav').classList.toggle('dark-mode');
-  });
 
   const closePopupButton = document.getElementById("closePopup");
 
@@ -28,14 +17,9 @@ window.addEventListener("DOMContentLoaded", () => {
   if (closePopupButton) {
     closePopupButton.addEventListener("click", () => {
       const currentWindow = window.__TAURI__.window.getCurrent();
-      currentWindow.close();  // Schließt das aktuelle Webview-Fenster in Tauri
+      currentWindow.close(); // Schließt das aktuelle Webview-Fenster in Tauri
     });
   }
-
-  
-
-  
-  
 });
 
 async function generatePdf() {
@@ -56,5 +40,3 @@ function closeNav() {
   document.getElementById("sidenav").style.width = "0";
   document.body.style.backgroundColor = "white";
 }
-
-
