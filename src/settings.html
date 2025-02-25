@@ -2,69 +2,91 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="material-icons.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mint Ec</title>
-    <link rel="stylesheet" href="style_settings.css" />
+    <title>Mint-EC</title>
+    <script type="module" src="main.js" defer></script>
+    <script type="module" src="components/topbar.js" defer></script>
+    
+    <script type="module" src="fachlicheKompetenz.js" defer></script>
   </head>
+
   <body>
-    <div class="container">
-      <!-- Menü -->
-      <div class="menu">
-        <a href="index.html" class="menu-item active">Dashboard</a>
-        <a href="schueler_bearbeiten.html" class="menu-item">Schüler bearbeiten</a>
-        <a href="afb1.html" class="menu-item">Bereich 1</a>
-        <a href="afb2.html" class="menu-item">Bereich 2</a>
-        <a href="afb3.html" class="menu-item">Bereich 3</a>
-        <a href="schueler_bearbeiten.html" class="menu-item">Einstellungen</a>
-        <div id="selected-student" class="selected-student">
-          <h3 id="student-name">Kein Schüler ausgewählt</h3>
-        </div>
-      </div>
+    
+    <!-- Header with Button for Navigation-->
+    <header id="header">
+      <button id="openNav" class="openNav">
+        <i class="material-icons">menu</i>
+      </button>
+        <button id="create-student" class="blauerButton">Schüler erstellen</button>
+        <h1 class="rightHeading">Mint-EC Zertifikat</h1>
+        <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
+      </header>
       
-      <!-- Hauptinhalt -->
-      <div class="main-content">
-        <h2>Einstellungen</h2>
-        
-        <!-- Eingabeformulare -->
-        <div class="form-section">
-          <label for="input1">Text 1:</label>
-          <input type="text" id="input1" name="input1" class="input-field" />
-        </div>
-        <div class="form-section">
-          <label for="input2">Text 2:</label>
-          <input type="text" id="input2" name="input2" class="input-field" />
-        </div>
-        <div class="form-section">
-          <label for="input3">Text 3:</label>
-          <input type="text" id="input3" name="input3" class="input-field" />
-        </div>
-        <div class="form-section">
-          <label for="input3">Links unterzeichner</label>
-          <label for="input3">Rechts unterzeichner</label>
-        </div>
-        <!-- Eingaben nebeneinander -->
-        <div class="form-section multi-input">
-          <label for="text-input">Name  </label>
-          <input type="text" id="text-input" name="text-input" class="input-field small" />
-          <input type="text" id="input4" name="input4" class="input-field small" />
-        </div>
-        <div class="form-section multi-input">
-          <label for="text-input">Position</label>
-          <input type="text" id="text-input" name="text-input" class="input-field small" />
-          <input type="text" id="input4" name="input4" class="input-field small" />
-        </div>
+
+    
+
+    <!-- Sidenavigation with close Button -->
+    <div id="sidenav" class="sidenav">
+      <a id="closeNav"><i class="material-icons">close</i></a>
+      <div id="navLinks">
+        <a href="index.html" id="Startseite">Startseite</a>
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
+        <a href="fachwissenschaftliches-arbeiten.html" id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches Arbeiten</a>
+        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
+        <a href="export.html" id="export">Exportieren</a>
+        <a href="settings.html" id="settings">Einstellungen</a>
       </div>
     </div>
+
+    <!--Main Content-->
+    <div id="main">
+      
+      <main id="content">
+        <h1>Einstellungen</h1>
+      
+
+        
+
+        <form id="settingsForm">
+          
+        
+
+          <label for="schuleName">Name der Schule: </label>
+          <input type="text" id="schuleName" required />
+          
+
+          <label for="schuleOrt">Ort der Schule</label>
+          <input type="text" id="schuleOrt" required />
+
+          <label for="ausgabepfad">Ausgabepfad</label>
+          <input value="C:/Mint-EC" type="text" id="ausgabepfad" required />
+          
+
+          
+
+          <button type="submit" class="blauerButton zentriert">Speichern</button>
+        
+      </form>
+        <a class="blauerButton" href="zusätzlich.html">
+          Weiter
+        </a>
+    
+
+       
+    
+
+        
+      </main>
+    </div>
+      
+    
   </body>
 </html>
 
-<script>
-  async function updatePersonName() {
-    // id zu name
-    document.getElementById("student-name").textContent = "";
-  }
 
-  window.onload = async function () {
-    updatePersonName();
-  };
-</script>
+<!--TODO: Make the Sidenav closable by clicking back on main-->
+<!--TODO: Light and Dark mode toggle-->
+
+<!--cargo tauri dev --no-watch / cargo tauri build -->

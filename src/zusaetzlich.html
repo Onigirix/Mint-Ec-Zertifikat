@@ -9,12 +9,10 @@
     <script type="module" src="main.js" defer></script>
     <script type="module" src="components/topbar.js" defer></script>
     
-    <script type="module" src="createSchuelerPopup.js" defer></script>
+    <script type="module" src="fachlicheKompetenz.js" defer></script>
   </head>
 
   <body>
-
- 
     
     <!-- Header with Button for Navigation-->
     <header id="header">
@@ -25,8 +23,6 @@
         <h1 class="rightHeading">Mint-EC Zertifikat</h1>
         <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
       </header>
-
-      
       
 
     
@@ -41,7 +37,6 @@
         <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
         <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
-        <a href="../mint-ec-front-end/bereich2.html">AF1</a>
       </div>
     </div>
 
@@ -49,48 +44,40 @@
     <div id="main">
       
       <main id="content">
-        <h1> Anleitung </h1>
-        
+        <h1>Zusätzliche MINT-Aktivitäten</h1>
+
+        <form id="mintAktivitaetForm">
+          <div id="aktivitaetenContainer">
+              <div class="aktivitaet">
+                  <label for="aktivitaetName">Name der Aktivität:</label>
+                  <input type="text" id="aktivitaetName" required />
+
+                  <label for="sek">Sekundarstufe:</label>
+                  <input type="text" id="sek" required />
+
+                  <label for="wertigkeit">Wertigkeit:</label>
+                  <select id="wertigkeit" required>
+                      <option value="" disabled selected>Bitte auswählen</option>
+                      <option value="5">5 Punkte</option>
+                      <option value="10">10 Punkte</option>
+                      <option value="15">15 Punkte</option>
+                  </select>
+              </div>
+          </div>
+
+          <button type="button" id="addAktivitaet" class="blauerButton">Weitere Aktivität hinzufügen</button>
+          <button type="submit" class="blauerButton">Speichern</button>
+      </form>
+      <a class="blauerButton" href="export.html">
+        Weiter
+      </a>
     
-      <!-- 
-      <button id="createStudentButton">Schüler erstellen</button>
-        <input type="password" id="Password" />
+
         
-        <button id="fill-search-bar-datalists">fill</button>
-        <button id="create-student">try to open popup via JS, won't work</button>
-        <button id="save-pdf">Saves a test pdf</button>
-        <button id="darkModeToggle">Dark Mode</button>  
---> 
-        <!-- Slideshow mit Anleitung-->
-        <div class="slideshow-container">
-          <div class="mySlides fade">
-            <div class="numbertext">1 / 3</div>
-            <img src="bilder/slide1.jpg" style="width:100%">
-            <div class="text">Anleitung Schritt 1: Erstelle einen Schüler.</div>
-          </div>
-      
-          <div class="mySlides fade">
-            <div class="numbertext">2 / 3</div>
-            <img src="bilder/slide2.jpg" style="width:100%">
-            <div class="text">Anleitung Schritt 2: Fülle die notwendigen Informationen aus.</div>
-          </div>
-      
-          <div class="mySlides fade">
-            <div class="numbertext">3 / 3</div>
-            <img src="bilder/slide3.jpg" style="width:100%">
-            <div class="text">Anleitung Schritt 3: Überprüfe deine Eingaben und speichere das Zertifikat.</div>
-          </div>
-      
-          <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-          <a class="next" onclick="plusSlides(1)">&#10095;</a>
-          
-        </div>
-      
-        <button id="startButton" class="blauerButton">Start</button>
       </main>
     </div>
       
-    <script type="module" src="slideshow.js"></script>
+    
   </body>
 </html>
 

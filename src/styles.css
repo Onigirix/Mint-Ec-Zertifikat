@@ -1,0 +1,475 @@
+/* Grundlegende Stile für das Layout */
+/* Farben
+#212225 - fast Schwarz
+#ffffff - weiß
+
+
+*/
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.sidenav.dark-mode {
+  background-color: #333;
+}
+
+header {
+  background-color: #212225;
+  color: #ffffffaa;
+  padding: 1em 2em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0.2em 0.4em rgba(0, 0, 0, 0.1);
+}
+
+header #eingabeName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+  
+}
+
+
+header h1 {
+  font-size: 1.5rem;;
+}
+
+#schuelerPopup {
+  padding: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input[type="text"], input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.blauerButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  
+}
+
+ .blauerButton:hover {
+  background: #0056b3;
+}
+
+
+#main h1 {
+  font-size: 2.5rem; /* Schriftgröße */
+  color: #ffffff; /* Schriftfarbe */
+  text-align: center; /* Zentrierter Text */
+  padding: 20px; /* Innenabstand */
+  background-color: rgba(33, 34, 37, 0.8); /* Hintergrundfarbe mit Transparenz */
+  border-radius: 8px; /* Abgerundete Ecken */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Schatteneffekt */
+  margin: 20px 0; /* Außenabstand (oben und unten) */
+  font-weight: bold; /* Fettdruck */
+  text-transform: uppercase; /* Alle Buchstaben großschreiben */
+  max-width: 80%;
+  margin: auto;
+}
+
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+
+.openNav {
+  background: none;
+  border: none;
+  color: #ffffffaa;
+  font-size: 1.5rem; 
+  cursor: pointer;
+  transition: color 0.3s ease-out;
+}
+
+.openNav:hover {
+  filter: drop-shadow(0 0 0.75rem rgb(255, 255, 255));
+}
+
+
+
+
+
+
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #212225;
+  overflow-x: hidden;
+  padding-top: 3em;
+  transition: 0.5s;
+}
+
+#closeNav {
+  padding: 1em; /* Relatives Padding */
+  color: #ffffffaa;
+  cursor: pointer;
+  will-change: filter;
+  transition: filter 0.2s ease-out;
+}
+
+#closeNav:hover {
+  filter: drop-shadow(0 0 0.75rem rgb(255, 255, 255));
+}
+
+#navLinks a {
+  padding: 15px 25px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #ecf0f1;
+  display: block;
+  transition: 0.3s;
+}
+
+
+
+
+
+
+
+#Fachliche-Kompetenz:hover {
+  filter: drop-shadow(0 0 1rem rgb(0, 0, 255));
+}
+
+#Fachwissenschaftliches-Arbeiten:hover {
+  filter: drop-shadow(0 0 1rem rgb(0, 255, 0));
+}
+
+#Zusätzliche-MINT-Aktivitäten:hover {
+  filter: drop-shadow(0 0 1rem rgb(255, 0, 255));
+}
+
+#settings:hover {
+  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
+#export:hover {
+  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
+
+#main {
+  padding: 20px;
+  padding-bottom: 60px; /* Platz für den Footer */
+  width: 100vw;
+}
+
+.slideshow-container {
+  position: relative;
+  max-width: 80%; /* volle Breite */
+  height: 60vh;
+  margin: auto;
+  overflow: hidden;
+}
+
+.mySlides {
+  display: none; /* Standardmäßig ausblenden */
+}
+  
+img {
+    
+    height: 80%; /* Höhe automatisch anpassen, um das Seitenverhältnis beizubehalten */
+    /* max-height: 60vh; Maximalhöhe, um sicherzustellen, dass das Bild nicht zu groß wird */
+    width: auto;
+    
+  }
+
+
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.text {
+  color: #212225;
+  font-size: 1.5rem;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+#startButton {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-align: center; /* Text zentrieren */
+}
+
+
+footer {
+  background-color: #212225;
+  color: #ffffffaa;
+  padding: 1em 2em;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 0.2em 0.4em rgba(0, 0, 0, 0.1);
+}
+
+#schuelerPopup {
+
+  margin: auto;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .blauerButton {
+    font-size: 0.9rem;
+  }
+
+  #main h1 {
+    font-size: 1.5rem;
+  }
+
+  .prev, .next {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}
+
+
+/* Fachliche Kompetenz */
+/* Tabelle zur Noteneingabe */
+table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #212225;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #dddddd;
+}
+
+th {
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+td input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.8em;
+}
+
+td input[type="number"] {
+  width: 60px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+td span {
+  font-size: 0.8rem;
+  color: #333;
+}
+
+/* Hover Effekt für die Tabelle */
+tr:hover {
+  background-color: rgba(33, 34, 37, 0.1);
+}
+
+/* Stil für den Gesamtdurchschnittsbereich */
+.gesamt-durchschnitt {
+  margin: 20px auto;
+  font-size: 1.3rem;
+  text-align: right;
+  color: #333;
+  max-width: 1200px;
+  padding-right: 20px;
+}
+
+.gesamt-durchschnitt label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.gesamt-durchschnitt span {
+  font-size: 1.6rem;
+  color: #007bff;
+}
+
+.zentriert {
+  display: block; /* Button blockieren, um die volle Breite einzunehmen */
+  margin: 20px auto; /* Zentriert den Button */
+  padding: 10px 15px;
+  
+}
+
+/* Anpassungen für die mobile Ansicht */
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  td input[type="number"] {
+    width: 50px;
+  }
+
+  .gesamt-durchschnitt {
+    font-size: 1.2rem;
+    text-align: center;
+    padding-right: 0;
+  }
+
+  .gesamt-durchschnitt span {
+    font-size: 1.5rem;
+  }
+}
+
+#facharbeitForm, #settingsForm, #mintAktivitaetForm {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 80%; /* max. Breite des Formulars */
+  margin: 10px auto; /* zentriert das Formular */
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  width: 99%;
+  padding: 8px;
+  margin: 5px 0 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem; /* Schriftgröße */
+}
+
+textarea {
+  resize: none; /* Verhindert das Resizing des Textbereichs */
+}
+
+#mintAktivitaetForm #settingsForm {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 80%; /* max. Breite des Formulars */
+  margin: 10px auto; /* zentriert das Formular */
+}
+
+#aktivitaetenContainer {
+  margin: 20px 0;
+}
+
+.aktivitaet {
+  background: #f8f9fa; /* Hellgrau für den Hintergrund */
+  border: 1px solid #ccc; /* Graue Grenze */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.aktivitaet label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.aktivitaet input, .aktivitaet select {
+  width: calc(100% - 20px); /* Vollständige Breite mit Padding */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+
+
+
