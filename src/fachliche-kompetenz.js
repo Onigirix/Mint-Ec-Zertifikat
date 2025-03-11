@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return count > 0 ? (sum / count).toFixed(2) : "0.00";
   }
 
-  function calculateBestAverage() {
+  async function calculateBestAverage() {
     const avg1 = parseFloat(document.getElementById("avg-1").textContent);
     const avg2 = parseFloat(document.getElementById("avg-2").textContent);
     const avg3 = parseFloat(document.getElementById("avg-3").textContent);
@@ -72,7 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const course = input.getAttribute("data-course");
       const avg = calculateCourseAverage(course);
       document.getElementById(`avg-${course}`).textContent = avg;
-      gesamtDurchschnittElement.textContent = calculateBestAverage();
+      calculateBestAverage().then((result) => {
+        gesamtDurchschnittElement.textContent = result;
+      });
     });
   });
 

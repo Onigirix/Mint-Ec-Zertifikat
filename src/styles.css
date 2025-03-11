@@ -151,6 +151,13 @@ input[type="date"] {
   justify-self: start;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 .openNav:hover {
   filter: drop-shadow(0 0 0.75rem rgb(255, 255, 255));
 }
@@ -407,7 +414,8 @@ tr:hover {
 }
 
 .gesamt-durchschnitt span {
-  font-size: 1.6rem;
+  font-size: 3rem;
+  margin-right: 25px;
 }
 
 .zentriert {
@@ -460,7 +468,7 @@ textarea,
 select {
   width: 99%;
   padding: 8px;
-  margin: 5px 0 15px;
+  margin: 10px 0 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem; /* Schriftgröße */
@@ -524,7 +532,6 @@ textarea {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -546,4 +553,36 @@ textarea {
 
 .grade-green {
   color: green;
+}
+
+.avg {
+  font-size: 15px;
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 49px;
+  left: 36.5%;
+  width: 250px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.suggestions-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: black;
+}
+
+.suggestions-list li:hover {
+  background-color: #f0f0f0;
 }

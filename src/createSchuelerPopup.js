@@ -1,14 +1,12 @@
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
+const { Webview } = window.__TAURI__.webview;
 
 window.addEventListener("DOMContentLoaded", () => {
   const createSchülerButton = document.querySelector("#create-student");
   const startButton = document.querySelector("#startButton");
 
-
   createSchülerButton.addEventListener("click", openStudentPopup);
   startButton.addEventListener("click", openStudentPopup);
-
-  
 });
 
 async function openStudentPopup() {
@@ -18,17 +16,11 @@ async function openStudentPopup() {
     minimizable: false,
     url: "schueler-popup.html",
   });
-  studentPopupWebview.once("tauri:// created", function () {
-    console.log("webview created");
-  });
-  studentPopupWebview.once("tauri://error", function (e) {
-    if (e.payload != "a webview with label `studentPopup` already exists") {
-      console.log("webview error", e);
-      return;
+  studentPopupWebview.once("tauri://created", function () {});
+  studentPopupWebview.once("tauri://error", async function (e) {
+    if (e.payload == "a webview with label `studentPopup` already exists") {
+      const studentPopupWindow = await Webview.getByLabel("studentPopup");
+      await studentPopupWindow.setFocus();
     }
-    console.log("webview already exists");
-    const studentPopupWindow = WebviewWindow.getByLabel("studentPopup");
-    console.log(studentPopupWindow);
-    studentPopupWindow.setFocus();
   });
 }

@@ -1,8 +1,6 @@
 use sqlx::{migrate::MigrateDatabase, Row, Sqlite, SqlitePool};
 use std::array;
 
-//TODO: Migrate to SQL Plugin for Tauri (https://v2.tauri.app/plugin/sql)
-
 const DATABASE: &str = "resources/db.sqlite";
 
 //TODO: Change to fetch_one instead of fetch_all
@@ -306,7 +304,6 @@ async fn create_students_table() {
         grade_1_4 INT,
         grade_1_avg REAL,
         subject_2 TEXT,
-        highered_subject BOOL,
         grade_2_1 INT,
         grade_2_2 INT,
         grade_2_3 INT,
@@ -323,29 +320,12 @@ async fn create_students_table() {
         grade_4_2 INT,
         grade_4_3 INT,
         grade_4_4 INT,
-        grade_4_avg REAL,
-        subject_5 TEXT,
-        grade_5_1 INT,
-        grade_5_2 INT,
-        grade_5_3 INT,
-        grade_5_4 INT,
-        grade_5_avg REAL
+        grade_4_avg REAL
     );",
     )
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating students table: {}", e));
-}
-
-pub async fn fill_students_table() {
-    let db = SqlitePool::connect(DATABASE).await.unwrap();
-
-    let _result = sqlx::query(
-        "INSERT INTO students (student_id, name) VALUES (NULL, 'John Doe'), (NULL, 'Max Mustermann');",
-    )
-    .execute(&db)
-    .await
-    .map_err(|e| eprintln!("Error changing school location: {}", e));
 }
 
 pub async fn add_student(first_name: String, last_name: String, birthday: String) {

@@ -4,11 +4,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const createSchülerButton = document.querySelector("#create-student");
   const startButton = document.querySelector("#startButton");
 
-
   createSchülerButton.addEventListener("click", openStudentPopup);
-  startButton.addEventListener("click", openStudentPopup);
-
-  
+  if (startButton != null) {
+    startButton.addEventListener("click", openStudentPopup);
+  }
 });
 
 async function openStudentPopup() {
@@ -18,7 +17,7 @@ async function openStudentPopup() {
     minimizable: false,
     url: "schueler-popup.html",
   });
-  studentPopupWebview.once("tauri:// created", function () {
+  studentPopupWebview.once("tauri://created", function () {
     console.log("webview created");
   });
   studentPopupWebview.once("tauri://error", function (e) {
@@ -29,6 +28,6 @@ async function openStudentPopup() {
     console.log("webview already exists");
     const studentPopupWindow = WebviewWindow.getByLabel("studentPopup");
     console.log(studentPopupWindow);
-    studentPopupWindow.setFocus();
+    studentPopupWindow.setFocus(); //FIXME: It's a different function now
   });
 }

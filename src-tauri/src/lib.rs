@@ -1,5 +1,6 @@
 pub mod db;
 pub mod pdf;
+pub mod state;
 use tauri::{Builder, Manager};
 use tokio::sync::Mutex;
 
@@ -19,7 +20,12 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
         //.plugin(prevent_default())
-        .invoke_handler(tauri::generate_handler![pdf::generate_pdf])
+        .invoke_handler(tauri::generate_handler![
+            pdf::generate_pdf,
+            state::get_state,
+            state::set_state,
+            state::get_student_id,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

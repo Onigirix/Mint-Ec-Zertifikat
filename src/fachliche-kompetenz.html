@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-
-    <script type="module" src="fachlicheKompetenz.js" defer></script>
+    <script type="module" src="createSchuelerPopup.js" defer></script>
+    <script type="module" src="fachliche-kompetenz.js" defer></script>
+    <script type="module" src="fachliche-kompetenz-db.js" defer></script>
   </head>
 
   <body>
@@ -76,7 +77,14 @@
               <!-- Erhöhtes Niveau -->
               <tr>
                 <td>Erhöhtes Niveau 1</td>
-                <td><input type="text" placeholder="Fachname" /></td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Fachname"
+                    class="subject"
+                    data-course="1"
+                  />
+                </td>
                 <!-- Eingabefeld für Fach -->
                 <td>
                   <input
@@ -110,11 +118,13 @@
                     data-semester="4"
                   />
                 </td>
-                <td><span id="avg-1">0.00</span></td>
+                <td><span class="avg" id="avg-1">0.00</span></td>
               </tr>
               <tr>
                 <td>Erhöhtes Niveau 2</td>
-                <td><input type="text" placeholder="Fachname" /></td>
+                <td>
+                  <input type="text" placeholder="Fachname" class="subject" />
+                </td>
                 <!-- Eingabefeld für Fach -->
                 <td>
                   <input
@@ -148,12 +158,14 @@
                     data-semester="4"
                   />
                 </td>
-                <td><span id="avg-2">0.00</span></td>
+                <td><span class="avg" id="avg-2">0.00</span></td>
               </tr>
               <!-- Grundlegendes Niveau -->
               <tr>
                 <td>Grundlegendes Niveau 1</td>
-                <td><input type="text" placeholder="Fachname" /></td>
+                <td>
+                  <input type="text" placeholder="Fachname" class="subject" />
+                </td>
                 <!-- Eingabefeld für Fach -->
                 <td>
                   <input
@@ -187,11 +199,13 @@
                     data-semester="4"
                   />
                 </td>
-                <td><span id="avg-3">0.00</span></td>
+                <td><span class="avg" id="avg-3">0.00</span></td>
               </tr>
               <tr>
                 <td>Grundlegendes Niveau 2</td>
-                <td><input type="text" placeholder="Fachname" /></td>
+                <td>
+                  <input type="text" placeholder="Fachname" class="subject" />
+                </td>
                 <!-- Eingabefeld für Fach -->
                 <td>
                   <input
@@ -225,52 +239,14 @@
                     data-semester="4"
                   />
                 </td>
-                <td><span id="avg-4">0.00</span></td>
-              </tr>
-              <tr>
-                <td>Grundlegendes Niveau 3</td>
-                <td><input type="text" placeholder="Fachname" /></td>
-                <!-- Eingabefeld für Fach -->
-                <td>
-                  <input
-                    type="number"
-                    class="note"
-                    data-course="5"
-                    data-semester="1"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    class="note"
-                    data-course="5"
-                    data-semester="2"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    class="note"
-                    data-course="5"
-                    data-semester="3"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    class="note"
-                    data-course="5"
-                    data-semester="4"
-                  />
-                </td>
-                <td><span id="avg-5">0.00</span></td>
+                <td><span class="avg" id="avg-4">0.00</span></td>
               </tr>
             </tbody>
           </table>
 
           <div class="gesamt-durchschnitt">
-            <label>Gesamtdurchschnitt: </label>
-            <span id="gesamtDurchschnitt">0.00</span>
+            <label>Stufe:</label>
+            <span id="gesamtDurchschnitt">- </span>
           </div>
           <button
             type="submit"
@@ -288,8 +264,3 @@
     </div>
   </body>
 </html>
-
-<!--TODO: Make the Sidenav closable by clicking back on main-->
-<!--TODO: Light and Dark mode toggle-->
-
-<!--cargo tauri dev --no-watch / cargo tauri build -->
