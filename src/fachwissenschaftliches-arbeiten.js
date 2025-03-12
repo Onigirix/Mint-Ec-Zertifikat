@@ -42,22 +42,49 @@ document
 document.getElementById("arbeitTyp").addEventListener("change", (e) => {
   const selected = e.target.value;
   const noteElem = document.getElementById("note");
-  if (selected === "2") {
+  const form = document.getElementById("facharbeitForm");
+  console.log(noteElem);
+  const noteLabel = document.getElementById("note_label");
+  if (selected === "4" || selected === "5") {
     // Create a select element for the note.
     const selectLevel = document.createElement("select");
     selectLevel.id = "level";
 
-    for (let i = 1; i <= 15; i++) {
-      let option = document.createElement("option");
-      option.value = i;
-      option.textContent = i;
-      selectLevel.appendChild(option);
-    }
-    // Replace the note input with the select dropdown.
-    noteElem.parentNode.replaceChild(selectLevel, noteElem);
+    let option1 = document.createElement("option");
+    option1.value = "0";
+    option1.text = "Bitte wählen";
+    let option2 = document.createElement("option");
+    option2.value = "10";
+    option2.text = "Teilnahme am Regionalwettbewerb";
+    let option3 = document.createElement("option");
+    option3.value = "12";
+    option3.text = "Preisträger im Regionalwettbewerb";
+    let option4 = document.createElement("option");
+    option4.value = "15";
+    option4.text = "Teilnahme am Landes- oder Bundeswettbewerb";
+    selectLevel.appendChild(option1);
+    selectLevel.appendChild(option2);
+    selectLevel.appendChild(option3);
+    selectLevel.appendChild(option4);
+    let levelLabel = document.createElement("label");
+    levelLabel.textContent = "Welche Leistungsstufe wurde erreicht?";
+    let levelDescription = document.createElement("input");
+    levelDescription.type = "text";
+    levelDescription.id = "levelDescription";
+    levelDescription.placeholder = "Was wurde in dem Wettbewerb erreicht?";
+    let levelDescriptionLabel = document.createElement("label");
+    levelDescriptionLabel.textContent = "Ergebnis der Wettbewerbsteilnahme:";
+    levelDescriptionLabel.htmlFor = "levelDescription";
+
+    form.appendChild(levelDescriptionLabel);
+    form.appendChild(levelDescription);
+    form.replaceChild(selectLevel, noteElem);
+    form.replaceChild(levelLabel, noteLabel);
+
+    let submitBtn = document.getElementById("submitBtn");
+    submitBtn.remove();
+    form.appendChild(submitBtn);
   } else {
-    // If another option is selected and a dropdown is in place,
-    // switch back to an input element.
     if (noteElem.tagName.toLowerCase() === "select") {
       const numberInput = document.createElement("input");
       numberInput.type = "number";

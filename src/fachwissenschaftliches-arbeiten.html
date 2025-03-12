@@ -67,8 +67,10 @@
           <select id="arbeitTyp" required>
             <option value="0" disabled selected>Bitte auswählen</option>
             <option value="1">Facharbeit</option>
-            <option value="2">Jugend Forscht Projekt</option>
-            <option value="3">Sonstiges</option>
+            <option value="2">wissenschaftspropädeutisches Fach</option>
+            <option value="3">besondere Lernleistung</option>
+            <option value="4">Jugend Forscht Projekt</option>
+            <option value="5">Anderer Wettbewerb</option>
           </select>
 
           <label for="thema">Thema:</label>
@@ -77,10 +79,10 @@
           <label for="beschreibung">Beschreibung:</label>
           <textarea id="beschreibung" rows="4"></textarea>
 
-          <label for="level">Note:</label>
-          <input type="number" id="level" min="1" max="15" step="1" />
+          <label for="level" id="note_label">Note:</label>
+          <input type="number" id="note" min="1" max="15" step="1" />
 
-          <button type="submit" class="blauerButton zentriert">
+          <button type="submit" class="blauerButton zentriert" id="submitBtn">
             Speichern
           </button>
         </form>
