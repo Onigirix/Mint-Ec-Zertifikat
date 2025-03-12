@@ -1,15 +1,22 @@
 const invoke = window.__TAURI__.core.invoke;
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
-let [studentId, studentName] = await invoke("get_state");
+window.studentState = {
+  studentId: 0,
+  studentName: "",
+};
+var [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
+select_student(studentIdOnLoad, studentNameOnLoad);
 
 const openNavButton = document.querySelector("#openNav");
 const closeNavButton = document.querySelector("#closeNav");
 const mainContent = document.querySelector("#main");
 const searchBox = document.getElementById("student-search");
 const list = document.getElementById("suggestions");
-const dummy = searchBox.offsetHeight;
 
+if (searchBox != null) {
+  searchBox.value = studentNameOnLoad;
+}
 openNavButton.addEventListener("click", openNav);
 closeNavButton.addEventListener("click", closeNav);
 mainContent.addEventListener("click", () => {
@@ -20,7 +27,7 @@ searchBox.addEventListener("click", async (e) => {
   e.stopPropagation();
   e.preventDefault();
 
-  if (searchBox.value.trim() === studentName) {
+  if (searchBox.value.trim() === window.studentState.studentName) {
     searchBox.value = "";
   }
 });
@@ -102,10 +109,11 @@ async function searchBoxInputted(e) {
 
 function searchBoxBlurred() {
   setTimeout(function () {
-    // Only perform blur logic if searchBox is no longer focused
-    if (document.activeElement === searchBox) return;
-    if (searchBox.value.trim() == "") {
-      searchBox.value = studentName;
+    if (
+      searchBox.value.trim() == "" ||
+      searchBox.value.trim() == window.studentState.studentName
+    ) {
+      searchBox.value = window.studentState.studentName;
     } else {
       searchBox.value = "";
       select_student(0, "");
@@ -119,8 +127,12 @@ async function select_student(newStudentId, newStudentName) {
     studentId: newStudentId,
     studentName: newStudentName,
   });
-  studentId = newStudentId;
-  studentName = newStudentName;
+  window.studentState.studentId = newStudentId;
+  window.studentState.studentName = newStudentName;
+  const event = new CustomEvent("studentChanged", {
+    detail: { studentId: newStudentId },
+  });
+  document.dispatchEvent(event);
 }
 
 // Fixes reload on click into student_search

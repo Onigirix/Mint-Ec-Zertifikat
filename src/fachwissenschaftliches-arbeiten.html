@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-    <script type="module" src="fachlicheKompetenz.js" defer></script>
+    <script
+      type="module"
+      src="fachwissenschaftliches-arbeiten.js"
+      defer
+    ></script>
   </head>
 
   <body>
@@ -61,17 +65,17 @@
         <form id="facharbeitForm">
           <label for="arbeitTyp">Typ der Arbeit:</label>
           <select id="arbeitTyp" required>
-            <option value="" disabled selected>Bitte auswählen</option>
-            <option value="facharbeit">Facharbeit</option>
-            <option value="jugend-forscht">Jugend Forscht Projekt</option>
-            <option value="sonstiges">Sonstiges</option>
+            <option value="0" disabled selected>Bitte auswählen</option>
+            <option value="1">Facharbeit</option>
+            <option value="2">Jugend Forscht Projekt</option>
+            <option value="3">Sonstiges</option>
           </select>
 
           <label for="thema">Thema:</label>
           <input type="text" id="thema" required />
 
           <label for="beschreibung">Beschreibung:</label>
-          <textarea id="beschreibung" rows="4" required></textarea>
+          <textarea id="beschreibung" rows="4"></textarea>
 
           <label for="note">Note:</label>
           <input type="number" id="note" min="1" max="15" step="1" required />
@@ -81,6 +85,10 @@
           </button>
         </form>
         <a class="blauerButton" href="zusätzlich.html"> Weiter </a>
+        <div class="gesamt-durchschnitt">
+          <label>Stufe:</label>
+          <span id="gesamtDurchschnitt">- </span>
+        </div>
       </main>
     </div>
   </body>

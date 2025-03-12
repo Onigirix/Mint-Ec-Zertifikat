@@ -320,7 +320,11 @@ async fn create_students_table() {
         grade_4_2 INT,
         grade_4_3 INT,
         grade_4_4 INT,
-        grade_4_avg REAL
+        grade_4_avg REAL,
+        type_of_paper INT DEFAUlT 0 NOT NULL,
+        topic_of_paper TEXT,
+        description_of_paper TEXT,
+        grade_of_paper TEXT
     );",
     )
     .execute(&db)

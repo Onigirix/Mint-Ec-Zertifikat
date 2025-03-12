@@ -19,7 +19,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
-        //.plugin(prevent_default())
+        .plugin(prevent_default())
         .invoke_handler(tauri::generate_handler![
             pdf::generate_pdf,
             state::get_state,
@@ -29,7 +29,7 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-/*
+
 #[cfg(debug_assertions)]
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     use tauri_plugin_prevent_default::Flags;
@@ -52,5 +52,5 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
         .password_autosave(false)
         .build()
 }
-*/
+
 //TODO: Uncomment the prevent_default plugin
