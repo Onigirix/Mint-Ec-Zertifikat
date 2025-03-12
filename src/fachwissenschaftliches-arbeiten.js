@@ -11,7 +11,7 @@ async function fill_fields(studentId) {
   document.getElementById("thema").value = res1[0]["topic_of_paper"];
   document.getElementById("beschreibung").value =
     res1[0]["description_of_paper"];
-  document.getElementById("note").value = res1[0]["grade_of_paper"];
+  document.getElementById("level").value = res1[0]["grade_of_paper"];
 }
 
 document.addEventListener("studentChanged", async (e) => {
@@ -26,7 +26,7 @@ async function save_form() {
       document.getElementById("arbeitTyp").value,
       document.getElementById("thema").value,
       document.getElementById("beschreibung").value,
-      document.getElementById("note").value,
+      document.getElementById("level").value,
       window.studentState.studentId,
     ]
   );
@@ -38,3 +38,35 @@ document
     e.preventDefault();
     await save_form();
   });
+
+document.getElementById("arbeitTyp").addEventListener("change", (e) => {
+  const selected = e.target.value;
+  const noteElem = document.getElementById("note");
+  if (selected === "2") {
+    // Create a select element for the note.
+    const selectLevel = document.createElement("select");
+    selectLevel.id = "level";
+
+    for (let i = 1; i <= 15; i++) {
+      let option = document.createElement("option");
+      option.value = i;
+      option.textContent = i;
+      selectLevel.appendChild(option);
+    }
+    // Replace the note input with the select dropdown.
+    noteElem.parentNode.replaceChild(selectLevel, noteElem);
+  } else {
+    // If another option is selected and a dropdown is in place,
+    // switch back to an input element.
+    if (noteElem.tagName.toLowerCase() === "select") {
+      const numberInput = document.createElement("input");
+      numberInput.type = "number";
+      numberInput.id = "note";
+      numberInput.min = "1";
+      numberInput.max = "15";
+      numberInput.step = "1";
+      // Replace back to the number input.
+      noteElem.parentNode.replaceChild(numberInput, noteElem);
+    }
+  }
+});
