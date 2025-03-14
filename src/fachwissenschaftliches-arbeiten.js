@@ -3,15 +3,17 @@ const invoke = window.__TAURI__.core.invoke;
 const db = await Database.load("sqlite://resources/db.sqlite");
 
 async function fill_fields(studentId) {
-  const res1 = await db.select(
-    "SELECT type_of_paper, topic_of_paper, description_of_paper, grade_of_paper FROM students WHERE student_id = $1",
-    [studentId]
-  );
-  document.getElementById("arbeitTyp").value = res1[0]["type_of_paper"];
-  document.getElementById("thema").value = res1[0]["topic_of_paper"];
-  document.getElementById("beschreibung").value =
-    res1[0]["description_of_paper"];
-  document.getElementById("level").value = res1[0]["grade_of_paper"];
+  if (studentId != 0) {
+    const res1 = await db.select(
+      "SELECT type_of_paper, topic_of_paper, description_of_paper, grade_of_paper FROM students WHERE student_id = $1",
+      [studentId]
+    );
+    document.getElementById("arbeitTyp").value = res1[0]["type_of_paper"];
+    document.getElementById("thema").value = res1[0]["topic_of_paper"];
+    document.getElementById("beschreibung").value =
+      res1[0]["description_of_paper"];
+    document.getElementById("level").value = res1[0]["grade_of_paper"];
+  }
 }
 
 document.addEventListener("studentChanged", async (e) => {
@@ -43,7 +45,6 @@ document.getElementById("arbeitTyp").addEventListener("change", (e) => {
   const selected = e.target.value;
   const noteElem = document.getElementById("note");
   const form = document.getElementById("facharbeitForm");
-  console.log(noteElem);
   const noteLabel = document.getElementById("note_label");
   if (selected === "4" || selected === "5") {
     // Create a select element for the note.
@@ -67,33 +68,41 @@ document.getElementById("arbeitTyp").addEventListener("change", (e) => {
     selectLevel.appendChild(option3);
     selectLevel.appendChild(option4);
     let levelLabel = document.createElement("label");
-    levelLabel.textContent = "Welche Leistungsstufe wurde erreicht?";
+    levelLabel.id = "levelLabel";
+    levelLabel.textContent = "Welcher Leistungsstufe entspricht dies?";
     let levelDescription = document.createElement("input");
     levelDescription.type = "text";
     levelDescription.id = "levelDescription";
-    levelDescription.placeholder = "Was wurde in dem Wettbewerb erreicht?";
     let levelDescriptionLabel = document.createElement("label");
-    levelDescriptionLabel.textContent = "Ergebnis der Wettbewerbsteilnahme:";
     levelDescriptionLabel.htmlFor = "levelDescription";
+    levelDescriptionLabel.id = "levelDescriptionLabel";
+    levelDescriptionLabel.textContent = "Was wurde in dem Wettbewerb erreicht?";
 
-    form.appendChild(levelDescriptionLabel);
-    form.appendChild(levelDescription);
-    form.replaceChild(selectLevel, noteElem);
-    form.replaceChild(levelLabel, noteLabel);
+    form.replaceChild(levelDescriptionLabel, noteLabel);
+    form.replaceChild(levelDescription, noteElem);
+    form.appendChild(levelLabel);
+    form.appendChild(selectLevel);
 
-    let submitBtn = document.getElementById("submitBtn");
+    const submitBtn = document.getElementById("submitBtn");
     submitBtn.remove();
     form.appendChild(submitBtn);
   } else {
-    if (noteElem.tagName.toLowerCase() === "select") {
-      const numberInput = document.createElement("input");
-      numberInput.type = "number";
-      numberInput.id = "note";
-      numberInput.min = "1";
-      numberInput.max = "15";
-      numberInput.step = "1";
-      // Replace back to the number input.
-      noteElem.parentNode.replaceChild(numberInput, noteElem);
-    }
+    const numberInputLabel = document.createElement("label");
+    numberInputLabel.htmlFor = "note";
+    numberInputLabel.textContent = "Note:";
+    numberInputLabel.id = "note_label";
+    const numberInput = document.createElement("input");
+    numberInput.type = "number";
+    numberInput.id = "note";
+    numberInput.min = "1";
+    numberInput.max = "15";
+    numberInput.step = "1";
+    form.replaceChild(numberInput, document.getElementById("levelDescription"));
+    form.replaceChild(
+      numberInputLabel,
+      document.getElementById("levelDescriptionLabel")
+    );
+    document.getElementById("level").remove();
+    document.getElementById("levelLabel").remove();
   }
 });
