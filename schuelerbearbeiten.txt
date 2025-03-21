@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mint Ec</title>
+    <link rel="stylesheet" href="style_sb.css" />
+    <script type="module" src="main.js" defer></script>
+    <script type="module" src="createSchuelerPopup.js" defer></script>
+    <script type="module" src="fachliche-kompetenz.js" defer></script>
+    <script type="module" src="fachliche-kompetenz-db.js" defer></script>
+  </head>
+  <body>
+    <!-- Header with Button for Navigation-->
+    <header id="header">
+      <button id="openNav" class="openNav">
+        <i class="material-icons">menu</i>
+      </button>
+      <div id="schülerEingabe">
+        <input
+          class="search-box"
+          type="text"
+          id="student-search"
+          placeholder="Schüler..."
+          value=""
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
+        <button id="create-student" class="blauerButton">
+          Schüler erstellen
+        </button>
+      </div>
+      <h1 class="rightHeading">Mint-EC Zertifikat</h1>
+    </header>
+
+    <!-- Sidenavigation with close Button -->
+    <div id="sidenav" class="sidenav">
+      <a id="closeNav"><i class="material-icons">close</i></a>
+      <div id="navLinks">
+        <a href="index.html" id="Startseite">Dashboard</a>
+        <a href="#" id="SchuelerBearbeiten" class="active">Schüler bearbeiten</a>
+        <a href="afb1.html" id="Bereich1">Bereich 1</a>
+        <a href="afb2.html" id="Bereich2">Bereich 2</a>
+        <a href="afb3.html" id="Bereich3">Bereich 3</a>
+        <a href="settings.html" id="settings">Einstellungen</a>
+      </div>
+    </div>
+
+    <!--Main Content-->
+    <div id="main">
+      <main id="content">
+        <h2>Schülerliste</h2>
+
+        <!-- Hier wird die Tabelle dynamisch eingefügt -->
+        <div id="table-container"></div>
+
+        <!-- Buttons zum Hinzufügen, Löschen und Bearbeiten -->
+        <div class="button-container">
+          <button class="add-button" onclick="addStudent()">
+            Neuen Schüler hinzufügen
+          </button>
+          <button id="deleteButton" onclick="deleteSelectedStudents()" disabled>
+            Ausgewählte Schüler löschen
+          </button>
+          <button id="editButton" onclick="editStudent()" disabled>
+            Schüler bearbeiten
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Sidebar toggle Script -->
+    <script>
+      document.getElementById('openNav').addEventListener('click', function() {
+        document.getElementById('sidenav').style.width = '250px';
+      });
+
+      document.getElementById('closeNav').addEventListener('click', function() {
+        document.getElementById('sidenav').style.width = '0';
+      });
+    </script>
+
+    <script>
+      let studentData = [
+        {
+          id: 1,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 2,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        { id: 3, name: "Hans Müller", stufe: "Q3", geburtsdatum: "2004-07-30" },
+        {
+          id: 4,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        },
+        {
+          id: 5,
+          name: "Max Mustermann",
+          stufe: "E1",
+          geburtsdatum: "2005-01-15",
+        },
+        {
+          id: 6,
+          name: "Erika Musterfrau",
+          stufe: "Q1",
+          geburtsdatum: "2006-03-22",
+        },
+        { id: 7, name: "Hans Müller", stufe: "Q3", geburtsdatum: "2004-07-30" },
+        {
+          id: 8,
+          name: "Anna Schmitt",
+          stufe: "Q3",
+          geburtsdatum: "2003-09-10",
+        }
+      ];
+
+      async function generateTable() {
+        let table = "<table>";
+        table += "<thead>";
+        table += "<tr><th>Name</th><th>Stufe</th><th>Geburtsdatum</th></tr>";
+        table += "</thead>";
+        table += "<tbody>";
+
+        studentData.forEach((student) => {
+          table += `<tr class="student-row" data-id="${student.id}" onclick="selectStudent(event, ${student.id})">
+                    <td>${student.name}</td>
+                    <td>${student.stufe}</td>
+                    <td>${student.geburtsdatum}</td>
+                  </tr>`;
+        });
+
+        table += "</tbody>";
+        table += "</table>";
+
+        document.getElementById("table-container").innerHTML = table;
+      }
+
+      async function selectStudent(event, studentId) {
+        const row = event.currentTarget;
+        const isSelected = row.classList.contains("selected");
+
+        document
+          .querySelectorAll(".student-row")
+          .forEach((r) => r.classList.remove("selected"));
+
+        if (!isSelected) {
+          row.classList.add("selected");
+          console.log("Ausgewählter Schüler ID: " + studentId);
+          // Speichern der ID im localStorage
+          localStorage.setItem("selectedStudentId", studentId);
+        }
+
+        // Schalter für die Buttons (Bearbeiten und Löschen)
+        const selectedRows = document.querySelectorAll(".student-row.selected");
+        const deleteButton = document.getElementById("deleteButton");
+        const editButton = document.getElementById("editButton");
+
+        if (selectedRows.length > 0) {
+          deleteButton.removeAttribute("disabled");
+          editButton.removeAttribute("disabled");
+
+          deleteButton.classList.add("selected");
+          editButton.classList.add("selected");
+        } else {
+          deleteButton.setAttribute("disabled", "true");
+          editButton.setAttribute("disabled", "true");
+
+          deleteButton.classList.remove("selected");
+          editButton.classList.remove("selected");
+        }
+
+        // Den Namen des ausgewählten Schülers anzeigen
+        const selectedStudent = studentData.find((student) => student.id == studentId);
+        if (selectedStudent) {
+          document.getElementById("student-name").textContent = selectedStudent.name;
+        }
+      }
+
+      async function editStudent() {
+        const selectedRow = document.querySelector(".student-row.selected");
+        if (selectedRow) {
+          const studentId = selectedRow.getAttribute("data-id");
+          const student = studentData.find((s) => s.id == studentId);
+          if (student) {
+            const newName = prompt("Neuen Namen eingeben:", student.name);
+            const newstufe = prompt("Neue stufe eingeben:", student.stufe);
+            const newGeburtsdatum = prompt(
+              "Neues Geburtsdatum eingeben (YYYY-MM-DD):",
+              student.geburtsdatum
+            );
+
+            if (newName && newstufe && newGeburtsdatum) {
+              student.name = newName;
+              student.stufe = newstufe;
+              student.geburtsdatum = newGeburtsdatum;
+              generateTable();
+            }
+          }
+        }
+      }
+
+      window.onload = async function () {
+        generateTable();
+
+        // Prüfen, ob eine Schüler-ID im localStorage gespeichert ist
+        const selectedStudentId = localStorage.getItem("selectedStudentId");
+        if (selectedStudentId) {
+          // Schüler mit dieser ID auswählen
+          const selectedRow = document.querySelector(
+            `.student-row[data-id="${selectedStudentId}"]`
+          );
+          if (selectedRow) {
+            selectedRow.classList.add("selected");
+            // Den Namen des ausgewählten Schülers anzeigen
+            const selectedStudent = studentData.find((student) => student.id == selectedStudentId);
+            if (selectedStudent) {
+              document.getElementById("student-name").textContent = selectedStudent.name;
+            }
+
+            // Schalter für die Buttons
+            const deleteButton = document.getElementById("deleteButton");
+            const editButton = document.getElementById("editButton");
+
+            deleteButton.removeAttribute("disabled");
+            editButton.removeAttribute("disabled");
+
+            deleteButton.classList.add("selected");
+            editButton.classList.add("selected");
+          }
+        }
+      };
+    </script>
+  </body>
+</html>
