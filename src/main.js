@@ -67,7 +67,7 @@ async function searchBoxInputted(e) {
 
   if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
     const suggestionResults = await db.select(
-      "SELECT * FROM students WHERE name like $1",
+      "SELECT * FROM students WHERE name LIKE $1",
       [`%${searchBox.value}%`]
     );
     list.innerHTML = "";
