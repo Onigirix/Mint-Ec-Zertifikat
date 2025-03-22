@@ -2,27 +2,34 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="material-icons.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mint-EC</title>
+    <title>Mint Ec</title>
+    <link rel="stylesheet" href="style_sb.css" />
+    <link rel="stylesheet" href="styles.css" />
     <script type="module" src="main.js" defer></script>
-    <script type="module" src="components/topbar.js" defer></script>
-
-    <script type="module" src="fachlicheKompetenz.js" defer></script>
+    <script type="module" src="schuelerbearbeiten.js" defer></script>
+    <script type="module" src="createSchuelerPopup.js" defer></script>
   </head>
-
   <body>
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
         <i class="material-icons">menu</i>
       </button>
-      <button id="create-student" class="blauerButton">
-        Schüler erstellen
-      </button>
+      <div id="schülerEingabe">
+        <input
+          class="search-box"
+          type="text"
+          id="student-search"
+          placeholder="Schüler..."
+          value=""
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
+        <button id="create-student" class="blauerButton">
+          Schüler erstellen
+        </button>
+      </div>
       <h1 class="rightHeading">Mint-EC Zertifikat</h1>
-      <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
     <!-- Sidenavigation with close Button -->
@@ -50,29 +57,24 @@
     <!--Main Content-->
     <div id="main">
       <main id="content">
-        <h1>Einstellungen</h1>
+        <h1>Schülerliste</h1>
 
-        <form id="settingsForm">
-          <label for="schuleName">Name der Schule: </label>
-          <input type="text" id="schuleName" required />
+        <!-- Hier wird die Tabelle dynamisch eingefügt -->
+        <div id="table-container"></div>
 
-          <label for="schuleOrt">Ort der Schule</label>
-          <input type="text" id="schuleOrt" required />
-
-          <label for="ausgabepfad">Ausgabepfad</label>
-          <input value="C:/Mint-EC" type="text" id="ausgabepfad" required />
-
-          <button type="submit" class="blauerButton zentriert">
-            Speichern
+        <!-- Buttons zum Hinzufügen, Löschen und Bearbeiten -->
+        <div class="button-container">
+          <button class="add-button" onclick="addStudent()">
+            Neuen Schüler hinzufügen
           </button>
-        </form>
-        <a class="blauerButton" href="zusätzlich.html"> Weiter </a>
+          <button id="deleteButton" onclick="deleteSelectedStudents()" disabled>
+            Ausgewählte Schüler löschen
+          </button>
+          <button id="editButton" onclick="editStudent()" disabled>
+            Schüler bearbeiten
+          </button>
+        </div>
       </main>
     </div>
   </body>
 </html>
-
-<!--TODO: Make the Sidenav closable by clicking back on main-->
-<!--TODO: Light and Dark mode toggle-->
-
-<!--cargo tauri dev --no-watch / cargo tauri build -->

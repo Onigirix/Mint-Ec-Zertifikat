@@ -231,6 +231,10 @@ input::-webkit-inner-spin-button {
   filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
 }
 
+#Schülerliste:hover {
+  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
 #main {
   padding: 20px;
   padding-bottom: 60px; /* Platz für den Footer */
@@ -585,4 +589,8 @@ textarea {
 
 .suggestions-list li:hover {
   background-color: #f0f0f0;
+}
+
+.select {
+  background-color: rgba(0, 0, 0, 0.8);
 }
