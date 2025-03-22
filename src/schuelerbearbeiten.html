@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint Ec</title>
-    <link rel="stylesheet" href="style_sb.css" />
     <link rel="stylesheet" href="styles.css" />
     <script type="module" src="main.js" defer></script>
     <script type="module" src="schuelerbearbeiten.js" defer></script>
@@ -16,20 +15,9 @@
       <button id="openNav" class="openNav">
         <i class="material-icons">menu</i>
       </button>
-      <div id="schülerEingabe">
-        <input
-          class="search-box"
-          type="text"
-          id="student-search"
-          placeholder="Schüler..."
-          value=""
-        />
-        <ul id="suggestions" class="suggestions-list"></ul>
-        <button id="create-student" class="blauerButton">
-          Schüler erstellen
-        </button>
-      </div>
+      <div></div>
       <h1 class="rightHeading">Mint-EC Zertifikat</h1>
+      <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
     <!-- Sidenavigation with close Button -->
@@ -64,13 +52,13 @@
 
         <!-- Buttons zum Hinzufügen, Löschen und Bearbeiten -->
         <div class="button-container">
-          <button class="add-button" onclick="addStudent()">
+          <button class="add-button" class="grünerButton">
             Neuen Schüler hinzufügen
           </button>
-          <button id="deleteButton" onclick="deleteSelectedStudents()" disabled>
+          <button id="deleteButton" class="grünerButton" disabled>
             Ausgewählte Schüler löschen
           </button>
-          <button id="editButton" onclick="editStudent()" disabled>
+          <button id="editButton" class="grünerButton" disabled>
             Schüler bearbeiten
           </button>
         </div>

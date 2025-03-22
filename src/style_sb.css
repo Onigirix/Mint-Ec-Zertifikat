@@ -595,7 +595,6 @@ textarea {
   background-color: #f0f0f0;
 }
 
-
 /* Body und Hintergrund */
 body {
   font-family: Arial, sans-serif;
@@ -642,8 +641,8 @@ a {
   color: #121212;
 }
 
- /* Optionales CSS für den Bereich, der den Namen anzeigt */
- .selected-student {
+/* Optionales CSS für den Bereich, der den Namen anzeigt */
+.selected-student {
   position: absolute;
   bottom: 20px;
   text-align: center;

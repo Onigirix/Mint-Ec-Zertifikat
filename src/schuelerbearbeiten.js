@@ -1,5 +1,24 @@
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
+import { select_student } from "./main.js";
+async function init() {
+  await generateTable();
+  if (window.studentState.studentId != 0) {
+    const row = document.querySelector(
+      `[data-id="${window.studentState.studentId}"]`
+    );
+    if (row) {
+      selectStudentInStudentEdit(row, window.studentState.studentId);
+    }
+  }
+}
+
+document.getElementById("editButton").addEventListener("click", editStudent);
+document.getElementById("main").addEventListener("click", function (event) {
+  if (!document.getElementById("content").contains(event.target)) {
+    deselectStudent();
+  }
+});
 
 async function generateTable() {
   let studentData = await db.select(
@@ -12,9 +31,7 @@ async function generateTable() {
   table += "<tbody>";
 
   studentData.forEach((student) => {
-    table += `<tr class="student-row" data-id="${
-      student.student_id
-    }" onclick="selectStudent(event, ${student.id})">
+    table += `<tr class="student-row" data-id="${student.student_id}" >
                     <td>${student.name}</td>
                     <td>temp</td>
                     <td>${
@@ -25,53 +42,43 @@ async function generateTable() {
                   </tr>`;
   });
 
+  // I don't know why, but it doesn't work without the Timeout of 0ms??????
+  setTimeout(() => {
+    document.querySelectorAll(".student-row").forEach((row) => {
+      const studentId = row.getAttribute("data-id");
+      row.addEventListener("click", (event) =>
+        selectStudentInStudentEdit(row, studentId)
+      );
+    });
+  }, 0);
+
   table += "</tbody>";
   table += "</table>";
 
   document.getElementById("table-container").innerHTML = table;
 }
 
-async function selectStudentInStudentEdit(event, studentId) {
-  const row = event.currentTarget;
-  const isSelected = row.classList.contains("selected");
-
+async function selectStudentInStudentEdit(row, studentId) {
   document
     .querySelectorAll(".student-row")
     .forEach((r) => r.classList.remove("selected"));
 
-  if (!isSelected) {
-    row.classList.add("selected");
-    console.log("Ausgewählter Schüler ID: " + studentId);
-    // Speichern der ID im localStorage
-    localStorage.setItem("selectedStudentId", studentId);
-  }
+  row.classList.add("selected");
+  select_student(parseInt(studentId), row.querySelector("td").textContent);
 
-  // Schalter für die Buttons (Bearbeiten und Löschen)
-  const selectedRows = document.querySelectorAll(".student-row.selected");
   const deleteButton = document.getElementById("deleteButton");
   const editButton = document.getElementById("editButton");
 
-  if (selectedRows.length > 0) {
-    deleteButton.removeAttribute("disabled");
-    editButton.removeAttribute("disabled");
+  deleteButton.removeAttribute("disabled");
+  editButton.removeAttribute("disabled");
+}
 
-    deleteButton.classList.add("selected");
-    editButton.classList.add("selected");
-  } else {
-    deleteButton.setAttribute("disabled", "true");
-    editButton.setAttribute("disabled", "true");
-
-    deleteButton.classList.remove("selected");
-    editButton.classList.remove("selected");
-  }
-
-  // Den Namen des ausgewählten Schülers anzeigen
-  const selectedStudent = studentData.find(
-    (student) => student.id == studentId
-  );
-  if (selectedStudent) {
-    document.getElementById("student-name").textContent = selectedStudent.name;
-  }
+async function deselectStudent() {
+  document.getElementById("deleteButton").setAttribute("disabled", "true");
+  document.getElementById("editButton").setAttribute("disabled", "true");
+  document
+    .querySelectorAll(".student-row")
+    .forEach((r) => r.classList.remove("selected"));
 }
 
 async function editStudent() {
@@ -97,35 +104,4 @@ async function editStudent() {
   }
 }
 
-window.onload = async function () {
-  generateTable();
-
-  // Prüfen, ob eine Schüler-ID im localStorage gespeichert ist
-  const selectedStudentId = window.studentState.studentID;
-  if (selectedStudentId != 0) {
-    const selectedRow = document.querySelector(
-      `.student-row[data-id="${selectedStudentId}"]`
-    );
-    if (selectedRow) {
-      selectedRow.classList.add("selected");
-      // Den Namen des ausgewählten Schülers anzeigen
-      const selectedStudent = studentData.find(
-        (student) => student.student_id == selectedStudentId
-      );
-      if (selectedStudent) {
-        document.getElementById("student-name").textContent =
-          selectedStudent.name;
-      }
-
-      // Schalter für die Buttons
-      const deleteButton = document.getElementById("deleteButton");
-      const editButton = document.getElementById("editButton");
-
-      deleteButton.removeAttribute("disabled");
-      editButton.removeAttribute("disabled");
-
-      deleteButton.classList.add("selected");
-      editButton.classList.add("selected");
-    }
-  }
-};
+init();

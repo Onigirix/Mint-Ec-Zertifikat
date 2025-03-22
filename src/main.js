@@ -23,15 +23,17 @@ mainContent.addEventListener("click", () => {
   searchBoxBlurred();
   closeNav();
 });
-searchBox.addEventListener("click", async (e) => {
-  e.stopPropagation();
-  e.preventDefault();
+if (searchBox != null) {
+  searchBox.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-  if (searchBox.value.trim() === window.studentState.studentName) {
-    searchBox.value = "";
-  }
-});
-searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
+    if (searchBox.value.trim() === window.studentState.studentName) {
+      searchBox.value = "";
+    }
+  });
+  searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
+}
 
 const closePopupButton = document.getElementById("closePopup");
 
@@ -108,18 +110,20 @@ async function searchBoxInputted(e) {
 }
 
 function searchBoxBlurred() {
-  setTimeout(function () {
-    if (
-      searchBox.value.trim() == "" ||
-      searchBox.value.trim() == window.studentState.studentName
-    ) {
-      searchBox.value = window.studentState.studentName;
-    } else {
-      searchBox.value = "";
-      select_student(0, "");
-    }
-    list.style.display = "none";
-  }, 20);
+  if (searchBox) {
+    setTimeout(function () {
+      if (
+        searchBox.value.trim() == "" ||
+        searchBox.value.trim() == window.studentState.studentName
+      ) {
+        searchBox.value = window.studentState.studentName;
+      } else {
+        searchBox.value = "";
+        select_student(0, "");
+      }
+      list.style.display = "none";
+    }, 20);
+  }
 }
 
 async function select_student(newStudentId, newStudentName) {
@@ -153,3 +157,5 @@ document.addEventListener(
   },
   true
 );
+
+export { select_student };
