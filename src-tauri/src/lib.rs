@@ -26,6 +26,14 @@ pub fn run() {
             state::set_state,
             state::get_student_id,
         ])
+        .on_window_event(|window, event| match event {
+            tauri::WindowEvent::CloseRequested { .. } => {
+                if window.label() == "main-window" {
+                    window.app_handle().exit(0);
+                }
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -52,5 +60,3 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
         .password_autosave(false)
         .build()
 }
-
-//TODO: Uncomment the prevent_default plugin

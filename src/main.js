@@ -131,6 +131,7 @@ async function select_student(newStudentId, newStudentName) {
     studentId: newStudentId,
     studentName: newStudentName,
   });
+  console.log(`Selected student ID: ${newStudentId}, Name: ${newStudentName}`);
   window.studentState.studentId = newStudentId;
   window.studentState.studentName = newStudentName;
   const event = new CustomEvent("studentChanged", {

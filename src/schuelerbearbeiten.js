@@ -1,6 +1,9 @@
 const Database = window.__TAURI__.sql;
+const { WebviewWindow } = window.__TAURI__.webviewWindow;
+const { Webview } = window.__TAURI__.webview;
 const db = await Database.load("sqlite://resources/db.sqlite");
 import { select_student } from "./main.js";
+
 async function init() {
   await generateTable();
   if (window.studentState.studentId != 0) {
@@ -79,29 +82,28 @@ async function deselectStudent() {
   document
     .querySelectorAll(".student-row")
     .forEach((r) => r.classList.remove("selected"));
+  select_student(0, "");
 }
 
 async function editStudent() {
-  const selectedRow = document.querySelector(".student-row.selected");
-  if (selectedRow) {
-    const studentId = selectedRow.getAttribute("data-id");
-    const student = studentData.find((s) => s.id == studentId);
-    if (student) {
-      const newName = prompt("Neuen Namen eingeben:", student.name);
-      const newstufe = prompt("Neue stufe eingeben:", student.stufe);
-      const newGeburtsdatum = prompt(
-        "Neues Geburtsdatum eingeben (YYYY-MM-DD):",
-        student.geburtsdatum
-      );
+  openEditStudentPopup();
+}
 
-      if (newName && newstufe && newGeburtsdatum) {
-        student.name = newName;
-        student.stufe = newstufe;
-        student.geburtsdatum = newGeburtsdatum;
-        generateTable();
-      }
+async function openEditStudentPopup() {
+  const studentPopupWebview = new WebviewWindow("editStudentPopup", {
+    hiddenTitle: true,
+    title: "Schüler bearbeiten",
+    height: 380,
+    minimizable: false,
+    url: "edit-schueler-popup.html?id=" + window.studentState.studentId,
+  });
+  studentPopupWebview.once("tauri://created", function () {});
+  studentPopupWebview.once("tauri://error", async function (e) {
+    if (e.payload == "a webview with label `studentPopup` already exists") {
+      const studentPopupWindow = await Webview.getByLabel("studentPopup");
+      await studentPopupWindow.setFocus();
     }
-  }
+  });
 }
 
 init();

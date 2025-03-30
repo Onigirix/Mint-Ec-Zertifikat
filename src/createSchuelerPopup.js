@@ -5,14 +5,20 @@ window.addEventListener("DOMContentLoaded", () => {
   const createSchülerButton = document.querySelector("#create-student");
   const startButton = document.querySelector("#startButton");
 
-  createSchülerButton.addEventListener("click", openStudentPopup);
-  startButton.addEventListener("click", openStudentPopup);
+  if (createSchülerButton) {
+    createSchülerButton.addEventListener("click", openStudentPopup);
+  }
+  if (startButton) {
+    startButton.addEventListener("click", openStudentPopup);
+  }
 });
 
 async function openStudentPopup() {
   //This can create multiple webviews if you click the button multiple times while the app is frozen, but that shouldn't be a problem with only async functions and commands
   const studentPopupWebview = new WebviewWindow("studentPopup", {
     hiddenTitle: true,
+    title: "Neuen Schüler erstellen",
+    height: 380,
     minimizable: false,
     url: "schueler-popup.html",
   });
