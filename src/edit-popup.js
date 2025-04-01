@@ -5,29 +5,34 @@ const db = await Database.load("sqlite://resources/db.sqlite");
 const closeButton = document.getElementById("schuelerAbbrechen");
 const Form = document.getElementById("schuelerForm");
 const studentId = new URLSearchParams(window.location.search).get("id");
+const nameField = document.getElementById("name");
+const geburtsdatumField = document.getElementById("geburtsdatum");
+
+const [student] = await db.select(
+  "SELECT name, birthday FROM students WHERE student_id = $1",
+  [studentId]
+);
+
+nameField.value = student.name;
+geburtsdatumField.value = student.birthday;
 
 closeButton.addEventListener("click", () => {
   closeWindow();
 });
 
-document.getElementById;
+Form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await formSubmitted(e);
+});
 
-Form.addEventListener("submit", async (e) => {});
-
+async function formSubmitted(e) {
+  await db.execute(
+    "UPDATE students SET name = $1, birthday = $2 WHERE student_id = $3",
+    [nameField.value, geburtsdatumField.value, studentId]
+  );
+  closeWindow();
+}
 function closeWindow() {
   const currentWindow = getCurrent();
   currentWindow.close();
-}
-
-async function formSubmitted() {
-  e.preventDefault();
-  await db.execute(
-    "UPDATE students SET name = $1, birthday = $2 WHERE id = $3",
-    [
-      e.target.vorname.value + " " + e.target.nachname.value,
-      e.target.geburtsdatum.value,
-      studentId,
-    ]
-  );
-  closeWindow();
 }
