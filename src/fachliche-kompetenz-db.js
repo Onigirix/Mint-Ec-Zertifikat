@@ -99,17 +99,14 @@ subjectFields.forEach(async function (field) {
     }
   });
   field.addEventListener("blur", async (e) => {
-    if (field.value == "") {
-    } else {
-      const res1 = await db.execute(
-        "UPDATE students SET subject_" +
-          field.dataset.course +
-          " = $1 WHERE student_id = $2",
-        [field.value, window.studentState.studentId]
-      );
-      field.style.border = "1px solid #ccc";
-      field.style.backgroundColor = "white";
-    }
+    await db.execute(
+      "UPDATE students SET subject_" +
+        field.dataset.course +
+        " = $1 WHERE student_id = $2",
+      [field.value, window.studentState.studentId]
+    );
+    field.style.border = "1px solid #ccc";
+    field.style.backgroundColor = "white";
   });
   /*field.addEventListener("keydown", async (e) => {
     if (e.keyCode === 9) {

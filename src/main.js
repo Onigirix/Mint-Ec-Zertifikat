@@ -1,12 +1,17 @@
 const invoke = window.__TAURI__.core.invoke;
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
+const listen = window.__TAURI__.event.listen;
+
+await listen("student-added", (event) => {
+  init(event.payload.new_student_id, event.payload.new_student_name);
+});
+
 window.studentState = {
   studentId: 0,
   studentName: "",
 };
 var [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
-select_student(studentIdOnLoad, studentNameOnLoad);
 
 const openNavButton = document.querySelector("#openNav");
 const closeNavButton = document.querySelector("#closeNav");
@@ -14,35 +19,28 @@ const mainContent = document.querySelector("#main");
 const searchBox = document.getElementById("student-search");
 const list = document.getElementById("suggestions");
 
-if (searchBox != null) {
-  searchBox.value = studentNameOnLoad;
-}
-openNavButton.addEventListener("click", openNav);
-closeNavButton.addEventListener("click", closeNav);
-mainContent.addEventListener("click", () => {
-  searchBoxBlurred();
-  closeNav();
-});
-if (searchBox != null) {
-  searchBox.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    if (searchBox.value.trim() === window.studentState.studentName) {
-      searchBox.value = "";
-    }
+async function init(new_student_id, new_student_name) {
+  select_student(new_student_id, new_student_name);
+  if (searchBox != null) {
+    searchBox.value = new_student_name;
+  }
+  openNavButton.addEventListener("click", openNav);
+  closeNavButton.addEventListener("click", closeNav);
+  mainContent.addEventListener("click", () => {
+    searchBoxBlurred();
+    closeNav();
   });
-  searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
-}
+  if (searchBox != null) {
+    searchBox.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-const closePopupButton = document.getElementById("closePopup");
-
-// Event-Listener für den Schließen-Button
-if (closePopupButton) {
-  closePopupButton.addEventListener("click", () => {
-    const currentWindow = window.__TAURI__.window.getCurrent();
-    currentWindow.close(); // Schließt das aktuelle Webview-Fenster in Tauri
-  });
+      if (searchBox.value.trim() === window.studentState.studentName) {
+        searchBox.value = "";
+      }
+    });
+    searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
+  }
 }
 
 async function generatePdf() {
@@ -65,8 +63,6 @@ function closeNav() {
 }
 
 async function searchBoxInputted(e) {
-  const startTime = performance.now();
-
   if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
     const suggestionResults = await db.select(
       "SELECT * FROM students WHERE name LIKE $1",
@@ -104,9 +100,6 @@ async function searchBoxInputted(e) {
       document.getElementById("suggestions").style.display = "none";
     }
   }
-
-  const endTime = performance.now();
-  console.log(`searchBoxInputted execution time: ${endTime - startTime}ms`);
 }
 
 function searchBoxBlurred() {
@@ -131,7 +124,6 @@ async function select_student(newStudentId, newStudentName) {
     studentId: newStudentId,
     studentName: newStudentName,
   });
-  console.log(`Selected student ID: ${newStudentId}, Name: ${newStudentName}`);
   window.studentState.studentId = newStudentId;
   window.studentState.studentName = newStudentName;
   const event = new CustomEvent("studentChanged", {
@@ -158,5 +150,7 @@ document.addEventListener(
   },
   true
 );
+
+init(studentIdOnLoad, studentNameOnLoad);
 
 export { select_student };

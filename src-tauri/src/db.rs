@@ -16,7 +16,6 @@ pub async fn setup_db() {
     create_settings_table().await;
     create_students_table().await;
     create_additional_mint_activities_table().await;
-    create_additional_mint_activities_levels_table().await;
     create_student_additional_mint_activites_table().await;
 }
 
@@ -324,7 +323,8 @@ async fn create_students_table() {
         type_of_paper INT DEFAUlT 0 NOT NULL,
         topic_of_paper TEXT,
         description_of_paper TEXT,
-        grade_of_paper TEXT
+        grade_of_paper INT,
+        level_of_competition TEXT
     );",
     )
     .execute(&db)
@@ -376,35 +376,16 @@ async fn create_additional_mint_activities_table() {
         "CREATE TABLE IF NOT EXISTS additional_mint_activities (
         additional_mint_activity_id INTEGER PRIMARY KEY,
         name TEXT,
-        description TEXT
+        description TEXT,
+        level_one TEXT,
+        level_two TEXT,
+        level_three TEXT,
+        sek INTEGER
     );",
     )
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
-}
-
-async fn create_additional_mint_activities_levels_table() {
-    let db = SqlitePool::connect(DATABASE).await.unwrap();
-
-    let _result = sqlx::query(
-        "CREATE TABLE IF NOT EXISTS additional_mint_activities_levels (
-        additional_mint_activity_level_id INTEGER PRIMARY KEY,
-        additional_mint_activity_id INTEGER UNIQUE NOT NULL,
-        level_one TEXT,
-        level_two TEXT,
-        level_three TEXT,
-        sek INTEGER
-        );",
-    )
-    .execute(&db)
-    .await
-    .map_err(|e| {
-        eprintln!(
-            "Error creating additional_mint_activities_levels table: {}",
-            e
-        )
-    });
 }
 
 async fn create_student_additional_mint_activites_table() {

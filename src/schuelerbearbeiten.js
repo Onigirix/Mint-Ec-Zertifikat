@@ -1,6 +1,7 @@
 const Database = window.__TAURI__.sql;
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
+const listen = window.__TAURI__.event.listen;
 const db = await Database.load("sqlite://resources/db.sqlite");
 import { select_student } from "./main.js";
 
@@ -108,3 +109,11 @@ async function openEditStudentPopup() {
 }
 
 init();
+
+await listen("student-added", (event) => {
+  init();
+});
+
+await listen("edit-popup-closed", (event) => {
+  init();
+});
