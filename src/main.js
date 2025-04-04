@@ -11,7 +11,7 @@ window.studentState = {
   studentId: 0,
   studentName: "",
 };
-var [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
+const [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
 
 const openNavButton = document.querySelector("#openNav");
 const closeNavButton = document.querySelector("#closeNav");
@@ -68,17 +68,17 @@ async function searchBoxInputted(e) {
     );
     list.innerHTML = "";
     for (let i = 0; i < suggestionResults.length; i++) {
-      let item = document.createElement("li");
+      const item = document.createElement("li");
       item.textContent = suggestionResults[i].name;
       item.dataset.id = suggestionResults[i].student_id;
       item.addEventListener("click", () => {
         searchBox.value = item.textContent;
-        select_student(parseInt(item.dataset.id), item.textContent);
+        select_student(Number.parseInt(item.dataset.id), item.textContent);
         list.style.display = "none";
       });
       list.appendChild(item);
     }
-    if (list.childNodes.length == 0) {
+    if (list.childNodes.length === 0) {
       list.style.display = "none";
     } else {
       list.style.display = "block";
@@ -89,12 +89,12 @@ async function searchBoxInputted(e) {
       list.style.display = "none";
       searchBox.value = firstResult.textContent;
 
-      select_student(parseInt(firstResult.dataset.id), firstResult.textContent);
+      select_student(Number.parseInt(firstResult.dataset.id), firstResult.textContent);
     } else {
       alert("Kein Schüler gefunden");
     }
   } else {
-    if (searchBox.value == "" || searchBox.value == null) {
+    if (searchBox.value === "" || searchBox.value === null) {
       document.getElementById("suggestions").style.display = "none";
     }
   }
@@ -102,10 +102,10 @@ async function searchBoxInputted(e) {
 
 function searchBoxBlurred() {
   if (searchBox) {
-    setTimeout(function () {
+    setTimeout(() => {
       if (
-        searchBox.value.trim() == "" ||
-        searchBox.value.trim() == window.studentState.studentName
+        searchBox.value.trim() === "" ||
+        searchBox.value.trim() === window.studentState.studentName
       ) {
         searchBox.value = window.studentState.studentName;
       } else {
@@ -128,9 +128,16 @@ async function select_student(newStudentId, newStudentName) {
     detail: { studentId: newStudentId },
   });
   document.dispatchEvent(event);
+
+    for (const input of document.querySelectorAll(".studentSpecificInput")) {
+        if (newStudentName === "" && newStudentId === 0) {
+          input.disabled = true;
+        } else {
+          input.disabled = false;
+        }
+    }
 }
 
-// Fixes reload on click into student_search
 document.addEventListener(
   "submit",
   (e) => {
