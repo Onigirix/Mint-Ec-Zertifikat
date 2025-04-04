@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0-rc.0",
+    "@tauri-apps/plugin-sql": "^2.0.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.6.1"
+  }
+}
