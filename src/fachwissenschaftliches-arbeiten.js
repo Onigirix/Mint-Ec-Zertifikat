@@ -2,6 +2,10 @@ const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
 const db = await Database.load("sqlite://resources/db.sqlite");
 const form = document.getElementById("facharbeitForm");
+const submitBtn = document.getElementById("submitBtn");
+      submitBtn.remove();
+      form.appendChild(submitBtn);
+
 const gesamtDurchschnittElement = document.getElementById("gesamtDurchschnitt");
 let formInputs = form.querySelectorAll("input, select, textarea");
 let option_4_5_selected = false;
@@ -122,10 +126,6 @@ async function typeChanged(selected) {
       form.replaceChild(levelDescription, noteElem);
       form.appendChild(levelLabel);
       form.appendChild(selectLevel);
-
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.remove();
-      form.appendChild(submitBtn);
 
       const gesamtDurchschnittDiv = document.querySelector(
         ".gesamt-durchschnitt"

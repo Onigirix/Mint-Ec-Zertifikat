@@ -54,12 +54,10 @@ async function generatePdf() {
 
 function openNav() {
   document.getElementById("sidenav").style.width = "30vw";
-  document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
 }
 
 function closeNav() {
   document.getElementById("sidenav").style.width = "0";
-  document.body.style.backgroundColor = "white";
 }
 
 async function searchBoxInputted(e) {
