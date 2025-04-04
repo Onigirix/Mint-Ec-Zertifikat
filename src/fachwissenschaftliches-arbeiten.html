@@ -2,7 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="style_fwa.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
@@ -84,18 +84,17 @@
           <label for="level" id="note_label">Note:</label>
           <input type="number" id="level" min="1" max="15" step="1" />
 
-          <button type="submit" class="blauerButton zentriert" id="submitBtn">
-            Speichern
-          </button>
+          
         </form>
-        <a class="blauerButton" href="zusätzlich.html"> Weiter </a>
-        <div class="gesamt-durchschnitt">
-          <label>Stufe:</label>
-          <span id="gesamtDurchschnitt">- </span>
-        </div>
+        
+        <button class="blauerButton" onclick="window.location.href='fachliche-kompetenz.html';" style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
+        <button type="submit" class="btn zentriert" id="submitBtn">
+          Stufe: - Speichern
+        </button>
+        <button class="blauerButton" onclick="window.location.href='zusaetzlich.html';" style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
+       
+        
       </main>
     </div>
   </body>
 </html>
-
-<!--TODO: Make the Sidenav closable by clicking back on main-->

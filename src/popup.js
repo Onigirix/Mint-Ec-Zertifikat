@@ -18,7 +18,6 @@ window.addEventListener("DOMContentLoaded", () => {
 document
   .getElementById("schuelerForm")
   .addEventListener("submit", async (e) => {
-    console.log(e);
     e.preventDefault();
     const result = await db.execute(
       "INSERT INTO students (name, birthday) VALUES ($1, $2)",
@@ -31,10 +30,7 @@ document
       new_student_id: result.lastInsertId,
       new_student_name: e.target.vorname.value + " " + e.target.nachname.value,
     });
-    if (e.submitter === document.getElementById("fertig")) {
-      const currentWindow = getCurrentWindow();
-      currentWindow.close();
-    } else {
-      e.target.reset();
-    }
+    const currentWindow = getCurrentWindow();
+    currentWindow.close();
+    e.target.reset();
   });

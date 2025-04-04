@@ -123,10 +123,6 @@ async function typeChanged(selected) {
       form.appendChild(levelLabel);
       form.appendChild(selectLevel);
 
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.remove();
-      form.appendChild(submitBtn);
-
       const gesamtDurchschnittDiv = document.querySelector(
         ".gesamt-durchschnitt"
       );
