@@ -8,8 +8,23 @@
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
     <script type="module" src="components/topbar.js" defer></script>
-
     <script type="module" src="fachlicheKompetenz.js" defer></script>
+
+    <style>
+      /* Fügt Flexbox hinzu, um die Labels und Eingabefelder nebeneinander anzuordnen */
+      .inline-inputs {
+        display: flex;
+        justify-content: center;
+        gap: 3vw; /* Abstand zwischen den beiden Eingabefeldern */
+      }
+      .inline-inputs label {
+        display: block; /* Labels bleiben block-level */
+        width: 150px; /* Festlegen der Breite für die Labels */
+      }
+      .inline-inputs input {
+        flex: 1; /* Eingabefelder nehmen den verfügbaren Raum ein */
+      }
+    </style>
   </head>
 
   <body>
@@ -20,7 +35,6 @@
       </button>
       <div></div>
       <h1 class="rightHeading">Mint-EC Zertifikat</h1>
-      <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
     <!-- Sidenavigation with close Button -->
@@ -29,17 +43,9 @@
       <div id="navLinks">
         <a href="index.html" id="Startseite">Startseite</a>
         <a href="schuelerbearbeiten.html" id="Schülerliste">Schülerliste</a>
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
-          >Fachliche Kompetenz</a
-        >
-        <a
-          href="fachwissenschaftliches-arbeiten.html"
-          id="Fachwissenschaftliches-Arbeiten"
-          >Fachwissenschaftliches Arbeiten</a
-        >
-        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten"
-          >Zusätzliche MINT-Aktivitäten</a
-        >
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz">Fachliche Kompetenz</a>
+        <a href="fachwissenschaftliches-arbeiten.html" id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches Arbeiten</a>
+        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche MINT-Aktivitäten</a>
         <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
       </div>
@@ -60,11 +66,20 @@
           <label for="ausgabepfad">Ausgabepfad</label>
           <input value="C:/Mint-EC" type="text" id="ausgabepfad" required />
 
-          <button type="submit" class="blauerButton zentriert">
-            Speichern
-          </button>
+          <!-- Neue Eingabefelder für Unterzeichner in einer flexiblen Zeile -->
+          <div class="inline-inputs">
+            <div>
+              <label for="linksUnterzeichner">Linksunterzeichner:</label>
+              <input type="text" id="linksUnterzeichner" required placeholder="Mint-EC Koordinator" />
+            </div>
+            <div>
+              <label for="rechtsUnterzeichner">Rechtsunterzeichner:</label>
+              <input type="text" id="rechtsUnterzeichner" required placeholder="Schulleiter" />
+            </div>
+          </div>
+
+          <button type="submit" class="blauerButton zentriert">Speichern</button>
         </form>
-        <a class="blauerButton" href="zusätzlich.html"> Weiter </a>
       </main>
     </div>
   </body>
