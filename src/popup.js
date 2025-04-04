@@ -31,8 +31,10 @@ document
       new_student_id: result.lastInsertId,
       new_student_name: e.target.vorname.value + " " + e.target.nachname.value,
     });
-    const currentWindow = getCurrentWindow();
-    if(e.)
-    //currentWindow.close();
-    e.target.reset();
+    if (e.submitter === document.getElementById("fertig")) {
+      const currentWindow = getCurrentWindow();
+      currentWindow.close();
+    } else {
+      e.target.reset();
+    }
   });

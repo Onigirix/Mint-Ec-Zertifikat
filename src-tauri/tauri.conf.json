@@ -35,6 +35,12 @@
       "icons/icon.icns"
     ],
     "resources": ["icons/*", "resources/*"],
-    "publisher": "Finn Arved Lieker"
+    "publisher": "Finn Arved Lieker",
+    "windows": {
+      "nsis": {
+        "languages": ["German", "English"],
+        "installerIcon": "C:/Users/aliek/Documents/Programming Stuff/Mint-Ec/Mint-Ec/src-tauri/icons/icon.ico"
+      }
+    }
   }
 }
