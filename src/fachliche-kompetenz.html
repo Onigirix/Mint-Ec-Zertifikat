@@ -2,7 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
@@ -260,15 +260,14 @@
             </tbody>
           </table>
 
-          <div class="gesamt-durchschnitt">
-            <label>Stufe:</label>
-            <span id="gesamtDurchschnitt">- </span>
-          </div>
+          
         </form>
-
-        <a class="blauerButton" href="fachwissenschaftliches-arbeiten.html">
-          Weiter
-        </a>
+        <div class="gesamt-durchschnitt" style="position: absolute; top: 64vh; left: 49vw; text-align: center;">
+          <label>Stufe:</label>
+          <span id="gesamtDurchschnitt">- </span>
+        </div>
+        <button class="blauerButton" onclick="window.location.href='schuelerbearbeiten.html';" style="position: absolute; top: 69vh; left: 12vw;">Zurück</button>
+       <button class="blauerButton" onclick="window.location.href='fachwissenschaftliches-arbeiten.html';" style="position: absolute; top: 69vh; left: 85vw;">Weiter</button>
       </main>
     </div>
   </body>

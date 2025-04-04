@@ -457,6 +457,14 @@ tr:not(.selected):hover {
 	margin: 10px auto; /* zentriert das Formular */
 }
 
+#schuelerForm{
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin: 2px auto; /* zentriert das Formular */
+	overflow-x: hidden;
+}
+
 label {
 	display: block;
 	margin: 10px 0 5px;
@@ -558,6 +566,8 @@ textarea {
 .avg {
 	font-size: 15px;
 }
+
+
 
 .suggestions-list {
 	position: absolute;
