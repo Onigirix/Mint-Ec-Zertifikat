@@ -17,6 +17,11 @@ async function init() {
 	}
 }
 
+document
+	.getElementById("deleteButton")
+	.addEventListener("click", () =>
+		deleteStudent(window.studentState.studentId),
+	);
 document.getElementById("editButton").addEventListener("click", editStudent);
 document.getElementById("main").addEventListener("click", (event) => {
 	if (!document.getElementById("content").contains(event.target)) {
@@ -111,6 +116,31 @@ async function openEditStudentPopup() {
 		}
 	});
 }
+
+async function deleteStudent(studentId) {
+	await db.execute(
+		"DELETE FROM student_additional_mint_activities WHERE student_id = $1",
+		[studentId],
+	);
+	await db.execute("DELETE FROM students WHERE student_id = $1", [studentId]);
+	init();
+}
+
+document.getElementById("manual").addEventListener("click", (event) => {
+	const handbookWebview = new WebviewWindow("handbook", {
+		hiddenTitle: true,
+		title: "Handbuch",
+		minimizable: true,
+		url: "assets/Manual.pdf",
+	});
+	handbookWebview.once("tauri://created", () => {});
+	handbookWebview.once("tauri://error", async (e) => {
+		if (e.payload === "a webview with label `handbook` already exists") {
+			const handbookWindow = await Webview.getByLabel("handbook");
+			await handbookWindow.setFocus();
+		}
+	});
+});
 
 init();
 

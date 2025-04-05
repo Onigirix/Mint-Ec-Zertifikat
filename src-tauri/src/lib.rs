@@ -1,4 +1,5 @@
 pub mod db;
+pub mod dialog;
 pub mod pdf;
 pub mod state;
 use tauri::{Builder, Manager};
@@ -25,6 +26,7 @@ pub fn run() {
             state::get_state,
             state::set_state,
             state::get_student_id,
+            dialog::folder_select
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { .. } => {

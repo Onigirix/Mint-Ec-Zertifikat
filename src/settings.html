@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-    <script type="module" src="components/topbar.js" defer></script>
-    <script type="module" src="fachlicheKompetenz.js" defer></script>
+    <script type="module" src="settings.js" defer></script>
 
     <style>
       /* Fügt Flexbox hinzu, um die Labels und Eingabefelder nebeneinander anzuordnen */
@@ -57,28 +56,37 @@
         <h1>Einstellungen</h1>
 
         <form id="settingsForm">
-          <label for="schuleName">Name der Schule: </label>
-          <input type="text" id="schuleName" required />
+          <label for="schoolName">Name der Schule: </label>
+          <input type="text" id="schoolName" />
 
-          <label for="schuleOrt">Ort der Schule</label>
-          <input type="text" id="schuleOrt" required />
+          <label for="schoolLocation">Ort der Schule</label>
+          <input type="text" id="schoolLocation" />
 
-          <label for="ausgabepfad">Ausgabepfad</label>
-          <input value="C:/Mint-EC" type="text" id="ausgabepfad" required />
+          <label for="outputPath">Ausgabepfad</label>
+            <div class="folder-input">
+            <input type="text" id="outputPath" />
+            <button type="button" id="folderSelectButton">
+              <i class="material-icons">folder</i>
+            </button>
+            </div>
 
           <!-- Neue Eingabefelder für Unterzeichner in einer flexiblen Zeile -->
           <div class="inline-inputs">
             <div>
-              <label for="linksUnterzeichner">Linksunterzeichner:</label>
-              <input type="text" id="linksUnterzeichner" required placeholder="Mint-EC Koordinator" />
+              <span/>Name</span> <br/>
+              <span>Position</span>
             </div>
             <div>
-              <label for="rechtsUnterzeichner">Rechtsunterzeichner:</label>
-              <input type="text" id="rechtsUnterzeichner" required placeholder="Schulleiter" />
+              <label for="namePos1">Linksunterzeichner:</label>
+              <input type="text" id="namePos1" />
+              <input type="text" id="pos1"/>
+            </div>
+            <div>
+              <label for="namePos2">Rechtsunterzeichner:</label>
+              <input type="text" id="namePos2" />
+              <input type="text" id="pos2"/>
             </div>
           </div>
-
-          <button type="submit" class="blauerButton zentriert">Speichern</button>
         </form>
       </main>
     </div>

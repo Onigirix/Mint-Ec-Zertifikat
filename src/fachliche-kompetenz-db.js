@@ -14,31 +14,34 @@ async function fill_fields(studentId) {
 		studentId,
 	]);
 	const data = res1[0];
-	for (const field of gradeFields) {
-		const course = field.dataset.course;
-		const semester = field.dataset.semester;
-		const value = data[`grade_${course}_${semester}`];
-		if (value !== null && value !== undefined) {
-			field.value = value;
-		} else {
-			field.value = "";
+	if (data) {
+		for (const field of gradeFields) {
+			const course = field.dataset.course;
+			const semester = field.dataset.semester;
+			const value = data[`grade_${course}_${semester}`];
+			if (value !== null && value !== undefined) {
+				field.value = value;
+			} else {
+				field.value = "";
+			}
 		}
-	}
 
-	// Fill subject fields
-	for (const field of subjectFields) {
-		const course = field.dataset.course;
-		const value = data[`subject_${course}`];
-		if (value !== null && value !== undefined) {
-			field.value = value;
-		} else {
-			field.value = "";
+		// Fill subject fields
+		for (const field of subjectFields) {
+			const course = field.dataset.course;
+			const value = data[`subject_${course}`];
+			if (value !== null && value !== undefined) {
+				field.value = value;
+			} else {
+				field.value = "";
+			}
 		}
-	}
 
-	const event = new CustomEvent("fields_filled");
-	document.dispatchEvent(event);
+		const event = new CustomEvent("fields_filled");
+		document.dispatchEvent(event);
+	}
 }
+
 for (const field of gradeFields) {
 	field.addEventListener("keyup", (e) => {
 		if (e.keyCode !== 13 && e.keyCode !== 9) {

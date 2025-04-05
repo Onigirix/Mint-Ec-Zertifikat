@@ -84,18 +84,46 @@ async function searchBoxInputted(e) {
 			list.style.display = "block";
 		}
 	} else if (e.key === "Enter") {
+		const activeItem = list.querySelector("li.active");
 		const firstResult = list.firstElementChild;
-		if (firstResult != null) {
+		if (activeItem) {
 			list.style.display = "none";
-			searchBox.value = firstResult.textContent;
+			searchBox.value = activeItem.textContent;
 
 			select_student(
-				Number.parseInt(firstResult.dataset.id),
-				firstResult.textContent,
+				Number.parseInt(activeItem.dataset.id),
+				activeItem.textContent,
 			);
 		} else {
-			alert("Kein Schüler gefunden");
+			if (firstResult != null) {
+				list.style.display = "none";
+				searchBox.value = firstResult.textContent;
+
+				select_student(
+					Number.parseInt(firstResult.dataset.id),
+					firstResult.textContent,
+				);
+			}
 		}
+	} else if (e.key === "Tab") {
+		e.preventDefault();
+		const items = Array.from(list.children);
+		if (items.length === 0) return;
+
+		const activeItem = list.querySelector("li.active");
+		let nextIndex = 0;
+
+		if (activeItem) {
+			const currentIndex = items.indexOf(activeItem);
+			activeItem.classList.remove("active");
+			nextIndex = (currentIndex + 1) % items.length;
+		}
+
+		const nextItem = items[nextIndex];
+		nextItem.classList.add("active");
+
+		searchBox.value = nextItem.textContent;
+		return;
 	} else {
 		if (searchBox.value === "" || searchBox.value === null) {
 			document.getElementById("suggestions").style.display = "none";
@@ -132,11 +160,12 @@ async function select_student(newStudentId, newStudentName) {
 	});
 	document.dispatchEvent(event);
 
-	for (const input of document.querySelectorAll(".studentSpecificInput")) {
+	const to_be_disabled = document.querySelector(".disabled-no-student");
+	if (to_be_disabled) {
 		if (newStudentName === "" && newStudentId === 0) {
-			input.disabled = true;
+			to_be_disabled.setAttribute("disabled", "true");
 		} else {
-			input.disabled = false;
+			to_be_disabled.removeAttribute("disabled");
 		}
 	}
 }
