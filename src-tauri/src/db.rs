@@ -295,7 +295,7 @@ async fn create_students_table() {
         student_id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         birthday TEXT,
-        certificate TEXT,
+        graduation_year INT,
         subject_1 TEXT,
         grade_1_1 INT,
         grade_1_2 INT,
