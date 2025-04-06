@@ -20,10 +20,11 @@ document
 	.addEventListener("submit", async (e) => {
 		e.preventDefault();
 		const result = await db.execute(
-			"INSERT INTO students (name, birthday) VALUES ($1, $2)",
+			"INSERT INTO students (name, birthday, graduation_year) VALUES ($1, $2, $3)",
 			[
 				`${e.target.vorname.value} ${e.target.nachname.value}`,
 				e.target.geburtsdatum.value,
+				e.target.abijahr.value,
 			],
 		);
 		await emit("student-added", {

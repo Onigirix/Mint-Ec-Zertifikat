@@ -31,18 +31,18 @@ document.getElementById("main").addEventListener("click", (event) => {
 
 async function generateTable() {
 	const studentData = await db.select(
-		"SELECT student_id, name, birthday FROM students",
+		"SELECT student_id, name, birthday, graduation_year FROM students",
 	);
 	let table = "<table>";
 	table += "<thead>";
-	table += "<tr><th>Name</th><th>Stufe</th><th>Geburtsdatum</th></tr>";
+	table += "<tr><th>Name</th><th>Abijahrgang</th><th>Geburtsdatum</th></tr>";
 	table += "</thead>";
 	table += "<tbody>";
 
 	for (const student of studentData) {
 		table += `<tr class="student-row" data-id="${student.student_id}" >
                     <td>${student.name}</td>
-                    <td>temp</td>
+                    <td>${student.graduation_year}</td>
                     <td>${
 											student.birthday
 												? student.birthday.split("-").reverse().join(".")
@@ -125,8 +125,6 @@ async function deleteStudent(studentId) {
 	await db.execute("DELETE FROM students WHERE student_id = $1", [studentId]);
 	init();
 }
-
-
 
 init();
 
