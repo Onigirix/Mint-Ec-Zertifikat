@@ -33,17 +33,15 @@ async function fill_fields(studentId) {
 			[studentId],
 		);
 		const type_of_paper = Number.parseInt(db_res[0].type_of_paper);
-		if (type_of_paper !== 0) {
-			document.getElementById("arbeitTyp").value = type_of_paper;
-			typeChanged(type_of_paper);
-			document.getElementById("thema").value = db_res[0].topic_of_paper;
-			document.getElementById("beschreibung").value =
-				db_res[0].description_of_paper;
-			document.getElementById("level").value = db_res[0].grade_of_paper;
-			if (type_of_paper === 4 || type_of_paper === 5) {
-				document.getElementById("levelDescription").value =
-					db_res[0].level_of_competition;
-			}
+		document.getElementById("arbeitTyp").value = type_of_paper;
+		typeChanged(type_of_paper);
+		document.getElementById("thema").value = db_res[0].topic_of_paper;
+		document.getElementById("beschreibung").value =
+			db_res[0].description_of_paper;
+		document.getElementById("level").value = db_res[0].grade_of_paper;
+		if (type_of_paper === 4 || type_of_paper === 5) {
+			document.getElementById("levelDescription").value =
+				db_res[0].level_of_competition;
 		}
 		changeStufe(db_res[0].grade_of_paper);
 	}
@@ -186,6 +184,7 @@ async function typeChanged(selected) {
 	}
 }
 document.addEventListener("studentChanged", async (e) => {
+	console.log("studentChanged event triggered");
 	const { studentId } = e.detail;
 	await fill_fields(studentId);
 });
