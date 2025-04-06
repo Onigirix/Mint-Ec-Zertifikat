@@ -170,6 +170,8 @@ async function select_student(newStudentId, newStudentName) {
 	}
 }
 
+
+
 document.addEventListener(
 	"submit",
 	(e) => {

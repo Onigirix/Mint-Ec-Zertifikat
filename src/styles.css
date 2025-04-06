@@ -291,8 +291,13 @@ img {
 }
 
 #startButton {
-	display: block;
-	margin: 20px auto;
+	padding: 10px 20px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	text-align: center; /* Text zentrieren */
+}
+
+.startButton {
 	padding: 10px 20px;
 	font-size: 1.2rem;
 	cursor: pointer;
@@ -600,3 +605,17 @@ textarea {
 .select {
 	background-color: rgba(0, 0, 0, 0.8);
 }
+.inline-inputs {
+	display: flex;
+	align-items: center; /* Hält die Labels und Eingabefelder auf gleicher Höhe */
+	gap: 20px; /* Abstand zwischen den Spalten */
+  }
+  
+  .labels {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-right: 20px; /* Abstand zwischen den Labels und den Inputs */
+  }
+
+  

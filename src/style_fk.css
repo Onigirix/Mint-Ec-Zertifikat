@@ -451,6 +451,7 @@ input[type="text"],
 input[type="number"],
 textarea,
 select {
+	
 	width: 99%;
 	padding: 8px;
 	margin: 10px 0 10px;

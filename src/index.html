@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
+    <script type="module" src="index_script.js" defer></script>
   </head>
 
   <body>
@@ -50,8 +51,16 @@
             <img src="bilder/Mintec_slogan.png" style="height: 100%; width: 80%; display: block;	margin: 20px auto;" />
           </div>
         </div>
-
-        <button id="startButton" class="blauerButton" onclick="window.location.href='schuelerbearbeiten.html';">Start</button>
+        <div style="display: flex; gap: 3%; margin-left: 40%; margin-top: 1%">
+          <button class="manualButton blauerButton startButton" id="manual" style="padding: 10px 20px;">
+            Handbuch
+          </button>
+          <button id="startButton" class="blauerButton" onclick="window.location.href='schuelerbearbeiten.html';" style="padding: 10px 20px;">
+            Start
+          </button>
+        </div>
+        
+        
       </main>
     </div>
   </body>
