@@ -65,7 +65,11 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     };
 
     let (path, mut form) = tokio::join!(spawn_file_dialog, prepare_pdf);
-    form.save(path.unwrap().path()).unwrap();
+    if path.is_some() {
+        db::change_default_file_path(String::from(path.clone().unwrap().path().to_str().unwrap()))
+            .await;
+        form.save(path.unwrap().path()).unwrap();
+    }
     Ok(())
     //TODO: Add a success message (toast notification)
 }
