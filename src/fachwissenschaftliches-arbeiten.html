@@ -64,9 +64,9 @@
       <main id="content">
         <h1>Fachlichwissenschaftliches Arbeiten</h1>
 
-        <form id="facharbeitForm">
+        <form id="facharbeitForm" class="darken">
           <label for="arbeitTyp">Typ der Arbeit:</label>
-          <select id="arbeitTyp" required>
+          <select id="arbeitTyp" required class="disabled-no-student">
             <option value="0" disabled selected>Bitte auswählen</option>
             <option value="1">Facharbeit</option>
             <option value="2">wissenschaftspropädeutisches Fach</option>
@@ -76,13 +76,13 @@
           </select>
 
           <label for="thema">Thema:</label>
-          <input type="text" id="thema" required />
+          <input type="text" id="thema" required class="disabled-no-student"/>
 
           <label for="beschreibung">Beschreibung:</label>
-          <textarea id="beschreibung" rows="4" ></textarea>
+          <textarea id="beschreibung" rows="4" class="disabled-no-student"></textarea>
 
           <label for="level" id="note_label">Note:</label>
-          <input type="number" id="level" min="1" max="15" step="1" />
+          <input type="number" id="level" min="1" max="15" step="1" class="disabled-no-student"/>
 
         </form>
 

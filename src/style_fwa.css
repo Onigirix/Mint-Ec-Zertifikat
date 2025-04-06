@@ -382,6 +382,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem; /* Schriftgröße */
+  resize: none;
 }
 
 @font-face {

@@ -160,14 +160,37 @@ async function select_student(newStudentId, newStudentName) {
 	});
 	document.dispatchEvent(event);
 
-	const to_be_disabled = document.querySelector(".disabled-no-student");
-	if (to_be_disabled) {
-		if (newStudentName === "" && newStudentId === 0) {
-			to_be_disabled.setAttribute("disabled", "true");
-		} else {
-			to_be_disabled.removeAttribute("disabled");
-		}
+	const to_be_disabled_elements = document.querySelectorAll(".disabled-no-student");
+	const to_be_darkend_elements = document.querySelectorAll(".darken");
+	const to_be_notSelect_elements = document.querySelectorAll("tr");
+
+
+	to_be_disabled_elements.forEach((element) => {
+	if (newStudentName === "" && newStudentId === 0) {
+		
+		element.setAttribute("disabled", "true");
+	} else {
+		to_be_darkend_elements.style.backgroundColor = "rgb(255, 255, 255)";
+		element.removeAttribute("disabled");
 	}
+	});
+	
+	to_be_darkend_elements.forEach((element) => {
+		if (newStudentName === "" && newStudentId === 0) {
+			
+			element.style.backgroundColor = "rgb(215, 215, 215)";
+		} else {
+			element.style.backgroundColor = "rgb(255, 255, 255)";
+		}
+		});
+	to_be_notSelect_elements.forEach(row => {
+		if (newStudentName === "" && newStudentId === 0) {
+			
+			row.classList.remove('hover');
+		} else {
+			row.classList.add('hover');
+		}
+	});
 }
 
 
