@@ -184,7 +184,6 @@ async function typeChanged(selected) {
 	}
 }
 document.addEventListener("studentChanged", async (e) => {
-	console.log("studentChanged event triggered");
 	const { studentId } = e.detail;
 	await fill_fields(studentId);
 });

@@ -26,7 +26,7 @@ async fn create_settings_table() {
     let _creation_result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS settings (
             id INTEGER PRIMARY KEY DEFAULT 1,
-            school_name TEXT DEFAULT 'Musterschule',
+            school_name TEXT DEFAULT 'an der Musterschule',
             school_location TEXT DEFAULT 'Musterstadt',
             school_functionary_1 TEXT DEFAULT 'Max Mustermann',
             school_functionary_2 TEXT DEFAULT 'Erika Musterfrau',
@@ -351,7 +351,7 @@ pub async fn add_student(first_name: String, last_name: String, birthday: String
 pub async fn get_student_birthday(student_id: i32) -> String {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query("SELECT birthday FROM students WHERE id = ?;")
+    let result = sqlx::query("SELECT birthday FROM students WHERE student_id = ?;")
         .bind(student_id)
         .fetch_all(&db)
         .await;

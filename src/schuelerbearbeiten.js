@@ -31,7 +31,7 @@ document.getElementById("main").addEventListener("click", (event) => {
 
 async function generateTable() {
 	const studentData = await db.select(
-		"SELECT student_id, name, birthday FROM students",
+		"SELECT student_id, name, birthday, graduation_year FROM students",
 	);
 	let table = "<table>";
 	table += "<thead>";
