@@ -34,6 +34,10 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             "%Y-%m-%d",
         )
         .unwrap();
+
+        let (field_6_text, fachliche_kompetenz_level) =
+            fachliche_kompetenz_text(student_id, student_name.clone()).await;
+
         let results = vec![
             form.set_text(0, format!("geboren am {}", birthday.format("%d.%m.%Y"))),
             form.set_text(1, format!("an der {}", settings[0])),
@@ -73,6 +77,74 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     Ok(())
     //TODO: Add a success message (toast notification)
 }
+
+async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (String, i32) {
+    let get_grades_return = db::get_grades(student_id).await;
+    match get_grades_return {
+        Ok((subjects, grades)) => {
+            let mut grade_averages: [f32; 4] = [0.0; 4];
+            for i in 1..=4 {
+                for j in 0..4 {
+                    grade_averages[i] = grade_averages[i] + (grades[j + 4 * i] as f32);
+                }
+                grade_averages[i - 1] = grade_averages[i - 1] / 4.0
+            }
+
+            let comb0 = (grade_averages[0] + grade_averages[1]) / 2.0;
+            let comb1 = (grade_averages[0] + grade_averages[1] + grade_averages[2]) / 3.0;
+            let comb2 = (grade_averages[0] + grade_averages[1] + grade_averages[3]) / 3.0;
+            let comb3 = (grade_averages[0] + grade_averages[2] + grade_averages[3]) / 3.0;
+            let comb4 = (grade_averages[1] + grade_averages[2] + grade_averages[3]) / 3.0;
+
+            let mut best_average = comb0;
+            let mut best_combination = 0;
+
+            if (comb1 > comb0) {
+                best_average = comb1;
+                best_combination = 1;
+            }
+
+            if comb2 > best_average {
+                best_average = comb2;
+                best_combination = 2;
+            }
+            if comb3 > best_average {
+                best_average = comb3;
+                best_combination = 3;
+            }
+            if comb4 > best_average {
+                best_average = comb4;
+                best_combination = 4;
+            }
+
+            let level = match best_average {
+                x if x < 9.0 => 0,
+                x if x < 11.0 => 1,
+                x if x > 13.0 => 2,
+                _ => 3,
+            };
+
+            let result = match best_combination {
+                0 => String::from("{.?}"),
+                1 => String::from(""),
+                2 => String::from(""),
+                3 => String::from(""),
+                4 => String::from(""),
+                _ => String::from("Errorcode: 69"),
+            };
+
+            (result, level)
+        }
+        Err(e) => {
+            eprintln!("Error fetching students grades: {}", e);
+            (
+                String::from(format!("Error while fetching the grades: {}", e)),
+                0,
+            )
+        }
+    }
+}
+
 //text_8 = Vor und Nachname
 //text_0 = Geburtsdatum
 //text_1 = Schule

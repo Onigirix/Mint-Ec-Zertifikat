@@ -104,7 +104,8 @@ async function openEditStudentPopup() {
 	const studentPopupWebview = new WebviewWindow("editStudentPopup", {
 		hiddenTitle: true,
 		title: "Schüler bearbeiten",
-		height: 280,
+		height: 380,
+		width: 800,
 		minimizable: false,
 		url: `edit-schueler-popup.html?id=${window.studentState.studentId}`,
 	});

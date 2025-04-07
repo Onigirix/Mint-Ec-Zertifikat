@@ -444,3 +444,27 @@ pub async fn print_fachwissenschaftliches_arbeiten() {
         Err(e) => eprintln!("Error fetching fachwissenschaftliches_arbeiten: {}", e),
     }
 }
+
+pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), String> {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query(
+        "SELECT subject_1, subject_2, subject_3, subject_4, grade_1_1, grade_1_2, grade_1_3, grade_1_4, grade_2_1, grade_2_2, grade_2_3, grade_2_4, grade_3_1, grade_3_2,
+grade_3_3, grade_3_4, grade_4_1, grade_4_2, grade_4_3, grade_4_4 FROM students WHERE student_id = ?;",
+    )
+    .bind(student_id)
+    .fetch_one(&db)
+    .await;
+
+    match result {
+        Ok(row) => {
+            let subjects: [String; 4] = [row.get(0), row.get(1), row.get(2), row.get(3)];
+            let grades: [i32; 16] = array::from_fn(|i| row.get(i + 4));
+            Ok((subjects, grades))
+        }
+        Err(e) => {
+            eprintln!("Error fetching all settings: {}", e);
+            Err(e.to_string())
+        }
+    }
+}
