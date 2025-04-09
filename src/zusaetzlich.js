@@ -1,227 +1,319 @@
+const Database = window.__TAURI__.sql;
+const db = await Database.load("sqlite://resources/db.sqlite");
 
-  // Datenstruktur für die Wettbewerbe und Stufen
-  let wettbewerbeData = [
-    { id: 1, name: "Mathematik Olympiade" },
-    { id: 2, name: "Informatik Wettbewerb" },
-    { id: 3, name: "Chemie Wettbewerb" },
-    { id: 3, name: "Chemie Wettbewerb" },
-    { id: 3, name: "Chemie Wettbewerb" }
-  ];
+const deleteButton = document.createElement("button");
+const toggleSwitch = document.getElementById("toggleSwitch");
+const sekText = document.getElementById("sekText");
+let competitionData = [{}];
 
-  let stufenData = {
-    1: [
-      { stufe: 1, beschreibung: "Runde 1" },
-      { stufe: 2, beschreibung: "Runde 2" },
-      { stufe: 3, beschreibung: "Finale" }
-    ],
-    2: [
-      { stufe: 1, beschreibung: "Code Challenge 1" },
-      { stufe: 2, beschreibung: "Code Challenge 2" },
-      { stufe: 3, beschreibung: "Code Challenge 3" }
-    ],
-    3: [
-      { stufe: 1, beschreibung: "Praktische Übung 1" },
-      { stufe: 2, beschreibung: "Praktische Übung 2" },
-      { stufe: 3, beschreibung: "Finale Experiment" }
-    ],
-    4: [
-      { stufe: 1, beschreibung: "Praktische Übung 1" },
-      { stufe: 2, beschreibung: "Praktische Übung 2" },
-      { stufe: 3, beschreibung: "Finale Experiment" }
-    ],
-    5: [
-      { stufe: 1, beschreibung: "Praktische Übung 1" },
-      { stufe: 2, beschreibung: "Praktische Übung 2" },
-      { stufe: 3, beschreibung: "Finale Experiment" }
-    ]
-  };
+let sek = 2;
 
-  let erreichteWettbewerbe = [
-    { id: 1, name: "Mathematik Olympiade", stufe: 2 },
-    { id: 2, name: "Informatik Wettbewerb", stufe: 3 }
-  ];
+async function init() {
+	toggleSwitch.checked = true;
 
-  // Funktion zum Befüllen der Wettbewerbstabelle
-  function populateWettbewerbeTable() {
-    const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
-    wettbewerbeTable.innerHTML = ''; // Tabelle zurücksetzen
+	populateWettbewerbeTable();
+	updateErreichteWettbewerbeTable();
+}
 
-    wettbewerbeData.forEach((wettbewerb) => {
-      const row = wettbewerbeTable.insertRow();
-      row.insertCell(0).textContent = wettbewerb.id;
-      const nameCell = row.insertCell(1);
-      nameCell.textContent = wettbewerb.name;
+let wettbewerbeData = [
+	{ id: 1, name: "Mathematik Olympiade" },
+	{ id: 2, name: "Informatik Wettbewerb" },
+	{ id: 3, name: "Chemie Wettbewerb" },
+	{ id: 3, name: "Chemie Wettbewerb" },
+	{ id: 3, name: "Chemie Wettbewerb" },
+];
 
-      // Doppelklick-Event zum Bearbeiten der Wettbewerbsnamen
-      nameCell.addEventListener('dblclick', () => {
-        if (row.classList.contains('active-row')) {
-          const newName = prompt("Wettbewerbsnamen bearbeiten:", wettbewerb.name);
-          if (newName) {
-            wettbewerb.name = newName;
-            nameCell.textContent = newName;
-            updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
-          }
-        }
-      });
+let stufenData = {
+	1: [
+		{ stufe: 1, beschreibung: "Runde 1" },
+		{ stufe: 2, beschreibung: "Runde 2" },
+		{ stufe: 3, beschreibung: "Finale" },
+	],
+	2: [
+		{ stufe: 1, beschreibung: "Code Challenge 1" },
+		{ stufe: 2, beschreibung: "Code Challenge 2" },
+		{ stufe: 3, beschreibung: "Code Challenge 3" },
+	],
+	3: [
+		{ stufe: 1, beschreibung: "Praktische Übung 1" },
+		{ stufe: 2, beschreibung: "Praktische Übung 2" },
+		{ stufe: 3, beschreibung: "Finale Experiment" },
+	],
+	4: [
+		{ stufe: 1, beschreibung: "Praktische Übung 1" },
+		{ stufe: 2, beschreibung: "Praktische Übung 2" },
+		{ stufe: 3, beschreibung: "Finale Experiment" },
+	],
+	5: [
+		{ stufe: 1, beschreibung: "Praktische Übung 1" },
+		{ stufe: 2, beschreibung: "Praktische Übung 2" },
+		{ stufe: 3, beschreibung: "Finale Experiment" },
+	],
+};
+// Funktion zum Befüllen der Wettbewerbstabelle
+async function populateWettbewerbeTable() {
+	competitionData = await db.select(
+		"SELECT additional_mint_activity_id, name, level_one, level_two, level_three FROM additional_mint_activities WHERE sek = $1",
+		[sek],
+	);
 
-      row.addEventListener('click', () => {
-        // Alle Zeilen zurücksetzen
-        const rows = wettbewerbeTable.getElementsByTagName('tr');
-        for (let r of rows) {
-          r.classList.remove('active-row');
-        }
+	const wettbewerbeTable = document
+		.getElementById("wettbewerbe-table")
+		.getElementsByTagName("tbody")[0];
+	wettbewerbeTable.innerHTML = ""; // Tabelle zurücksetzen
 
-        // Die angeklickte Zeile hervorheben
-        row.classList.add('active-row');
+	if(competitionData.length === 0){const row = wettbewerbeTable.insertRow();
+		row.insertCell(0).textContent = "-";
+		row.insertCell(1).textContent ="Noch kein Wettbewerb vorhanden"
+	}
 
-        // Tabelle 2 basierend auf dem ausgewählten Wettbewerb anpassen
-        updateStufenTable(stufenData[wettbewerb.id]);
-      });
-    });
+	for (const wettbewerb of competitionData) {
+		const row = wettbewerbeTable.insertRow();
+		row.insertCell(0).textContent = wettbewerb.additional_mint_activity_id;
+		const nameCell = row.insertCell(1);
+		nameCell.textContent = wettbewerb.name;
+		// Doppelklick-Event zum Bearbeiten der Wettbewerbsnamen
+		nameCell.addEventListener("dblclick", () => {
+			if (row.classList.contains("active-row")) {
+				const newName = prompt("Wettbewerbsnamen bearbeiten:", wettbewerb.name);
+				if (newName) {
+					wettbewerb.name = newName;
+					nameCell.textContent = newName;
+					updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+				}
+			}
+		});
 
-    // Das erste Element automatisch auswählen
-    const firstRow = wettbewerbeTable.querySelector('tr');
-    if (firstRow) {
-      firstRow.classList.add('active-row');
-      updateStufenTable(stufenData[wettbewerbeData[0].id]);
-    }
+		row.addEventListener("click", () => {
+			// Alle Zeilen zurücksetzen
+			const rows = wettbewerbeTable.getElementsByTagName("tr");
+			for (const r of rows) {
+				r.classList.remove("active-row");
+			}
 
-    // Erreichte Wettbewerbe ebenfalls aktualisieren
-    updateErreichteWettbewerbeTable();
-  }
+			// Die angeklickte Zeile hervorheben
+			row.classList.add("active-row");
 
-  // Funktion zum Befüllen der Stufentabelle
-  function updateStufenTable(stufen) {
-    const stufenTable = document.getElementById('stufen-table').getElementsByTagName('tbody')[0];
-    stufenTable.innerHTML = ''; // Zuerst alle Zeilen löschen
+			// Tabelle 2 basierend auf dem ausgewählten Wettbewerb anpassen
+			updateStufenTable(wettbewerb.additional_mint_activity_id);
+		});
+	}
 
-    stufen.forEach((stufe) => {
-      const row = stufenTable.insertRow();
-      const stufeCell = row.insertCell(0);
-      stufeCell.textContent = stufe.stufe;
-      const beschreibungCell = row.insertCell(1);
-      beschreibungCell.textContent = stufe.beschreibung;
+	// Das erste Element automatisch auswählen
+	const firstRow = wettbewerbeTable.querySelector("tr");
+	if (firstRow) {
+		firstRow.classList.add("active-row");
+		updateStufenTable(Number.parseInt(firstRow.cells[0].textContent));
+	}
 
-      // Doppelklick-Event zum Bearbeiten der Stufenbeschreibungen
-      beschreibungCell.addEventListener('dblclick', () => {
-        const newBeschreibung = prompt("Stufenbeschreibung bearbeiten:", stufe.beschreibung);
-        if (newBeschreibung) {
-          stufe.beschreibung = newBeschreibung;
-          beschreibungCell.textContent = newBeschreibung;
-          updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
-        }
-      });
+	// Erreichte Wettbewerbe ebenfalls aktualisieren
+	updateErreichteWettbewerbeTable();
+}
 
-      row.classList.add('clickable');
-      row.addEventListener('click', () => {
-        // Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
-        addToErreichteWettbewerbe(row, stufe);
-      });
-    });
-  }
+// Funktion zum Befüllen der Stufentabelle
+function updateStufenTable(additional_mint_activity_id) {
+	const stufenTable = document
+		.getElementById("stufen-table")
+		.getElementsByTagName("tbody")[0];
+	stufenTable.innerHTML = ""; // Zuerst alle Zeilen löschen
 
-  // Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
-  function addToErreichteWettbewerbe(row, stufe) {
-    const wettbewerbeTable = document.getElementById('wettbewerbe-table').getElementsByTagName('tbody')[0];
-    const activeRow = wettbewerbeTable.querySelector('.active-row');
-    const wettbewerbName = activeRow.cells[1].textContent;
+	const selectedCompetitionArray = competitionData.filter(competition => competition.additional_mint_activity_id === additional_mint_activity_id);
+	const selectedCompetition = selectedCompetitionArray[0];
 
-    const erreichteWettbewerbeTable = document.getElementById('erreichte-wettbewerbe-table').getElementsByTagName('tbody')[0];
-    const newRow = erreichteWettbewerbeTable.insertRow();
-    newRow.insertCell(0).textContent = wettbewerbName;
-    newRow.insertCell(1).textContent = `${stufe.stufe}: ${stufe.beschreibung}`;
+	if (!selectedCompetition){return}
 
-    // Löschen-Button hinzufügen
-    const deleteCell = newRow.insertCell(2);
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Löschen';
-    deleteButton.classList.add('delete-btn'); // Anwendung des neuen Stils
-    deleteButton.addEventListener('click', (e) => {
-      const confirmation = confirm('Möchten Sie diesen Eintrag wirklich löschen?');
-      if (confirmation) {
-        newRow.remove();
-        updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe nach dem Löschen aktualisieren
-      }
-      e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
-    });
-    deleteCell.appendChild(deleteButton);
-  }
+	const row1 = stufenTable.insertRow();
+	const stufeCell1 = row1.insertCell(0);
+	stufeCell1.textContent = 1;
+	const beschreibungCell1 = row1.insertCell(1);
+	beschreibungCell1.textContent = selectedCompetition.level_one;
+	const row2 = stufenTable.insertRow();
+	const stufeCell2 = row2.insertCell(0);
+	stufeCell2.textContent = 2;
+	const beschreibungCell2 = row2.insertCell(1);
+	beschreibungCell2.textContent = selectedCompetition.level_two;
+	const row3 = stufenTable.insertRow();
+	const stufeCell3 = row3.insertCell(0);
+	stufeCell3.textContent = 3;
+	const beschreibungCell3 = row3.insertCell(1);
+	beschreibungCell3.textContent = selectedCompetition.level_three;
 
-  // Funktion zur dynamischen Aktualisierung der erreichten Wettbewerbe Tabelle
-  function updateErreichteWettbewerbeTable() {
-    const erreichteWettbewerbeTable = document.getElementById('erreichte-wettbewerbe-table').getElementsByTagName('tbody')[0];
-    erreichteWettbewerbeTable.innerHTML = ''; // Alle Zeilen zurücksetzen
+	row1.classList.add("clickable");
+	row1.addEventListener("click", () => {
+		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
+		addToErreichteWettbewerbe(row1, 1);
+	});
+	row2.classList.add("clickable");
+	row2.addEventListener("click", () => {
+		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
+		addToErreichteWettbewerbe(row2, 2);
+	});
+	row3.classList.add("clickable");
+	row3.addEventListener("click", () => {
+		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
+		addToErreichteWettbewerbe(row3, 3);
+	});
 
-    erreichteWettbewerbe.forEach((eintrag) => {
-      const row = erreichteWettbewerbeTable.insertRow();
-      row.insertCell(0).textContent = eintrag.name;
-      row.insertCell(1).textContent = `${eintrag.stufe}: ${stufenData[eintrag.id][eintrag.stufe - 1].beschreibung}`;
+	beschreibungCell1.addEventListener("dblclick", () => {
+		const newBeschreibung = prompt(
+			"Stufenbeschreibung bearbeiten:",
+			stufe.beschreibung,
+		);
+		if (newBeschreibung) {
+			stufe.beschreibung = newBeschreibung;
+			beschreibungCell1.textContent = newBeschreibung;
+			updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+		}});
+  beschreibungCell2.addEventListener("dblclick", () => {
+	const newBeschreibung = prompt(
+	  "Stufenbeschreibung bearbeiten:",
+	  stufe.beschreibung,
+	);
+	if (newBeschreibung) {
+	  stufe.beschreibung = newBeschreibung;
+	  beschreibungCell2.textContent = newBeschreibung;
+	  updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+	}});
+	beschreibungCell3.addEventListener("dblclick", () => {
+	  const newBeschreibung = prompt(
+		"Stufenbeschreibung bearbeiten:",
+		stufe.beschreibung,
+	  );
+	  if (newBeschreibung) {
+		stufe.beschreibung = newBeschreibung;
+		beschreibungCell3.textContent = newBeschreibung;
+		updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+	  }
+	});
+	}
 
-      // Löschen-Button hinzufügen
-      const deleteCell = row.insertCell(2);
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Löschen';
-      deleteButton.classList.add('delete-btn'); // Anwendung des neuen Stils
-      deleteButton.addEventListener('click', (e) => {
-        const confirmation = confirm('Möchten Sie diesen Eintrag wirklich löschen?');
-        if (confirmation) {
-          row.remove();
-          // Erreichte Wettbewerbe Array ebenfalls aktualisieren
-          erreichteWettbewerbe = erreichteWettbewerbe.filter(e => e !== eintrag);
-        }
-        e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
-      });
-      deleteCell.appendChild(deleteButton);
-    });
-  }
 
-  // Funktion zum Hinzufügen eines neuen Wettbewerbs
-  function showAddWettbewerbForm() {
-    const name = prompt("Geben Sie den Namen des neuen Wettbewerbs ein:");
-    if (name) {
-      const newId = wettbewerbeData.length + 1;
+// Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
+function addToErreichteWettbewerbe(row, stufe) {
+	const wettbewerbeTable = document
+		.getElementById("wettbewerbe-table")
+		.getElementsByTagName("tbody")[0];
+	const activeRow = wettbewerbeTable.querySelector(".active-row");
+	const wettbewerbName = activeRow.cells[1].textContent;
 
-      // Stufeninformationen abfragen
-      let stufen = [];
-      for (let i = 1; i <= 3; i++) {
-        const beschreibung = prompt(`Geben Sie die Beschreibung für Stufe ${i} ein:`);
-        stufen.push({ stufe: i, beschreibung: beschreibung });
-      }
+	const erreichteWettbewerbeTable = document
+		.getElementById("erreichte-wettbewerbe-table")
+		.getElementsByTagName("tbody")[0];
+	const newRow = erreichteWettbewerbeTable.insertRow();
+	newRow.insertCell(0).textContent = wettbewerbName;
+	newRow.insertCell(1).textContent = `${stufe.stufe}: ${stufe.beschreibung}`;
 
-      // Den neuen Wettbewerb und die Stufen speichern
-      wettbewerbeData.push({ id: newId, name: name });
-      stufenData[newId] = stufen;
+	// Löschen-Button hinzufügen
+	const deleteCell = newRow.insertCell(2);
+	const deleteButton = document.createElement("button");
+	deleteButton.textContent = "Löschen";
+	deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
+	deleteButton.addEventListener("click", (e) => {
+		const confirmation = confirm(
+			"Möchten Sie diesen Eintrag wirklich löschen?",
+		);
+		if (confirmation) {
+			newRow.remove();
+			updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe nach dem Löschen aktualisieren
+		}
+		e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
+	});
+	deleteCell.appendChild(deleteButton);
+}
 
-      populateWettbewerbeTable();
-    }
-  }
+// Funktion zur dynamischen Aktualisierung der erreichten Wettbewerbe Tabelle
+async function updateErreichteWettbewerbeTable() {
+	const erreichteWettbewerbeTable = document
+		.getElementById("erreichte-wettbewerbe-table")
+		.getElementsByTagName("tbody")[0];
+	erreichteWettbewerbeTable.innerHTML = "";
 
-  // Tabellen befüllen, wenn die Seite geladen wird
-  window.onload = populateWettbewerbeTable;
+	if(window.studentState.studentId === 0){
+		return;
+	}
 
-  // Hole das Checkbox-Element und den Text
-  const toggleSwitch = document.getElementById('toggleSwitch');
-  const sekText = document.getElementById('sekText');
-  
-  // Füge einen Event-Listener hinzu, der reagiert, wenn der Schalter umgelegt wird
-  toggleSwitch.addEventListener('change', function() {
-    if (toggleSwitch.checked) {
-      sekText.textContent = 'SEK II'; // Ändere den Text, wenn der Schalter aktiviert ist
-    } else {
-      sekText.textContent = 'SEK I'; // Setze den Text zurück, wenn der Schalter deaktiviert ist
-    }
-  });
-  const toggleSwitchTable = document.getElementById('toggleSwitchTable');
-  const myTable = document.getElementById('wettbewerbe-table');
-  const mySearch = document.getElementById('wettbewerbsSuche');
+	const erreichteWettbewerbe = await db.select("SELECT additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = 1;");
+	const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(singleCompetition => {
+		return singleCompetition.sek === sek;
+	})
 
-  toggleSwitchTable.addEventListener('change', function() {
-    if (toggleSwitchTable.checked) {
-        myTable.style.display = 'none'; // Verstecke die Tabelle
-        mySearch.style.display = "block";
-    } else {
-      
-      myTable.style.display = 'table'; // Zeige die Tabelle
-      mySearch.style.display = "none";
-    }
-  });
+	for (const eintrag of erreichteWettbewerbeWithCorrectSek) {
+		const row = erreichteWettbewerbeTable.insertRow();
+		row.insertCell(0).textContent = eintrag.competition_name;
+		row.insertCell(1).textContent =
+			`${eintrag.level}: ${eintrag.level_description}`;
+
+		// Löschen-Button hinzufügen
+		const deleteCell = row.insertCell(2);
+		deleteButton.textContent = "Löschen";
+		deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
+		deleteButton.addEventListener("click", (e) => {
+			const confirmation = confirm(
+				"Möchten Sie diesen Eintrag wirklich löschen?",
+			);
+			if (confirmation) {
+				row.remove();
+				// Erreichte Wettbewerbe Array ebenfalls aktualisieren
+				erreichteWettbewerbe = erreichteWettbewerbe.filter(
+					(e) => e !== eintrag,
+				);
+			}
+			e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
+		});
+		deleteCell.appendChild(deleteButton);
+	}
+}
+
+// Funktion zum Hinzufügen eines neuen Wettbewerbs
+function showAddWettbewerbForm() {
+	const name = prompt("Geben Sie den Namen des neuen Wettbewerbs ein:");
+	if (name) {
+		const newId = wettbewerbeData.length + 1;
+
+		// Stufeninformationen abfragen
+		let stufen = [];
+		for (let i = 1; i <= 3; i++) {
+			const beschreibung = prompt(
+				`Geben Sie die Beschreibung für Stufe ${i} ein:`,
+			);
+			stufen.push({ stufe: i, beschreibung: beschreibung });
+		}
+
+		// Den neuen Wettbewerb und die Stufen speichern
+		wettbewerbeData.push({ id: newId, name: name });
+		stufenData[newId] = stufen;
+
+		populateWettbewerbeTable();
+	}
+}
+
+// Füge einen Event-Listener hinzu, der reagiert, wenn der Schalter umgelegt wird
+toggleSwitch.addEventListener("change", () => {
+	if (toggleSwitch.checked) {
+		sekText.textContent = "SEK II";
+		sek = 2;
+	} else {
+		sekText.textContent = "SEK I";
+		sek = 1;
+	}
+	populateWettbewerbeTable();
+});
+const toggleSwitchTable = document.getElementById("toggleSwitchTable");
+const myTable = document.getElementById("wettbewerbe-table");
+const mySearch = document.getElementById("wettbewerbsSuche");
+
+toggleSwitchTable.addEventListener("change", () => {
+	if (toggleSwitchTable.checked) {
+		myTable.style.display = "none"; // Verstecke die Tabelle
+		mySearch.style.display = "block";
+	} else {
+		myTable.style.display = "table"; // Zeige die Tabelle
+		mySearch.style.display = "none";
+	}
+});
+
+init();
+
+document.addEventListener("studentChanged", (e) => {
+	updateErreichteWettbewerbeTable();
+});

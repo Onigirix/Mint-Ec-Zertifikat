@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-
+    <script type="module" src="createSchuelerPopup.js" defer></script>
     <script type="module" src="zusaetzlich.js" defer></script>
   </head>
 
@@ -60,7 +60,7 @@
       <main id="content">
         <h1>Zusätzliche MINT-Aktivitäten</h1>
                   <!-- Rounded switch -->
-  
+
         <form id="mintAktivitaetForm">
           <div id="aktivitaetenContainer">
 
@@ -112,9 +112,9 @@
       <div style="display: flex; gap: 10px">
       <label class="switch">
         <input type="checkbox" id="toggleSwitch">
-        <span class="slider round"></span>
+        <span class="slider round sek_slider"></span>
       </label>
-      <h4 style="padding-top: 10px" id="sekText">SEK I</h4>
+      <h4 style="padding-top: 10px" id="sekText">SEK II</h4>
 
       <label class="switch" style="margin-left: 8%; position: absolute">
         <input type="checkbox" id="toggleSwitchTable">
@@ -122,7 +122,7 @@
       </label>
       <h4 style="padding-top: 10px; margin-left: 11%; position: absolute">Suchleiste</h4>
       </div>
-      
+
       <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
 
       <div class="scrollable-table">

@@ -393,10 +393,10 @@ async fn create_student_additional_mint_activites_table() {
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS student_additional_mint_activities (
+            student_additional_mint_activities_id INTEGER PRIMARY KEY,
             student_id INTEGER,
             additional_mint_activity_id INTEGER,
             level INT,
-            PRIMARY KEY (student_id, additional_mint_activity_id),
             FOREIGN KEY (student_id) REFERENCES students(student_id),
             FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
             );"
