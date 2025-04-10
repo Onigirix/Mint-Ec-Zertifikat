@@ -10,46 +10,10 @@ let sek = 2;
 
 async function init() {
 	toggleSwitch.checked = true;
-
 	populateWettbewerbeTable();
 	updateErreichteWettbewerbeTable();
 }
 
-let wettbewerbeData = [
-	{ id: 1, name: "Mathematik Olympiade" },
-	{ id: 2, name: "Informatik Wettbewerb" },
-	{ id: 3, name: "Chemie Wettbewerb" },
-	{ id: 3, name: "Chemie Wettbewerb" },
-	{ id: 3, name: "Chemie Wettbewerb" },
-];
-
-let stufenData = {
-	1: [
-		{ stufe: 1, beschreibung: "Runde 1" },
-		{ stufe: 2, beschreibung: "Runde 2" },
-		{ stufe: 3, beschreibung: "Finale" },
-	],
-	2: [
-		{ stufe: 1, beschreibung: "Code Challenge 1" },
-		{ stufe: 2, beschreibung: "Code Challenge 2" },
-		{ stufe: 3, beschreibung: "Code Challenge 3" },
-	],
-	3: [
-		{ stufe: 1, beschreibung: "Praktische Übung 1" },
-		{ stufe: 2, beschreibung: "Praktische Übung 2" },
-		{ stufe: 3, beschreibung: "Finale Experiment" },
-	],
-	4: [
-		{ stufe: 1, beschreibung: "Praktische Übung 1" },
-		{ stufe: 2, beschreibung: "Praktische Übung 2" },
-		{ stufe: 3, beschreibung: "Finale Experiment" },
-	],
-	5: [
-		{ stufe: 1, beschreibung: "Praktische Übung 1" },
-		{ stufe: 2, beschreibung: "Praktische Übung 2" },
-		{ stufe: 3, beschreibung: "Finale Experiment" },
-	],
-};
 // Funktion zum Befüllen der Wettbewerbstabelle
 async function populateWettbewerbeTable() {
 	competitionData = await db.select(
@@ -141,17 +105,17 @@ function updateStufenTable(additional_mint_activity_id) {
 	row1.classList.add("clickable");
 	row1.addEventListener("click", () => {
 		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
-		addToErreichteWettbewerbe(row1, 1);
+		addToErreichteWettbewerbe(1, selectedCompetition.level_one);
 	});
 	row2.classList.add("clickable");
 	row2.addEventListener("click", () => {
 		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
-		addToErreichteWettbewerbe(row2, 2);
+		addToErreichteWettbewerbe(2, selectedCompetition.level_two);
 	});
 	row3.classList.add("clickable");
 	row3.addEventListener("click", () => {
 		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
-		addToErreichteWettbewerbe(row3, 3);
+		addToErreichteWettbewerbe(3, selectedCompetition.level_three);
 	});
 
 	beschreibungCell1.addEventListener("dblclick", () => {
@@ -189,33 +153,34 @@ function updateStufenTable(additional_mint_activity_id) {
 
 
 // Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
-function addToErreichteWettbewerbe(row, stufe) {
+async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 	const wettbewerbeTable = document
 		.getElementById("wettbewerbe-table")
 		.getElementsByTagName("tbody")[0];
 	const activeRow = wettbewerbeTable.querySelector(".active-row");
 	const wettbewerbName = activeRow.cells[1].textContent;
+	const wettbewerbId = Number.parseInt(activeRow.cells[0].textContent);
+
+	const db_result = await db.execute(
+		`INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
+		[window.studentState.studentId, wettbewerbId, stufe]
+	);
 
 	const erreichteWettbewerbeTable = document
 		.getElementById("erreichte-wettbewerbe-table")
 		.getElementsByTagName("tbody")[0];
 	const newRow = erreichteWettbewerbeTable.insertRow();
 	newRow.insertCell(0).textContent = wettbewerbName;
-	newRow.insertCell(1).textContent = `${stufe.stufe}: ${stufe.beschreibung}`;
+	newRow.insertCell(1).textContent = `${stufe}: ${stufe_beschreibung}`;
 
 	// Löschen-Button hinzufügen
 	const deleteCell = newRow.insertCell(2);
 	const deleteButton = document.createElement("button");
 	deleteButton.textContent = "Löschen";
 	deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
-	deleteButton.addEventListener("click", (e) => {
-		const confirmation = confirm(
-			"Möchten Sie diesen Eintrag wirklich löschen?",
-		);
-		if (confirmation) {
+	deleteButton.addEventListener("click", async (e) => {
+		const temp = await db.execute("DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ?", [db_result.lastInsertId]);
 			newRow.remove();
-			updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe nach dem Löschen aktualisieren
-		}
 		e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
 	});
 	deleteCell.appendChild(deleteButton);
@@ -232,7 +197,7 @@ async function updateErreichteWettbewerbeTable() {
 		return;
 	}
 
-	const erreichteWettbewerbe = await db.select("SELECT additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = 1;");
+	const erreichteWettbewerbe = await db.select("SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = 1;");
 	const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(singleCompetition => {
 		return singleCompetition.sek === sek;
 	})
@@ -243,22 +208,14 @@ async function updateErreichteWettbewerbeTable() {
 		row.insertCell(1).textContent =
 			`${eintrag.level}: ${eintrag.level_description}`;
 
-		// Löschen-Button hinzufügen
 		const deleteCell = row.insertCell(2);
+		const deleteButton = document.createElement("button");
 		deleteButton.textContent = "Löschen";
-		deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
-		deleteButton.addEventListener("click", (e) => {
-			const confirmation = confirm(
-				"Möchten Sie diesen Eintrag wirklich löschen?",
-			);
-			if (confirmation) {
+		deleteButton.classList.add("delete-btn");
+		deleteButton.addEventListener("click", async (e) => {
+				await db.execute(`DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ${eintrag.combination_id};`)
 				row.remove();
-				// Erreichte Wettbewerbe Array ebenfalls aktualisieren
-				erreichteWettbewerbe = erreichteWettbewerbe.filter(
-					(e) => e !== eintrag,
-				);
-			}
-			e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
+			e.stopPropagation();
 		});
 		deleteCell.appendChild(deleteButton);
 	}
