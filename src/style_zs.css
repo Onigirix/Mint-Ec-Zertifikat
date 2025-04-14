@@ -719,5 +719,32 @@ input:checked + .slider:before {
 	position: absolute;
 	display: none;
 	width: 130%;
-	top: 33%;
+	top: 29%;
+	min-height: 50vh;
+}
+
+#competition-suggestions {
+	width: 20%;
+	margin: 0;
+	padding: 0;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 4px 0 4px 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+#competition-suggestions li {
+	padding: 8px 12px;
+
+	color: black;
+}
+
+#competition-suggestions li:hover {
+	background-color: #f0f0f0;
+}
+
+#competition-search{
+	width: 20%;
 }

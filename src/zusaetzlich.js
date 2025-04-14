@@ -4,8 +4,13 @@ const db = await Database.load("sqlite://resources/db.sqlite");
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
 const sekText = document.getElementById("sekText");
-let competitionData = [{}];
+const toggleSwitchTable = document.getElementById("toggleSwitchTable");
+const myTable = document.getElementById("wettbewerbe-table");
+const mySearch = document.getElementById("wettbewerbsSuche");
+const competitionSearchSuggestions = document.getElementById("competition-suggestions");
+const competitionSearchBox = document.getElementById("competition-search");
 
+let competitionData = [{}];
 let sek = 2;
 
 async function init() {
@@ -68,6 +73,7 @@ async function populateWettbewerbeTable() {
 	if (firstRow) {
 		firstRow.classList.add("active-row");
 		updateStufenTable(Number.parseInt(firstRow.cells[0].textContent));
+		competitionSearchBox.value = firstRow.cells[1].textContent;
 	}
 
 	// Erreichte Wettbewerbe ebenfalls aktualisieren
@@ -181,6 +187,7 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 	deleteButton.addEventListener("click", async (e) => {
 		const temp = await db.execute("DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ?", [db_result.lastInsertId]);
 			newRow.remove();
+			console.log(temp);
 		e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
 	});
 	deleteCell.appendChild(deleteButton);
@@ -193,9 +200,10 @@ async function updateErreichteWettbewerbeTable() {
 		.getElementsByTagName("tbody")[0];
 	erreichteWettbewerbeTable.innerHTML = "";
 
+	if(window.studentState){
 	if(window.studentState.studentId === 0){
 		return;
-	}
+	}}else{return;}
 
 	const erreichteWettbewerbe = await db.select("SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = $1;", [window.studentState.studentId]);
 	const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(singleCompetition => {
@@ -249,15 +257,16 @@ toggleSwitch.addEventListener("change", () => {
 	if (toggleSwitch.checked) {
 		sekText.textContent = "SEK II";
 		sek = 2;
+		competitionSearchBox.value = "";
+		competitionSearchSuggestions.innerHTML = "";
 	} else {
 		sekText.textContent = "SEK I";
 		sek = 1;
+		competitionSearchBox.value = "";
+		competitionSearchSuggestions.innerHTML = "";
 	}
 	populateWettbewerbeTable();
 });
-const toggleSwitchTable = document.getElementById("toggleSwitchTable");
-const myTable = document.getElementById("wettbewerbe-table");
-const mySearch = document.getElementById("wettbewerbsSuche");
 
 toggleSwitchTable.addEventListener("change", () => {
 	if (toggleSwitchTable.checked) {
@@ -274,3 +283,73 @@ init();
 document.addEventListener("studentChanged", (e) => {
 	updateErreichteWettbewerbeTable();
 });
+
+competitionSearchBox.addEventListener("keydown", async (e) => {
+	if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
+		const suggestionResults = await db.select(
+			"SELECT name, additional_mint_activity_id FROM additional_mint_activities WHERE name LIKE $1 AND sek = $2",
+			[`%${competitionSearchBox.value}%`, sek],
+		);
+		competitionSearchSuggestions.innerHTML = "";
+		for (let i = 0; i < suggestionResults.length && i < 3; i++) {
+			const item = document.createElement("li");
+			item.textContent = suggestionResults[i].name;
+			item.dataset.id = suggestionResults[i].additional_mint_activity_id;
+			item.addEventListener("click", () => {
+				competitionSearchBox.value = item.textContent;
+				updateStufenTable(
+					Number.parseInt(item.dataset.id),
+				);
+				competitionSearchSuggestions.style.display = "none";
+			});
+			competitionSearchSuggestions.appendChild(item);
+		}
+		if (competitionSearchSuggestions.childNodes.length === 0) {
+			competitionSearchSuggestions.style.display = "none";
+		} else {
+			competitionSearchSuggestions.style.display = "block";
+		}
+	} else if (e.key === "Enter") {
+		const activeItem = competitionSearchSuggestions.querySelector("li.active");
+		const firstResult = competitionSearchSuggestions.firstElementChild;
+		if (activeItem) {
+			competitionSearchSuggestions.style.display = "none";
+			competitionSearchBox.value = activeItem.textContent;
+
+			updateStufenTable(
+				Number.parseInt(activeItem.dataset.id)
+			);
+		} else {
+			if (firstResult != null) {
+				competitionSearchSuggestions.style.display = "none";
+				competitionSearchBox.value = firstResult.textContent;
+
+				updateStufenTable(
+					Number.parseInt(firstResult.dataset.id)
+				);
+			}
+		}
+	} else if (e.key === "Tab") {
+		e.preventDefault();
+		const items = Array.from(competitionSearchSuggestions.children);
+		if (items.length === 0) return;
+
+		const activeItem = competitionSearchSuggestions.querySelector("li.active");
+		let nextIndex = 0;
+
+		if (activeItem) {
+			const currentIndex = items.indexOf(activeItem);
+			activeItem.classList.remove("active");
+			nextIndex = (currentIndex + 1) % items.length;
+		}
+
+		const nextItem = items[nextIndex];
+		nextItem.classList.add("active");
+
+		competitionSearchBox.value = nextItem.textContent;
+		return;
+	} else {
+		if (competitionSearchBox.value === "" || competitionSearchBox.value === null) {
+			competitionSearchSuggestions.style.display = "none";
+		}
+	}});
