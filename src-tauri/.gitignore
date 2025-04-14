@@ -6,4 +6,7 @@
 # will have schema files for capabilities auto-completion
 /gen/schemas
 
-/pdf-master/target/
+/resources/db.sqlite
+/resources/db.sqlite-shm
+/resources/db.sqlite-wal
+
