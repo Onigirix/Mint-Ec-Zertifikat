@@ -748,3 +748,16 @@ input:checked + .slider:before {
 #competition-search{
 	width: 20%;
 }
+
+table[disabled] {
+	pointer-events: none;
+}
+
+table[disabled] input,
+table[disabled] textarea,
+table[disabled] select,
+table[disabled] tbody {
+	background-color: #ddd;
+	color: #666;
+	cursor: not-allowed;
+}

@@ -24,8 +24,6 @@
           placeholder="Schüler..."
           value />
         <ul id="suggestions" class="suggestions-list">
-          <li>Test</li>
-          <li>Test2</li>
         </ul>
         <button id="create-student" class="blauerButton">
           Schüler erstellen
@@ -90,16 +88,13 @@
                   value />
                   <ul id="competition-suggestions"
                     class="competition-suggestions-list">
-                    <li>Test</li>
-                    <li>Test</li>
-                    <li>Test</li>
                   </ul>
               </div>
 
               <!-- Tabelle 2: Stufen -->
               <div class="table-container scrollable-table">
                 <h2>Erreichte Stufen</h2>
-                <table id="stufen-table">
+                <table id="stufen-table" class="disabled-no-student">
                   <thead>
                     <tr>
                       <th>Stufe</th>
@@ -132,7 +127,7 @@
 
               <div class="scrollable-table">
                 <h2>Erreichte Wettbewerbe</h2>
-                <table id="erreichte-wettbewerbe-table">
+                <table id="erreichte-wettbewerbe-table" class="disabled-no-student">
                   <thead>
                     <tr>
                       <th>Wettbewerb</th>
@@ -154,7 +149,7 @@
       <button class="blauerButton"
         onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
         style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
-      <button class="btn" onclick="showAddWettbewerbForm()"
+      <button class="btn" id="add-competition"
         style="position: absolute; top: 92vh; left: 36vw;">Wettbewerb
         hinzufügen</button>
       <button class="btn"

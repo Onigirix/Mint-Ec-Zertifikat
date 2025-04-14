@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="competition-popup.css" />
+    <script src="competition-popup.js" type="module" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wettbewerb erstellen</title>
+  </head>
+  <body>
+    <div id="competitionPopup">
+      <h2>Wettbewerb erstellen</h2>
+      <form id="competitionForm">
+        <label for="competitionName">Name:</label>
+        <input
+          type="text"
+          id="competitionName"
+          name="competitionName"
+          style="margin-left: 2px; max-width: 97%"
+          required
+        /><br />
+        <label for="firstLevel">Erste Stufe:</label>
+        <input
+          type="text"
+          id="firstLevel"
+          name="firstLevel"
+          style="margin-left: 2px; max-width: 97%"
+          required
+        /><br />
+        <label for="secondLevel">Zweite Stufe:</label>
+        <input
+          type="text"
+          id="secondLevel"
+          name="secondLevel"
+          style="margin-left: 2px; max-width: 97%"
+          required
+        /><br />
+        <label for="thirdLevel">Dritte Stufe:</label>
+        <input
+          style="margin-left: 2px; max-width: 97%"
+          type="text"
+          id="thirdLevel"
+          name="thirdLevel"
+          required
+        /><br />
+
+        <label for="sek-container">Sekundarstufe:</label>
+        <div id="sek-container">
+          <div>
+            <input type="checkbox" id="sek-1" class="sek-checkbox" value="1" />
+            <label for="sek-1">I</label>
+          </div>
+          <div>
+            <input type="checkbox" id="sek-2" class="sek-checkbox" value="2" />
+            <label for="sek-2">II</label>
+          </div>
+        </div>
+
+        <button type="submit" class="blauerButton" id="fertig">Fertig</button>
+        <button type="submit" class="blauerButton" id="save">
+          Speichern und neuen Wettbewerb eingeben
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

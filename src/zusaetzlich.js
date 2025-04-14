@@ -1,5 +1,6 @@
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
+const listen = window.__TAURI__.event.listen;
 
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
@@ -9,6 +10,8 @@ const myTable = document.getElementById("wettbewerbe-table");
 const mySearch = document.getElementById("wettbewerbsSuche");
 const competitionSearchSuggestions = document.getElementById("competition-suggestions");
 const competitionSearchBox = document.getElementById("competition-search");
+const addCompetitionButton = document.getElementById("add-competition");
+
 
 let competitionData = [{}];
 let sek = 2;
@@ -202,8 +205,17 @@ async function updateErreichteWettbewerbeTable() {
 
 	if(window.studentState){
 	if(window.studentState.studentId === 0){
+		const emptyRow = erreichteWettbewerbeTable.insertRow();
+		emptyRow.insertCell(0).textContent = "Kein Schüler ausgewählt."
+		emptyRow.insertCell(1).textContent = "-"
+		emptyRow.insertCell(2).textContent = "-"
 		return;
-	}}else{return;}
+	}}else{
+		const emptyRow = erreichteWettbewerbeTable.insertRow();
+		emptyRow.insertCell(0).textContent = "Schülerdaten werden geladen..."
+		emptyRow.insertCell(1).textContent = "-"
+		emptyRow.insertCell(2).textContent = "-"
+		return;}
 
 	const erreichteWettbewerbe = await db.select("SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = $1;", [window.studentState.studentId]);
 	const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(singleCompetition => {
@@ -231,25 +243,23 @@ async function updateErreichteWettbewerbeTable() {
 
 // Funktion zum Hinzufügen eines neuen Wettbewerbs
 function showAddWettbewerbForm() {
-	const name = prompt("Geben Sie den Namen des neuen Wettbewerbs ein:");
-	if (name) {
-		const newId = wettbewerbeData.length + 1;
+	const { WebviewWindow } = window.__TAURI__.webviewWindow;
+	const { Webview } = window.__TAURI__.webview;
 
-		// Stufeninformationen abfragen
-		let stufen = [];
-		for (let i = 1; i <= 3; i++) {
-			const beschreibung = prompt(
-				`Geben Sie die Beschreibung für Stufe ${i} ein:`,
-			);
-			stufen.push({ stufe: i, beschreibung: beschreibung });
+	const competitionPopupWebview = new WebviewWindow("competitionPopup", {
+		hiddenTitle: true,
+		title: "Neuen Wettbewerb erstellen",
+		height: 550,
+		minimizable: false,
+		url: "competition-popup.html",
+	});
+	competitionPopupWebview.once("tauri://created", () => {});
+	competitionPopupWebview.once("tauri://error", async (e) => {
+		if (e.payload === "a webview with label `competitionPopup` already exists") {
+			const competitionPopupWindow = await Webview.getByLabel("competitionPopup");
+			await competitionPopupWindow.setFocus();
 		}
-
-		// Den neuen Wettbewerb und die Stufen speichern
-		wettbewerbeData.push({ id: newId, name: name });
-		stufenData[newId] = stufen;
-
-		populateWettbewerbeTable();
-	}
+	});
 }
 
 // Füge einen Event-Listener hinzu, der reagiert, wenn der Schalter umgelegt wird
@@ -353,3 +363,7 @@ competitionSearchBox.addEventListener("keydown", async (e) => {
 			competitionSearchSuggestions.style.display = "none";
 		}
 	}});
+
+addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
+
+await listen("student-")
