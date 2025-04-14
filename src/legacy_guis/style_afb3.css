@@ -1,0 +1,246 @@
+/* Allgemeines Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body und Hintergrund */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+/* Container für das Layout */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Menü-Stil */
+.menu {
+  width: 250px;
+  background-color: #121212;
+  padding-top: 50px;
+  position: relative;
+}
+
+
+.menu-item {
+  padding: 15px;
+  text-align: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  display: block;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #aa00ff;
+  color: #121212;
+}
+
+/* Aktives Menü-Item */
+.menu-item.active {
+  background-color: #aa00ff;
+  color: #121212;
+}
+/* Body und Hintergrund */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+/* Container für das Layout */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Menü-Stil */
+.menu {
+  width: 250px;
+  background-color: #121212;
+  padding-top: 50px;
+  position: relative;
+  height: 100%;
+}
+
+.menu-item {
+  padding: 15px;
+  text-align: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #aa00ff;
+  color: #121212;
+}
+
+/* Aktives Menü-Item */
+.menu-item.active {
+  background-color: #aa00ff;
+  color: #121212;
+}
+
+/* Hauptinhalt */
+.main-content {
+  flex-grow: 1;
+  background-color: #222222;
+  padding: 20px;
+  color: #ccc;
+  text-align: center;
+  /* Entfernt das Flexbox-Layout und lässt die Inhalte untereinander anordnen */
+  display: block;
+  background-position: cover;
+}
+
+/* Futuristische Effekte */
+.menu-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: #aa00ff;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.menu-item:hover::before {
+  transform: scaleX(1);
+}
+
+.main-content h1 {
+  font-size: 3rem;
+  color: #aa00ff;
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  color: #aa00ff;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* Stil für die aktive Zeile */
+.active-row {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Stil für auswählbare Zeilen */
+.clickable {
+  cursor: pointer;
+}
+
+/* Flexbox Container für nebeneinander liegende Tabellen */
+.tables-container {
+  display: flex;
+  gap: 20px;
+}
+
+.table-container {
+  flex: 1;
+}
+
+/* Maximale Höhe und Scrollen für Tabellen */
+.scrollable-table {
+  max-height: 300px; /* Max Höhe für scrollbare Tabellen */
+  overflow-y: auto;
+}
+
+/* Stil für den Button */
+.btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+
+.btn:active {
+  background-color: #3e8e41;
+}
+
+/* Schönerer Löschen-Button */
+.delete-btn {
+  background-color: #f44336; /* Roter Hintergrund */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
+}
+
+.delete-btn:active {
+  background-color: #d32f2f;
+}
+
+#wettbewerbe-table {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#erreichte-wettbewerbe-table {
+  max-height: 200px;
+  overflow-y: auto;
+}
+#erreichte-wettbewerbe-table-wrapper {
+  max-height: 200px; /* Maximale Höhe des Containers */
+  overflow-y: auto; /* Scrollen aktivieren, wenn die Höhe überschritten wird */
+}
+.selected-student {
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #121212;
+  justify-content: center;
+  background-color: #aa00ff;
+  width: 100%;
+  border-radius: 10px; /* Abgerundete Ecken */
+  padding: 10px;
+}

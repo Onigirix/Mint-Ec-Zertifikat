@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
-    <script type="module" src="createSchuelerPopup.js" defer></script>
+
     <script type="module" src="zusaetzlich.js" defer></script>
   </head>
 
@@ -22,9 +22,9 @@
           type="text"
           id="student-search"
           placeholder="Schüler..."
-          value />
-        <ul id="suggestions" class="suggestions-list">
-        </ul>
+          value=""
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
         <button id="create-student" class="blauerButton">
           Schüler erstellen
         </button>
@@ -39,14 +39,17 @@
       <div id="navLinks">
         <a href="index.html" id="Startseite">Startseite</a>
         <a href="schuelerbearbeiten.html" id="Schülerliste">Schülerliste</a>
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz">Fachliche
-          Kompetenz </a>
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
+          >Fachliche Kompetenz </a
+        >
         <a
           href="fachwissenschaftliches-arbeiten.html"
-          id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches
-          Arbeiten</a>
-        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche
-          MINT-Aktivitäten</a>
+          id="Fachwissenschaftliches-Arbeiten"
+          >Fachwissenschaftliches Arbeiten</a
+        >
+        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten"
+          >Zusätzliche MINT-Aktivitäten</a
+        >
         <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
       </div>
@@ -56,108 +59,98 @@
     <div id="main">
       <main id="content">
         <h1>Zusätzliche MINT-Aktivitäten</h1>
-        <!-- Rounded switch -->
-
+                  <!-- Rounded switch -->
+  
         <form id="mintAktivitaetForm">
           <div id="aktivitaetenContainer">
 
-            <!-- Tabellen nebeneinander -->
-            <div class="tables-container">
-              <!-- Tabelle 1: Wettbewerbe -->
-              <div class="table-container scrollable-table">
-                <h2>Wettbewerbe</h2>
-                <table id="wettbewerbe-table" class="darken clickable">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+      <!-- Tabellen nebeneinander -->
+      <div class="tables-container">
+        <!-- Tabelle 1: Wettbewerbe -->
+        <div class="table-container scrollable-table">
+          <h2>Wettbewerbe</h2>
+          <table id="wettbewerbe-table" class="darken clickable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
 
-                  </tbody>
-                </table>
-              </div>
-
-              <div id="wettbewerbsSuche">
-                <input
-                  class="search-box"
-                  type="text"
-                  id="competition-search"
-                  placeholder="Wettbewerb..."
-                  value />
-                  <ul id="competition-suggestions"
-                    class="competition-suggestions-list">
-                  </ul>
-              </div>
-
-              <!-- Tabelle 2: Stufen -->
-              <div class="table-container scrollable-table">
-                <h2>Erreichte Stufen</h2>
-                <table id="stufen-table" class="disabled-no-student">
-                  <thead>
-                    <tr>
-                      <th>Stufe</th>
-                      <th>Vorraussetzung</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Dynamische Inhalte werden hier eingefügt -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div style="display: flex; gap: 10px">
-              <label class="switch">
-                <input type="checkbox" id="toggleSwitch">
-                <span class="slider round sek_slider"></span>
-              </label>
-              <h4 style="padding-top: 10px" id="sekText">SEK II</h4>
-
-              <label class="switch"
-                style="margin-left: 8%; position: absolute">
-                <input type="checkbox" id="toggleSwitchTable">
-                <span class="slider round"></span>
-              </label>
-              <h4
-                style="padding-top: 10px; margin-left: 11%; position: absolute">Suchleiste</h4>
-            </div>
-
-              <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
-
-              <div class="scrollable-table">
-                <h2>Erreichte Wettbewerbe</h2>
-                <table id="erreichte-wettbewerbe-table" class="disabled-no-student">
-                  <thead>
-                    <tr>
-                      <th>Wettbewerb</th>
-                      <th>Stufe</th>
-                      <th>Aktion</th> <!-- Spalte für Löschen-Button -->
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Dynamische Inhalte werden hier eingefügt -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
+            </tbody>
+          </table>
         </div>
-      </form>
 
-      <button class="blauerButton"
-        onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
-        style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
-      <button class="btn" id="add-competition"
-        style="position: absolute; top: 92vh; left: 36vw;">Wettbewerb
-        hinzufügen</button>
-      <button class="btn"
-        style="position: absolute; top: 92vh; left: 50vw; background-color: gray;">Zum
-        Ändern: Doppelclick</button>
-      <button class="blauerButton" onclick="window.location.href='export.html';"
-        style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
-    </main>
+        <div id="wettbewerbsSuche" >
+          <input
+            class="search-box"
+            type="text"
+            id="student-search"
+            placeholder="Wettbewerb..."
+            value=""
+          />
+          <ul id="suggestions" class="suggestions-list"></ul>
+        </div>
+
+        <!-- Tabelle 2: Stufen -->
+        <div class="table-container scrollable-table">
+          <h2>Erreichte Stufen</h2>
+          <table id="stufen-table">
+            <thead>
+              <tr>
+                <th>Stufe</th>
+                <th>Vorraussetzung</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamische Inhalte werden hier eingefügt -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px">
+      <label class="switch">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="slider round"></span>
+      </label>
+      <h4 style="padding-top: 10px" id="sekText">SEK I</h4>
+
+      <label class="switch" style="margin-left: 8%; position: absolute">
+        <input type="checkbox" id="toggleSwitchTable">
+        <span class="slider round"></span>
+      </label>
+      <h4 style="padding-top: 10px; margin-left: 11%; position: absolute">Suchleiste</h4>
+      </div>
+      
+      <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
+
+      <div class="scrollable-table">
+      <h2>Erreichte Wettbewerbe</h2>
+      <table id="erreichte-wettbewerbe-table" >
+        <thead>
+          <tr>
+            <th>Wettbewerb</th>
+            <th>Stufe</th>
+            <th>Aktion</th> <!-- Spalte für Löschen-Button -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamische Inhalte werden hier eingefügt -->
+        </tbody>
+      </table>
+    </div>
+    </div>
+
+    </div>
+          </div>
+        </form>
+
+      <button class="blauerButton" onclick="window.location.href='fachwissenschaftliches-arbeiten.html';" style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
+      <button class="btn" onclick="showAddWettbewerbForm()" style="position: absolute; top: 92vh; left: 36vw;">Wettbewerb hinzufügen</button>
+      <button class="btn" style="position: absolute; top: 92vh; left: 50vw; background-color: gray;">Zum Ändern: Doppelclick</button>
+      <button class="blauerButton" onclick="window.location.href='export.html';" style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
+      </main>
 
   </body>
 </html>
