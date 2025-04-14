@@ -74,6 +74,7 @@ header h1 {
 	border: 1px solid #ccc;
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	margin: auto !important;
 }
 
 input[type="text"],
@@ -315,10 +316,6 @@ footer {
 	box-shadow: 0 0.2em 0.4em rgba(0, 0, 0, 0.1);
 }
 
-#schuelerPopup {
-	margin: auto;
-}
-
 /* Responsive Anpassungen */
 @media (max-width: 768px) {
 	header h1 {
@@ -457,16 +454,14 @@ tr:not(.selected):hover {
 	background: white;
 	padding: 10px;
 	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	max-width: 80%; /* max. Breite des Formulars */
-	margin: 10px auto; /* zentriert das Formular */
+	max-width: 80%;
+	margin: 10px auto;
 }
 
 #schuelerForm{
 	background: white;
 	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	margin: 2px auto; /* zentriert das Formular */
+	margin: 2px auto;
 	overflow-x: hidden;
 }
 
@@ -610,7 +605,7 @@ textarea {
 	align-items: center; /* Hält die Labels und Eingabefelder auf gleicher Höhe */
 	gap: 20px; /* Abstand zwischen den Spalten */
   }
-  
+
   .labels {
 	display: flex;
 	flex-direction: column;
