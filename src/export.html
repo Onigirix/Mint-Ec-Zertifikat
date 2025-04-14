@@ -17,6 +17,7 @@
       <button id="openNav" class="openNav">
         <i class="material-icons">menu</i>
       </button>
+      <div></div>
       <h1 class="rightHeading">Mint-EC Zertifikat</h1>
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
@@ -44,21 +45,8 @@
       <main id="content">
         <h1>PDF erstellen</h1>
 
-        <form id="settingsForm">
-
-          <label for="schuleName">Name der Schule: </label>
-          <input type="text" id="schuleName" required />
-
-          <label for="schuleOrt">Ort der Schule</label>
-          <input type="text" id="schuleOrt" required />
-
-          <label for="ausgabepfad">Ausgabepfad</label>
-          <input value="C:/Mint-EC" type="text" id="ausgabepfad" required />
-
-          <button type="submit" class="blauerButton zentriert">PDF
-            generieren</button>
-
-        </form>
+        <button id="generatePdf" class="blauerButton zentriert">PDF
+          generieren</button>
 
         <button class="blauerButton"
           onclick="window.location.href='zusaetzlich.html';"

@@ -3,8 +3,6 @@ use std::array;
 
 const DATABASE: &str = "resources/db.sqlite";
 
-//TODO: Change to fetch_one instead of fetch_all
-
 #[tokio::main]
 pub async fn setup_db() {
     if !Sqlite::database_exists(DATABASE).await.unwrap_or(false) {
@@ -16,7 +14,7 @@ pub async fn setup_db() {
     create_settings_table().await;
     create_students_table().await;
     create_additional_mint_activities_table().await;
-    create_student_additional_mint_activites_table().await;
+    create_student_additional_mint_activities_table().await;
 }
 
 async fn create_settings_table() {
@@ -279,13 +277,6 @@ pub async fn get_all_settings() -> [String; 6] {
         }
     }
 }
-///Returns all six settings
-/// - `0`: Setting A
-/// - `1`: Setting B
-/// - `2`: Setting C
-/// - `3`: Setting D
-/// - `4`: Setting E
-/// - `5`: Setting F
 
 async fn create_students_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
@@ -353,14 +344,13 @@ pub async fn get_student_birthday(student_id: i32) -> String {
 
     let result = sqlx::query("SELECT birthday FROM students WHERE student_id = ?;")
         .bind(student_id)
-        .fetch_all(&db)
+        .fetch_one(&db)
         .await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
-            let school_name: String = row.get(0);
-            school_name
+        Ok(row) => {
+            let birthday: String = row.get(0);
+            birthday
         }
         Err(e) => {
             eprintln!("Error fetching the birthday: {}", e);
@@ -388,15 +378,15 @@ async fn create_additional_mint_activities_table() {
     .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
 }
 
-async fn create_student_additional_mint_activites_table() {
+async fn create_student_additional_mint_activities_table() {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS student_additional_mint_activities (
+            student_additional_mint_activities_id INTEGER PRIMARY KEY,
             student_id INTEGER,
             additional_mint_activity_id INTEGER,
             level INT,
-            PRIMARY KEY (student_id, additional_mint_activity_id),
             FOREIGN KEY (student_id) REFERENCES students(student_id),
             FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
             );"
@@ -425,23 +415,26 @@ pub async fn add_additional_mint_activity_to_student(
     .map_err(|e|eprintln!("Error adding additional MINT activity to student: {}", e));
 }
 
-pub async fn print_fachwissenschaftliches_arbeiten() {
+#[doc = "
+    - first i32: Type of Paper
+    - `0`: Topic of Paper
+    - `1`: Description of Paper
+    - `2`: Level of Competition
+    - second i32: Grade of Paper"]
+pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [String; 3], i32) {
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
-    let result = sqlx::query("SELECT fachwissenschaftliches_arbeiten FROM schüler WHERE id = 1;")
-        .fetch_all(&db)
-        .await;
+    let result =
+        sqlx::query("SELECT type_of_paper, topic_of_paper, description_of_paper, grade_of_paper, level_of_competition FROM students WHERE student_id = ?;")
+            .bind(student_id)
+            .fetch_one(&db).await;
 
     match result {
-        Ok(mut rows) => {
-            let row = rows.pop().unwrap();
-            let fachwissenschaftliches_arbeiten: String = row.get(0);
-            println!(
-                "fachwissenschaftliches_arbeiten: {}",
-                fachwissenschaftliches_arbeiten
-            );
+        Ok(row) => (row.get(0), [row.get(1), row.get(2), row.get(4)], row.get(3)),
+        Err(e) => {
+            eprintln!("Error fetching fachwissenschaftliches_arbeiten: {}", e);
+            (0, array::from_fn(|_i| String::from("Error")), 0)
         }
-        Err(e) => eprintln!("Error fetching fachwissenschaftliches_arbeiten: {}", e),
     }
 }
 
@@ -449,8 +442,28 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
     let db = SqlitePool::connect(DATABASE).await.unwrap();
 
     let result = sqlx::query(
-        "SELECT subject_1, subject_2, subject_3, subject_4, grade_1_1, grade_1_2, grade_1_3, grade_1_4, grade_2_1, grade_2_2, grade_2_3, grade_2_4, grade_3_1, grade_3_2,
-grade_3_3, grade_3_4, grade_4_1, grade_4_2, grade_4_3, grade_4_4 FROM students WHERE student_id = ?;",
+        "SELECT
+            COALESCE(subject_1, '...'),
+            COALESCE(subject_2, '...'),
+            COALESCE(subject_3, '...'),
+            COALESCE(subject_4, '...'),
+            COALESCE(grade_1_1, 0),
+            COALESCE(grade_1_2, 0),
+            COALESCE(grade_1_3, 0),
+            COALESCE(grade_1_4, 0),
+            COALESCE(grade_2_1, 0),
+            COALESCE(grade_2_2, 0),
+            COALESCE(grade_2_3, 0),
+            COALESCE(grade_2_4, 0),
+            COALESCE(grade_3_1, 0),
+            COALESCE(grade_3_2, 0),
+            COALESCE(grade_3_3, 0),
+            COALESCE(grade_3_4, 0),
+            COALESCE(grade_4_1, 0),
+            COALESCE(grade_4_2, 0),
+            COALESCE(grade_4_3, 0),
+            COALESCE(grade_4_4, 0)
+         FROM students WHERE student_id = ?;",
     )
     .bind(student_id)
     .fetch_one(&db)
@@ -459,12 +472,64 @@ grade_3_3, grade_3_4, grade_4_1, grade_4_2, grade_4_3, grade_4_4 FROM students W
     match result {
         Ok(row) => {
             let subjects: [String; 4] = [row.get(0), row.get(1), row.get(2), row.get(3)];
-            let grades: [i32; 16] = array::from_fn(|i| row.get(i + 4));
+            let grades: [i32; 16] = std::array::from_fn(|i| row.get(i + 4));
             Ok((subjects, grades))
         }
         Err(e) => {
-            eprintln!("Error fetching all settings: {}", e);
+            eprintln!("Error fetching grades: {}", e);
             Err(e.to_string())
+        }
+    }
+}
+
+pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)> {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 1;")
+        .bind(student_id)
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(rows) => {
+            let mut competitions = Vec::new();
+            for row in rows {
+                let name: String = row.get(0);
+                let level: i32 = row.get(1);
+                let level_description: String = row.get(2);
+                competitions.push((name, level_description, level));
+            }
+            competitions
+        }
+        Err(e) => {
+            eprintln!("Error fetching sek1 competitions: {}", e);
+            vec![]
+        }
+    }
+}
+
+pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)> {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 2;")
+        .bind(student_id)
+        .fetch_all(&db)
+        .await;
+
+    match result {
+        Ok(rows) => {
+            let mut competitions = Vec::new();
+            for row in rows {
+                let name: String = row.get(0);
+                let level: i32 = row.get(1);
+                let level_description: String = row.get(2);
+                competitions.push((name, level_description, level));
+            }
+            competitions
+        }
+        Err(e) => {
+            eprintln!("Error fetching sek1 competitions: {}", e);
+            vec![]
         }
     }
 }
