@@ -1,3 +1,4 @@
+// Popup.js
 const { getCurrentWindow } = window.__TAURI__.window;
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");

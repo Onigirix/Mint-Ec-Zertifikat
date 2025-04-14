@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo-Seite</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: hidden;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+ 
+    padding: 10px 20px;
+    background: #ccc;
+  }
+  .search-box {
+    border: none;
+    padding: 5px;
+    margin-left: 45%;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    background: #0000001c;
+    display: inline-block;
+    text-align: center;
+  }
+  .content {
+    display: flex;
+    height: 94vh;
+    
+  }
+  .content-left {
+    display: flex;
+    width: 50vw;;
+    flex-direction: column;
+    border: solid black 2px;
+  }
+  
+  .sidebar {
+    flex: 1;
+    
+    background: rgba(93, 153, 51, 0.6);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .main-content {
+    flex: 1;
+    background: rgba(190, 29, 29, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  .footer {
+    flex:1;
+    background: rgba(0, 129, 201, 0.7);
+    padding: 20px;
+    border: solid black 2px;
+  }
+  
+  .schueler {
+      position: absolute;
+      left: 25%;
+      padding: 20px;
+      background: rgba(25, 25, 25, 0.8);
+      width: 50%; /* 60% Breite der Seite */
+      border: 2px solid rgba(0, 0, 0, 0.9);
+    }
+
+    .box-container-row {
+      display: flex;
+      flex-direction: row;
+    }
+    .box-container-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .box {
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 1px solid blue;
+      width: 100% /* 50% Breite der Elterncontainer minus Rand und Padding */;
+      margin-top: 10px;
+      height: 100px;
+    }
+    .boxr {
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 1px solid blue;
+      width: 100%;
+      height: 20px;
+      font-size: medium;
+      font-weight: bold;
+      text-align: center;
+      padding-top:4px;
+    }
+    .box3{
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 3px solid blue;
+      padding: 10px;
+      margin: 5px;
+      width: 100px /* 50% Breite der Elterncontainer minus Rand und Padding */;
+      
+    }
+    .box2 {
+      background-color: rgba(173, 216, 230, 0.689);
+      border: 1px solid blue;
+      padding: 10px;
+      
+      margin-left: 30%;
+      margin-top: 20px;
+      width: 40%; /* 50% Breite der Elterncontainer minus Rand und Padding */
+    }
+
+    .box:nth-child(n+3) {
+      margin-top: 20px; /* Abstand zwischen den unteren Boxen */
+    }
+
+    .button {
+      margin-top: 10px;
+      color: black;
+      padding: 10px 10px;
+      border: none;
+      cursor: pointer;
+      width: 30%;
+      margin-left: 30px;
+      font-weight: bold;
+      border: 1px solid black;
+    }
+    .button2 {
+      margin-top: 10px;
+      color: black;
+      padding: 10px 10px;
+      border: none;
+      cursor: pointer;
+      width: 30%;
+      margin-left: 130px;
+      font-weight: bold;
+      border: 1px solid black;
+    }
+
+    /* Neue Stile für die Schüler-Tabelle */
+    .schueler-tabelle {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 450px;
+    }
+    .schueler-tabelle td, .schueler-tabelle th {
+      border: 1px solid black;
+      
+    }
+    .dunne-spalte {
+      width: 10%;
+    }
+    .circle-with-minus {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; /* Dies sorgt dafür, dass das Element rund ist */
+  background-color: #000; /* Hintergrundfarbe des Kreises */
+  color: #fff; /* Farbe des Minuszeichens */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  margin-left: 12px;
+}
+
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <input class="search-box" type="text" placeholder="Schüler...">
+    <div>
+      <span class="icon" style="position: absolute; left: 57%; top: 13px">+</span>
+      <span class="icon"  style="position: absolute; left: 95%; top: 13px">&#128424;</span> <!-- Das Schloss-Symbol -->
+      <span class="icon"  style="position: absolute; left: 97%; top: 13px">&#9881;</span> <!-- Das Schloss-Symbol -->
+    </div>
+  </div>
+  
+
+<div class="content">
+  <div class="content-left">
+    <div class="footer"></div>
+    <div class="sidebar"></div>
+  </div>
+  
+  <div class="main-content"></div>
+  <div class="schueler">
+    <div class="box-container-col">
+      <div class="box-container-row" style="width: 100%;">
+        <div class="boxr">WissProPräd-Fach</div>
+        <div class="boxr">Jugend Forscht</div>
+        <div class="boxr" style="background-color: rgba(153, 255, 80, 0.5); border: 1px solid black;">Facharbeit</div>
+        <div class="boxr">sonstiges</div>
+      </div>
+      <div class="box" style="width: 740px;margin-left: 15px; background-color: rgba(173, 216, 230, 0.4); border: 2+px black solid; height: 80px">
+        <div class="box-container-row">
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 20px;">Thema der Facharbeit</h4>
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 400px;">Punkte</h4>
+        <h4 style="margin: 0; margin-top: 10px; margin-left: 37px;">Stufe</h4>
+      </div>
+        <div class="box-container-row" style="padding-top: 3px">
+          <div class="box" style="width: 700px; height: 30px; margin-left: 20px; margin-top: -3px;"></div>
+          <div class="box" style="width: 100px; height: 30px; margin-left: 5px; margin-top: -3px;"></div>
+          <div class="box" style="width: 100px; height: 30px; margin-left: 5px; margin-top: -3px; margin-right: 5px;"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    
+  </div>
+</div>
+
+</body>
+</html>

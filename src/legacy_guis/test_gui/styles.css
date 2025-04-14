@@ -14,6 +14,7 @@ body {
   font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
   overflow: hidden;
   user-select: none;
+  
 }
 
 body.dark-mode {
@@ -29,43 +30,23 @@ header {
   background-color: #212225;
   color: #ffffffaa;
   padding: 1em 2em;
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   box-shadow: 0 0.2em 0.4em rgba(0, 0, 0, 0.1);
 }
 
-#student-search {
-  margin: 0 10px 0 0; /* Removed vertical margins */
-  width: 30%;
-  height: 32px; /* Reduced height */
-  font-size: 0.9rem; /* Smaller font size */
-}
-
-#create-student {
-  height: 32px; /* Reduced height to match input */
-  padding: 0 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-#create-student:hover {
-  background-color: #0056b3;
-}
-
-#schülerEingabe {
+header #eingabeName {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1; /* Take available space */
+ 
+  
 }
 
+
 header h1 {
-  font-size: 1.5rem;
+  font-size: 1.5rem;;
 }
 
 #schuelerPopup {
@@ -76,8 +57,7 @@ header h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-input[type="text"],
-input[type="date"] {
+input[type="text"], input[type="date"] {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -93,23 +73,20 @@ input[type="date"] {
   color: white;
   cursor: pointer;
   text-decoration: none;
+  
 }
 
-.blauerButton:hover {
+ .blauerButton:hover {
   background: #0056b3;
 }
+
 
 #main h1 {
   font-size: 2.5rem; /* Schriftgröße */
   color: #ffffff; /* Schriftfarbe */
   text-align: center; /* Zentrierter Text */
   padding: 20px; /* Innenabstand */
-  background-color: rgba(
-    33,
-    34,
-    37,
-    0.8
-  ); /* Hintergrundfarbe mit Transparenz */
+  background-color: rgba(33, 34, 37, 0.8); /* Hintergrundfarbe mit Transparenz */
   border-radius: 8px; /* Abgerundete Ecken */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Schatteneffekt */
   margin: 20px 0; /* Außenabstand (oben und unten) */
@@ -124,43 +101,30 @@ input[type="date"] {
   animation-duration: 1.5s;
 }
 
-.search-box {
-  border: none;
-  padding: 5px;
-  max-width: 250px;
-  height: 32px; /* Fixed height */
-  box-sizing: border-box;
+@keyframes fade {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
 }
 
-@keyframes fade {
-  from {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
 .openNav {
   background: none;
   border: none;
   color: #ffffffaa;
-  font-size: 1.5rem;
+  font-size: 1.5rem; 
   cursor: pointer;
   transition: color 0.3s ease-out;
-  justify-self: start;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  /* display: none; <- Crashes Chrome on hover */
-  -webkit-appearance: none;
-  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 .openNav:hover {
   filter: drop-shadow(0 0 0.75rem rgb(255, 255, 255));
 }
+
+
+
+
+
+
 
 .sidenav {
   height: 100%;
@@ -171,30 +135,16 @@ input::-webkit-inner-spin-button {
   left: 0;
   background-color: #212225;
   overflow-x: hidden;
-  padding-top: 0; /* Changed from 3em to 0 */
+  padding-top: 3em;
   transition: 0.5s;
 }
 
 #closeNav {
-  position: absolute; /* Position absolutely within sidenav */
-  top: 1em; /* Match the vertical position of the open button */
-  left: 1em; /* Match the horizontal position of the open button */
+  padding: 1em; /* Relatives Padding */
   color: #ffffffaa;
   cursor: pointer;
   will-change: filter;
   transition: filter 0.2s ease-out;
-  font-size: 1.5rem; /* Match the font size of the open button */
-  display: flex; /* Use flexbox for better icon alignment */
-  align-items: center;
-  justify-content: center;
-}
-
-#Startseite {
-  margin-top: 100px;
-}
-
-#Startseite:hover {
-  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
 }
 
 #closeNav:hover {
@@ -204,12 +154,17 @@ input::-webkit-inner-spin-button {
 #navLinks a {
   padding: 15px 25px;
   text-decoration: none;
-  font-size: 24px;
+  font-size: 18px;
   color: #ecf0f1;
   display: block;
   transition: 0.3s;
-  white-space: nowrap;
 }
+
+
+
+
+
+
 
 #Fachliche-Kompetenz:hover {
   filter: drop-shadow(0 0 1rem rgb(0, 0, 255));
@@ -231,15 +186,11 @@ input::-webkit-inner-spin-button {
   filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
 }
 
-#Schülerliste:hover {
-  filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
-}
 
 #main {
   padding: 20px;
   padding-bottom: 60px; /* Platz für den Footer */
   width: 100vw;
-  height: 80vh;
 }
 
 .slideshow-container {
@@ -253,15 +204,17 @@ input::-webkit-inner-spin-button {
 .mySlides {
   display: none; /* Standardmäßig ausblenden */
 }
-
+  
 img {
-  height: 80%; /* Höhe automatisch anpassen, um das Seitenverhältnis beizubehalten */
-  /* max-height: 60vh; Maximalhöhe, um sicherzustellen, dass das Bild nicht zu groß wird */
-  width: auto;
-}
+    
+    height: 80%; /* Höhe automatisch anpassen, um das Seitenverhältnis beizubehalten */
+    /* max-height: 60vh; Maximalhöhe, um sicherzustellen, dass das Bild nicht zu groß wird */
+    width: auto;
+    
+  }
 
-.prev,
-.next {
+
+.prev, .next {
   cursor: pointer;
   position: absolute;
   top: 50%;
@@ -280,8 +233,7 @@ img {
   border-radius: 3px 0 0 3px;
 }
 
-.prev:hover,
-.next:hover {
+.prev:hover, .next:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -304,6 +256,7 @@ img {
   text-align: center; /* Text zentrieren */
 }
 
+
 footer {
   background-color: #212225;
   color: #ffffffaa;
@@ -316,6 +269,7 @@ footer {
 }
 
 #schuelerPopup {
+
   margin: auto;
 }
 
@@ -338,12 +292,12 @@ footer {
     font-size: 1.5rem;
   }
 
-  .prev,
-  .next {
+  .prev, .next {
     font-size: 1rem;
     padding: 10px;
   }
 }
+
 
 /* Fachliche Kompetenz */
 /* Tabelle zur Noteneingabe */
@@ -364,8 +318,7 @@ thead {
   font-weight: bold;
 }
 
-th,
-td {
+th, td {
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #dddddd;
@@ -399,10 +352,9 @@ td span {
 }
 
 /* Hover Effekt für die Tabelle */
-tr.hover:hover {
+tr:hover {
   background-color: rgba(33, 34, 37, 0.1);
 }
-
 
 /* Stil für den Gesamtdurchschnittsbereich */
 .gesamt-durchschnitt {
@@ -420,14 +372,15 @@ tr.hover:hover {
 }
 
 .gesamt-durchschnitt span {
-  font-size: 3rem;
-  margin-right: 25px;
+  font-size: 1.6rem;
+  color: #007bff;
 }
 
 .zentriert {
   display: block; /* Button blockieren, um die volle Breite einzunehmen */
   margin: 20px auto; /* Zentriert den Button */
   padding: 10px 15px;
+  
 }
 
 /* Anpassungen für die mobile Ansicht */
@@ -452,19 +405,13 @@ tr.hover:hover {
   }
 }
 
-#facharbeitForm,
-#settingsForm,
-#mintAktivitaetForm {
+#facharbeitForm {
   background: white;
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 80%; /* max. Breite des Formulars */
   margin: 10px auto; /* zentriert das Formular */
-}
-
-#mintAktivitaetForm{
-  height: 65vh;
 }
 
 label {
@@ -478,7 +425,7 @@ textarea,
 select {
   width: 99%;
   padding: 8px;
-  margin: 10px 0 10px;
+  margin: 5px 0 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem; /* Schriftgröße */
@@ -488,7 +435,7 @@ textarea {
   resize: none; /* Verhindert das Resizing des Textbereichs */
 }
 
-#mintAktivitaetForm #settingsForm {
+#mintAktivitaetForm {
   background: white;
   padding: 10px;
   border-radius: 8px;
@@ -501,228 +448,28 @@ textarea {
   margin: 20px 0;
 }
 
-
-
-@font-face {
-  font-family: "Material Icons";
-  font-style: normal;
-  font-weight: 400;
-  src: url("assets/MaterialSymbolsRounded.woff2") format("woff2");
+.aktivitaet {
+  background: #f8f9fa; /* Hellgrau für den Hintergrund */
+  border: 1px solid #ccc; /* Graue Grenze */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
-.material-icons {
-  font-family: "Material Icons";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
+.aktivitaet label {
+  display: block;
+  margin-bottom: 5px;
 }
 
-.avg {
-  font-size: 15px;
-}
-
-.suggestions-list {
-  position: absolute;
-  top: 49px;
-  left: 36.5%;
-  width: 250px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background: white;
+.aktivitaet input, .aktivitaet select {
+  width: calc(100% - 20px); /* Vollständige Breite mit Padding */
+  padding: 10px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px 0 4px 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  display: none;
-}
-
-.suggestions-list li {
-  padding: 8px 12px;
-
-  color: black;
-}
-
-.suggestions-list li:hover {
-  background-color: #f0f0f0;
+  border-radius: 4px;
 }
 
 
 
 
-.main-content h2 {
-  font-size: 2rem;
-  color: #aa00ff;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
 
-th, td {
-  padding: 8px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-th {
-  color: black;
-  background-color: #f2f2f2;
-}
-
-/* Stil für die aktive Zeile */
-.active-row {
-  background-color: #4CAF50;
-  color: white;
-}
-
-/* Stil für auswählbare Zeilen */
-.clickable {
-  cursor: pointer;
-}
-
-/* Flexbox Container für nebeneinander liegende Tabellen */
-.tables-container {
-  display: flex;
-  gap: 20px;
-}
-
-.table-container {
-  flex: 1;
-}
-
-/* Maximale Höhe und Scrollen für Tabellen */
-.scrollable-table {
-  max-height: 220px; /* Max Höhe für scrollbare Tabellen */
-  overflow-y: auto;
-}
-
-/* Stil für den Button */
-.btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #45a049;
-}
-
-.btn:active {
-  background-color: #3e8e41;
-}
-
-/* Schönerer Löschen-Button */
-.delete-btn {
-  background-color: #f44336; /* Roter Hintergrund */
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
-
-.delete-btn:hover {
-  background-color: #e53935;
-}
-
-.delete-btn:active {
-  background-color: #d32f2f;
-}
-
-#wettbewerbe-table{
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-#erreichte-wettbewerbe-table{
-  max-height: 250px;
-  overflow-y: auto;
-}
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 2px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(17px);
-  -ms-transform: translateX(17px);
-  transform: translateX(17px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-#wettbewerbsSuche{
-  position: absolute;
-  display: none;
-  width: 130%;
-  top: 33%;
-}

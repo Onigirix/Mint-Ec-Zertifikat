@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mint Ec</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Menü -->
+      <div class="menu">
+        <a href="index.html" class="menu-item active">Dashboard</a>
+        <a href="schueler_bearbeiten.html" class="menu-item"
+          >Schüler bearbeiten</a
+        >
+        <a href="afb1.html" class="menu-item">Bereich 1</a>
+        <a href="afb2.html" class="menu-item">Bereich 2</a>
+        <a href="afb3.html" class="menu-item">Bereich 3</a>
+        <a href="settings.html" class="menu-item">Einstellungen</a>
+        <div id="selected-student" class="selected-student">
+          
+          <h3 id="student-name">Kein Schüler ausgewählt</h3>
+        </div>
+      </div>
+      
+      <!-- Hauptinhalt -->
+      <div class="main-content">
+        <h1>Willkommen beim Mint-Ec PDF Generator</h1>
+      </div>
+    </div>
+  </body>
+</html>
+<script>
+        async function updatePersonName() {
+
+//id zu name
+
+    document.getElementById("student-name").textContent = "";
+  }
+  window.onload = async function () {
+        updatePersonName();
+      };
+</script>
