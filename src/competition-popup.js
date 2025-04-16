@@ -1,7 +1,7 @@
 const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
 const emit = window.__TAURI__.event.emit;
-
+const { getCurrentWindow } = window.__TAURI__.window;
 const sekCheckboxes = document.querySelectorAll(".sek-checkbox");
 
 document

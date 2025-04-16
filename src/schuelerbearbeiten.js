@@ -2,6 +2,7 @@ const Database = window.__TAURI__.sql;
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
+const { ask } = window.__TAURI__.dialog;
 const db = await Database.load("sqlite://resources/db.sqlite");
 import { select_student } from "./main.js";
 
@@ -19,10 +20,11 @@ async function init() {
 
 document
 	.getElementById("deleteButton")
-	.addEventListener("click", () =>
-		deleteStudent(window.studentState.studentId),
+	.addEventListener("click", async () =>
+		deleteStudent(window.studentState.studentId)
 	);
 document.getElementById("editButton").addEventListener("click", editStudent);
+document.getElementById("deleteYearButton").addEventListener("click", async () => deleteYear(window.studentState.studentId))
 document.getElementById("main").addEventListener("click", (event) => {
 	if (!document.getElementById("content").contains(event.target)) {
 		deselectStudent();
@@ -81,14 +83,17 @@ async function selectStudentInStudentEdit(row, studentId) {
 
 	const deleteButton = document.getElementById("deleteButton");
 	const editButton = document.getElementById("editButton");
+	const deleteYearButton = document.getElementById("deleteYearButton");
 
 	deleteButton.removeAttribute("disabled");
 	editButton.removeAttribute("disabled");
+	deleteYearButton.removeAttribute("disabled");
 }
 
 async function deselectStudent() {
 	document.getElementById("deleteButton").setAttribute("disabled", "true");
 	document.getElementById("editButton").setAttribute("disabled", "true");
+	document.getElementById("deleteYearButton").setAttribute("disabled", "true");
 	for (const r of document.querySelectorAll(".student-row")) {
 		r.classList.remove("selected");
 	}
@@ -124,7 +129,36 @@ async function deleteStudent(studentId) {
 		[studentId],
 	);
 	await db.execute("DELETE FROM students WHERE student_id = $1", [studentId]);
+	deselectStudent();
 	init();
+}
+
+async function deleteYear(student_id) {
+	if (!student_id) return;
+
+	const student = await db.select(
+		"SELECT graduation_year FROM students WHERE student_id = $1",
+		[student_id],
+	);
+	if (!student || student.length === 0) return;
+
+	const graduationYear = student[0].graduation_year;
+
+	const confirmed = await ask(
+		`Möchten Sie wirklich alle Schüler des Jahrgangs ${graduationYear} löschen?`,
+		{ title: "Jahrgang löschen bestätigen", kind: "warning" },
+	);
+
+	if (confirmed) {
+		const studentsToDelete = await db.select(
+			"SELECT student_id FROM students WHERE graduation_year = $1",
+			[graduationYear],
+		);
+		const studentIdsToDelete = studentsToDelete.map((s) => s.student_id);
+		for (const studentIdToDelete of studentIdsToDelete){
+			deleteStudent(studentIdToDelete);
+		}
+	}
 }
 
 init();

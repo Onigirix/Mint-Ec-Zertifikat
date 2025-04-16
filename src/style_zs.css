@@ -572,18 +572,15 @@ th {
 	background-color: #f2f2f2;
 }
 
-/* Stil für die aktive Zeile */
 .active-row {
 	background-color: #4caf50;
 	color: white;
 }
 
-/* Stil für auswählbare Zeilen */
 .clickable {
 	cursor: pointer;
 }
 
-/* Flexbox Container für nebeneinander liegende Tabellen */
 .tables-container {
 	display: flex;
 	gap: 20px;
@@ -593,13 +590,11 @@ th {
 	flex: 1;
 }
 
-/* Maximale Höhe und Scrollen für Tabellen */
 .scrollable-table {
-	max-height: 220px; /* Max Höhe für scrollbare Tabellen */
+	max-height: 220px;
 	overflow-y: auto;
 }
 
-/* Stil für den Button */
 .btn {
 	background-color: #4caf50;
 	color: white;
@@ -619,15 +614,14 @@ th {
 	background-color: #3e8e41;
 }
 
-/* Schönerer Löschen-Button */
 .delete-btn {
-	background-color: #f44336; /* Roter Hintergrund */
+	background-color: #f44336;
 	color: white;
 	border: none;
-	padding: 5px 10px;
+	padding: 10px 20px;
 	border-radius: 5px;
 	cursor: pointer;
-	font-size: 14px;
+	font-size: 16px;
 	transition: background-color 0.3s ease;
 }
 

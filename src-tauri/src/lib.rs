@@ -20,6 +20,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(prevent_default())
         .invoke_handler(tauri::generate_handler![
             pdf::generate_pdf,

@@ -116,6 +116,16 @@ td {
 	cursor: pointer;
 	transition: background-color 0.3s;
 }
+#deleteYearButton {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	background-color: #4caf50;
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
 
 .button-container {
 	width: 100%;
@@ -131,6 +141,12 @@ td {
 }
 
 #deleteButton[disabled] {
+	background-color: #ccc !important;
+	color: #666 !important;
+	cursor: not-allowed !important;
+}
+
+#deleteYearButton[disabled] {
 	background-color: #ccc !important;
 	color: #666 !important;
 	cursor: not-allowed !important;
