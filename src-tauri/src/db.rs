@@ -30,7 +30,8 @@ async fn create_settings_table() {
             school_functionary_2 TEXT DEFAULT 'Erika Musterfrau',
             school_functionary_1_position TEXT DEFAULT 'MINT-Koordinator',
             school_functionary_2_position TEXT DEFAULT 'Schulleiter',
-            default_file_path TEXT DEFAULT '/'
+            default_file_path TEXT DEFAULT '/',
+            competition_search_box INTEGER DEFAULT 0
         );",
     )
     .execute(&db)

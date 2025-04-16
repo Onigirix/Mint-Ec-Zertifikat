@@ -23,7 +23,7 @@ document
         ]
       );
     }
-    await emit("competition-added", {});
+    await emit("competitions-changed", {});
     if (e.submitter === document.getElementById("fertig")) {
       const currentWindow = getCurrentWindow();
       currentWindow.close();

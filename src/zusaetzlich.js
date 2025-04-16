@@ -20,9 +20,14 @@ async function init() {
 	toggleSwitch.checked = true;
 	populateWettbewerbeTable();
 	updateErreichteWettbewerbeTable();
+	const [competitionSearchBoxValue] = await db.select("SELECT competition_search_box FROM settings WHERE id = 1");
+	if (competitionSearchBoxValue.competition_search_box == 1) {
+		toggleSwitchTable.checked = true;
+		myTable.style.display = "none";
+		mySearch.style.display = "block";
+	}
 }
 
-// Funktion zum Befüllen der Wettbewerbstabelle
 async function populateWettbewerbeTable() {
 	competitionData = await db.select(
 		"SELECT additional_mint_activity_id, name, level_one, level_two, level_three FROM additional_mint_activities WHERE sek = $1",
@@ -32,7 +37,7 @@ async function populateWettbewerbeTable() {
 	const wettbewerbeTable = document
 		.getElementById("wettbewerbe-table")
 		.getElementsByTagName("tbody")[0];
-	wettbewerbeTable.innerHTML = ""; // Tabelle zurücksetzen
+	wettbewerbeTable.innerHTML = "";
 
 	if(competitionData.length === 0){const row = wettbewerbeTable.insertRow();
 		row.insertCell(0).textContent = "-";
@@ -51,44 +56,40 @@ async function populateWettbewerbeTable() {
 				if (newName) {
 					wettbewerb.name = newName;
 					nameCell.textContent = newName;
-					updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+					updateErreichteWettbewerbeTable();
 				}
 			}
 		});
 
 		row.addEventListener("click", () => {
-			// Alle Zeilen zurücksetzen
 			const rows = wettbewerbeTable.getElementsByTagName("tr");
 			for (const r of rows) {
 				r.classList.remove("active-row");
 			}
 
-			// Die angeklickte Zeile hervorheben
 			row.classList.add("active-row");
 
-			// Tabelle 2 basierend auf dem ausgewählten Wettbewerb anpassen
 			updateStufenTable(wettbewerb.additional_mint_activity_id);
 		});
 	}
 
-	// Das erste Element automatisch auswählen
 	const firstRow = wettbewerbeTable.querySelector("tr");
 	if (firstRow) {
 		firstRow.classList.add("active-row");
 		updateStufenTable(Number.parseInt(firstRow.cells[0].textContent));
-		competitionSearchBox.value = firstRow.cells[1].textContent;
+    if (firstRow.cells[1].textContent === "Noch kein Wettbewerb vorhanden"){
+    competitionSearchBox.value = "";}else{
+		competitionSearchBox.value = firstRow.cells[1].textContent;}
 	}
 
-	// Erreichte Wettbewerbe ebenfalls aktualisieren
 	updateErreichteWettbewerbeTable();
 }
 
-// Funktion zum Befüllen der Stufentabelle
 function updateStufenTable(additional_mint_activity_id) {
 	const stufenTable = document
 		.getElementById("stufen-table")
 		.getElementsByTagName("tbody")[0];
-	stufenTable.innerHTML = ""; // Zuerst alle Zeilen löschen
+	stufenTable.innerHTML = "";
 
 	const selectedCompetitionArray = competitionData.filter(competition => competition.additional_mint_activity_id === additional_mint_activity_id);
 	const selectedCompetition = selectedCompetitionArray[0];
@@ -113,17 +114,14 @@ function updateStufenTable(additional_mint_activity_id) {
 
 	row1.classList.add("clickable");
 	row1.addEventListener("click", () => {
-		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
 		addToErreichteWettbewerbe(1, selectedCompetition.level_one);
 	});
 	row2.classList.add("clickable");
 	row2.addEventListener("click", () => {
-		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
 		addToErreichteWettbewerbe(2, selectedCompetition.level_two);
 	});
 	row3.classList.add("clickable");
 	row3.addEventListener("click", () => {
-		// Den Wettbewerb und die Stufe zu Tabelle 3 hinzufügen
 		addToErreichteWettbewerbe(3, selectedCompetition.level_three);
 	});
 
@@ -135,7 +133,7 @@ function updateStufenTable(additional_mint_activity_id) {
 		if (newBeschreibung) {
 			stufe.beschreibung = newBeschreibung;
 			beschreibungCell1.textContent = newBeschreibung;
-			updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+			updateErreichteWettbewerbeTable();
 		}});
   beschreibungCell2.addEventListener("dblclick", () => {
 	const newBeschreibung = prompt(
@@ -145,7 +143,7 @@ function updateStufenTable(additional_mint_activity_id) {
 	if (newBeschreibung) {
 	  stufe.beschreibung = newBeschreibung;
 	  beschreibungCell2.textContent = newBeschreibung;
-	  updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+	  updateErreichteWettbewerbeTable();
 	}});
 	beschreibungCell3.addEventListener("dblclick", () => {
 	  const newBeschreibung = prompt(
@@ -155,13 +153,11 @@ function updateStufenTable(additional_mint_activity_id) {
 	  if (newBeschreibung) {
 		stufe.beschreibung = newBeschreibung;
 		beschreibungCell3.textContent = newBeschreibung;
-		updateErreichteWettbewerbeTable(); // Erreichte Wettbewerbe auch aktualisieren
+		updateErreichteWettbewerbeTable();
 	  }
 	});
 	}
 
-
-// Funktion zum Hinzufügen des Wettbewerbs und der Stufen zu Tabelle 3
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 	const wettbewerbeTable = document
 		.getElementById("wettbewerbe-table")
@@ -191,12 +187,11 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 		const temp = await db.execute("DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ?", [db_result.lastInsertId]);
 			newRow.remove();
 			console.log(temp);
-		e.stopPropagation(); // Verhindert das Auslösen des Zeilenklicks
+		e.stopPropagation();
 	});
 	deleteCell.appendChild(deleteButton);
 }
 
-// Funktion zur dynamischen Aktualisierung der erreichten Wettbewerbe Tabelle
 async function updateErreichteWettbewerbeTable() {
 	const erreichteWettbewerbeTable = document
 		.getElementById("erreichte-wettbewerbe-table")
@@ -241,7 +236,6 @@ async function updateErreichteWettbewerbeTable() {
 	}
 }
 
-// Funktion zum Hinzufügen eines neuen Wettbewerbs
 function showAddWettbewerbForm() {
 	const { WebviewWindow } = window.__TAURI__.webviewWindow;
 	const { Webview } = window.__TAURI__.webview;
@@ -262,7 +256,6 @@ function showAddWettbewerbForm() {
 	});
 }
 
-// Füge einen Event-Listener hinzu, der reagiert, wenn der Schalter umgelegt wird
 toggleSwitch.addEventListener("change", () => {
 	if (toggleSwitch.checked) {
 		sekText.textContent = "SEK II";
@@ -278,13 +271,15 @@ toggleSwitch.addEventListener("change", () => {
 	populateWettbewerbeTable();
 });
 
-toggleSwitchTable.addEventListener("change", () => {
+toggleSwitchTable.addEventListener("change", async () => {
 	if (toggleSwitchTable.checked) {
-		myTable.style.display = "none"; // Verstecke die Tabelle
+		myTable.style.display = "none";
 		mySearch.style.display = "block";
+		await db.execute("UPDATE settings SET competition_search_box = 1 WHERE id = 1;");
 	} else {
-		myTable.style.display = "table"; // Zeige die Tabelle
+		myTable.style.display = "table";
 		mySearch.style.display = "none";
+		await db.execute("UPDATE settings SET competition_search_box = 0 WHERE id = 1;");
 	}
 });
 
@@ -366,4 +361,4 @@ competitionSearchBox.addEventListener("keydown", async (e) => {
 
 addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
 
-await listen("student-")
+await listen("competitions-changed", (event) => populateWettbewerbeTable());
