@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="material-icons.css" />
+    <link rel="stylesheet" href="style_ex.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint-EC</title>
     <script type="module" src="main.js" defer></script>
@@ -11,13 +11,21 @@
   </head>
 
   <body>
-
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
         <i class="material-icons">menu</i>
       </button>
-      <div></div>
+      <div id="schülerEingabe">
+        <input
+          class="search-box"
+          type="text"
+          id="student-search"
+          placeholder="Schüler..."
+          value
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
+      </div>
       <h1 class="rightHeading">Mint-EC Zertifikat</h1>
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
@@ -27,13 +35,17 @@
       <a id="closeNav"><i class="material-icons">close</i></a>
       <div id="navLinks">
         <a href="index.html" id="Startseite">Startseite</a>
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz">Fachliche
-          Kompetenz</a>
-        <a href="fachwissenschaftliches-arbeiten.html"
-          id="Fachwissenschaftliches-Arbeiten">Fachwissenschaftliches
-          Arbeiten</a>
-        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten">Zusätzliche
-          MINT-Aktivitäten</a>
+        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
+          >Fachliche Kompetenz</a
+        >
+        <a
+          href="fachwissenschaftliches-arbeiten.html"
+          id="Fachwissenschaftliches-Arbeiten"
+          >Fachwissenschaftliches Arbeiten</a
+        >
+        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten"
+          >Zusätzliche MINT-Aktivitäten</a
+        >
         <a href="export.html" id="export">Exportieren</a>
         <a href="settings.html" id="settings">Einstellungen</a>
       </div>
@@ -41,19 +53,31 @@
 
     <!--Main Content-->
     <div id="main">
-
       <main id="content">
         <h1>PDF erstellen</h1>
 
-        <button id="generatePdf" class="blauerButton zentriert">PDF
-          generieren</button>
+        <button
+          id="generatePdf"
+          class="blauerButton zentriert disabled-no-student"
+        >
+          PDF generieren
+        </button>
 
-        <button class="blauerButton"
+        In späteren Versionen, wird es hier die Möglichkeit geben mehrere PDFs
+        gleichzeitig zu generieren, indem man ein Liste hat und Jahrgänge oder
+        einzelne Schüler zu dieser Liste hinzufügen bzw. entfernen kann.
+        Zusätzlich kann man dann auch auswählen ob man von dieser Liste nur alle
+        Zertifikate die mindestens Stufe 1, 2 bzw. 3 erreicht haben als PDF
+        speichern möchte.
+
+        <button
+          class="blauerButton"
           onclick="window.location.href='zusaetzlich.html';"
-          style="position: absolute; top: 70vh; left: 12vw;">Zurück</button>
-
+          style="position: absolute; top: 70vh; left: 12vw"
+        >
+          Zurück
+        </button>
       </main>
     </div>
-
   </body>
 </html>
