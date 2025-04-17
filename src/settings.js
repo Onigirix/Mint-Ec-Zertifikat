@@ -169,4 +169,96 @@ selectFolderButton.addEventListener("click", async () => {
 	} catch (error) {}
 });
 
+schoolNameField.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_name = $1 WHERE id = 1",
+		[schoolNameField.value],
+	  );
+	  schoolNameField.style.border = "1px solid rgb(204, 204, 204)";
+	  schoolNameField.style.backgroundColor = "white";
+	},
+	false,
+  );
+
+  schoolLocationField.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_location = $1 WHERE id = 1",
+		[schoolLocationField.value],
+	  );
+	  schoolLocationField.style.border = "1px solid rgb(204, 204, 204)";
+	  schoolLocationField.style.backgroundColor = "white";
+	},
+	false,
+  );
+
+  outputPathField.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET default_file_path = $1 WHERE id = 1",
+		[outputPathField.value],
+	  );
+	  outputPathField.style.border = "1px solid rgb(204, 204, 204)";
+	  outputPathField.style.backgroundColor = "white";
+	},
+  );
+
+  schoolFunctionary1Field.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
+		[schoolFunctionary1Field.value],
+	  );
+	  schoolFunctionary1Field.style.border = "1px solid rgb(204, 204, 204)";
+	  schoolFunctionary1Field.style.backgroundColor = "white";
+	},
+	false,
+  );
+
+  schoolFunctionary2Field.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
+		[schoolFunctionary2Field.value],
+	  );
+	  schoolFunctionary2Field.style.border = "1px solid rgb(204, 204, 204)";
+	  schoolFunctionary2Field.style.backgroundColor = "white";
+	},
+	false,
+  );
+
+  schoolFunctionary1PositionField.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
+		[schoolFunctionary1PositionField.value],
+	  );
+	  schoolFunctionary1PositionField.style.border =
+		"1px solid rgb(204, 204, 204)";
+	  schoolFunctionary1PositionField.style.backgroundColor = "white";
+	},
+	false,
+  );
+
+  schoolFunctionary2PositionField.addEventListener(
+	"blur",
+	async () => {
+	  const res1 = await db.execute(
+		"UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
+		[schoolFunctionary2PositionField.value],
+	  );
+	  schoolFunctionary2PositionField.style.border =
+		"1px solid rgb(204, 204, 204)";
+	  schoolFunctionary2PositionField.style.backgroundColor = "white";
+	},
+	false,
+  );
+
 init();

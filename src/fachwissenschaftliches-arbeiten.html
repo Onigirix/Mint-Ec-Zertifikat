@@ -67,7 +67,7 @@
         <form id="facharbeitForm" class="darken">
           <label for="arbeitTyp">Typ der Arbeit:</label>
           <select id="arbeitTyp" required class="disabled-no-student">
-            <option value="0" disabled selected>Bitte auswählen</option>
+            <option value="0" disabled selected>Bitte wählen</option>
             <option value="1">Facharbeit</option>
             <option value="2">wissenschaftspropädeutisches Fach</option>
             <option value="3">besondere Lernleistung</option>
@@ -76,25 +76,48 @@
           </select>
 
           <label for="thema">Thema:</label>
-          <input type="text" id="thema" required class="disabled-no-student"/>
+          <input type="text" id="thema" required class="disabled-no-student" />
 
           <label for="beschreibung">Beschreibung:</label>
-          <textarea id="beschreibung" rows="4" class="disabled-no-student"></textarea>
+          <textarea
+            id="beschreibung"
+            rows="4"
+            class="disabled-no-student"
+          ></textarea>
 
           <label for="level" id="note_label">Note:</label>
-          <input type="number" id="level" min="1" max="15" step="1" class="disabled-no-student"/>
-
+          <input
+            type="number"
+            id="level"
+            min="1"
+            max="15"
+            step="1"
+            class="disabled-no-student"
+          />
         </form>
 
-        <button class="blauerButton" onclick="window.location.href='fachliche-kompetenz.html';" style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
-        <button form="facharbeitForm" type="submit" class="btn zentriert" id="submitBtn submitFachwissenschaftlichesArbeiten">
+        <button
+          class="blauerButton"
+          onclick="window.location.href='fachliche-kompetenz.html';"
+          style="position: absolute; top: 92vh; left: 12vw"
+        >
+          Zurück
+        </button>
+        <button
+          form="facharbeitForm"
+          type="submit"
+          class="btn zentriert"
+          id="submitBtn submitFachwissenschaftlichesArbeiten"
+        >
           Speichern
         </button>
-          <label>Stufe:</label>
-          <span id="gesamtDurchschnitt">- </span>
-        <button class="blauerButton" onclick="window.location.href='zusaetzlich.html';" style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
-
-
+        <button
+          class="blauerButton"
+          onclick="window.location.href='zusaetzlich.html';"
+          style="position: absolute; top: 92vh; left: 85vw"
+        >
+          Weiter
+        </button>
       </main>
     </div>
   </body>

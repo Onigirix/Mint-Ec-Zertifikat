@@ -1,0 +1,22 @@
+.folder-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+
+#outputPath{
+  flex: 1;
+}
+
+#folderSelectButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.folder-input input, .folder-input button {
+  margin: 0;
+  flex-wrap: nowrap;
+}

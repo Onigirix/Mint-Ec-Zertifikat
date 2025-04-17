@@ -1,6 +1,10 @@
 const Database = window.__TAURI__.sql;
-const db = await Database.load("sqlite://resources/db.sqlite");
+const { WebviewWindow } = window.__TAURI__.webviewWindow;
+const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
+const {ask} = window.__TAURI__.dialog;
+
+const db = await Database.load("sqlite://resources/db.sqlite");
 
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
@@ -8,14 +12,15 @@ const sekText = document.getElementById("sekText");
 const toggleSwitchTable = document.getElementById("toggleSwitchTable");
 const myTable = document.getElementById("wettbewerbe-table");
 const mySearch = document.getElementById("wettbewerbsSuche");
-const competitionSearchSuggestions = document.getElementById(
-  "competition-suggestions"
-);
+const competitionSearchSuggestions = document.getElementById("competition-suggestions");
 const competitionSearchBox = document.getElementById("competition-search");
 const addCompetitionButton = document.getElementById("add-competition");
+const editCompetitionButton = document.getElementById("edit-competition");
+const deleteCompetitionButton = document.getElementById("delete-competition")
 const mainContent = document.querySelector("#main");
-let selectedCompetitionName = "";
 
+let selectedCompetitionName = "";
+let selectedCompetitionId = 0;
 let competitionData = [{}];
 let sek = 2;
 
@@ -84,6 +89,7 @@ async function populateWettbewerbeTable() {
 }
 
 function updateStufenTable(additional_mint_activity_id) {
+  selectedCompetitionId = additional_mint_activity_id;
   const stufenTable = document
     .getElementById("stufen-table")
     .getElementsByTagName("tbody")[0];
@@ -231,9 +237,6 @@ async function updateErreichteWettbewerbeTable() {
 }
 
 function showAddWettbewerbForm() {
-  const { WebviewWindow } = window.__TAURI__.webviewWindow;
-  const { Webview } = window.__TAURI__.webview;
-
   const competitionPopupWebview = new WebviewWindow("competitionPopup", {
     hiddenTitle: true,
     title: "Neuen Wettbewerb erstellen",
@@ -254,15 +257,42 @@ function showAddWettbewerbForm() {
   });
 }
 
+async function showEditWettbewerbForm(){
+  const editCompetitionPopupWebview = new WebviewWindow("editCompetitionPopup", {
+    hiddenTitle: true,
+    title: `${selectedCompetitionName} in der SEK ${sek} bearbeiten`,
+    height: 470,
+    minimizable: false,
+    url: `edit-competition-popup.html?id=${selectedCompetitionId}`,
+  });
+  editCompetitionPopupWebview.once("tauri://created", () => {});
+  editCompetitionPopupWebview.once("tauri://error", async (e) => {
+    if (
+      e.payload === "a webview with label `editCompetitionPopup` already exists"
+    ) {
+      const editCompetitionPopupWindow = await Webview.getByLabel(
+        "editCompetitionPopup"
+      );
+      await editCompetitionPopupWindow.setFocus();
+    }
+  });
+}
+
 toggleSwitch.addEventListener("change", () => {
   if (toggleSwitch.checked) {
     sekText.textContent = "SEK II";
     sek = 2;
+    selectedCompetitionId = 0;
+    selectedCompetitionName = "";
+    updateStufenTable(0);
     competitionSearchBox.value = "";
     competitionSearchSuggestions.innerHTML = "";
   } else {
     sekText.textContent = "SEK I";
     sek = 1;
+    selectedCompetitionId = 0;
+    selectedCompetitionName = "";
+    updateStufenTable(0);
     competitionSearchBox.value = "";
     competitionSearchSuggestions.innerHTML = "";
   }
@@ -285,7 +315,7 @@ toggleSwitchTable.addEventListener("change", async () => {
   }
 });
 
-init();
+await init();
 
 document.addEventListener("studentChanged", (e) => {
   updateErreichteWettbewerbeTable();
@@ -383,7 +413,26 @@ mainContent.addEventListener("click", () => {
   }
 });
 
+async function deleteCompetition(){
+  const selectedCompetitionIdLocal = selectedCompetitionId;
+  const selectedCompetitionNameLocal = selectedCompetitionName; //Save the state of the variables when the dialog is spawned so the possibility of the competition being changed while the dialog is open, which would otherwise lead to the deleted competition being a different one, than the one displayed in the dialog.
+  const first_confirm = await ask(`Möchten sie den Wettbewerb "${selectedCompetitionNameLocal}" wirklich unwiederruflich löchen? \nDies löscht auch alle Teilnahmen an dem Wettbewerb.`, { title: "Mint-EC", kind: "warning" })
+  if (first_confirm){
+    await db.execute("DELETE FROM student_additional_mint_activities WHERE additional_mint_activity_id = $1", [selectedCompetitionIdLocal]);
+    await db.execute("DELETE FROM additional_mint_activities WHERE additional_mint_activity_id = $1", [selectedCompetitionIdLocal])
+    selectedCompetitionId = 0;
+    selectedCompetitionName = "";
+    updateStufenTable(0);
+    competitionSearchBox.value = "";
+    competitionSearchSuggestions.innerHTML = "";
+    populateWettbewerbeTable();
+    updateErreichteWettbewerbeTable();
+  }
+}
+
 addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
+editCompetitionButton.addEventListener("click", async (e) => await showEditWettbewerbForm()) //TODO: Figure out if async is helpful
+deleteCompetitionButton.addEventListener("click", async (e) => await deleteCompetition())
 
 await listen("competitions-changed", (event) => populateWettbewerbeTable());
 

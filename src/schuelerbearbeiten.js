@@ -146,7 +146,7 @@ async function deleteYear(student_id) {
 
 	const confirmed = await ask(
 		`Möchten Sie wirklich alle Schüler des Jahrgangs ${graduationYear} löschen?`,
-		{ title: "Jahrgang löschen bestätigen", kind: "warning" },
+		{ title: "Mint-EC", kind: "warning" },
 	);
 
 	if (confirmed) {

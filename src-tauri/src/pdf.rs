@@ -56,9 +56,9 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             x if x < 1.0 => String::from(
                 "Die Durchschnittsnote liegt unter 1.0, bitte pr\u{00fc}fen sie Ihre Eingabe.",
             ),
-            x if x < 1.5 => String::from("Mit Erfolg"),
-            x if x < 2.5 => String::from("Mit besonderem Erfolg"),
-            _ => String::from("Mit Auszeichnung"),
+            x if x < 1.5 => String::from("mit Erfolg"),
+            x if x < 2.5 => String::from("mit besonderem Erfolg"),
+            _ => String::from("mit Auszeichnung"),
         };
 
         let results = vec![
@@ -203,9 +203,9 @@ async fn fachwissenschaftliches_arbeiten_text(
             String::from("Die Notenpunkte liegen unter 9, bitte prüfen sie Ihre Eingabe."),
             0,
         ),
-        x if x < 11 => (result_string + "\nDies Entspricht der Stufe 1", 1),
-        x if x < 13 => (result_string + "\nDies Entspricht der Stufe 2", 2),
-        _ => (result_string + "\nDies Entspricht der Stufe 3", 3),
+        x if x < 11 => (result_string, 1),
+        x if x < 13 => (result_string, 2),
+        _ => (result_string, 3),
     };
 }
 
