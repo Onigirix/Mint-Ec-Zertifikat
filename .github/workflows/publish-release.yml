@@ -1,4 +1,4 @@
-name: 'add-binaries-to-release'
+name: 'publish-release'
 
 on:
   push:
