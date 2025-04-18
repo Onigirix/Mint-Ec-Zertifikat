@@ -43,6 +43,10 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      - name: Add Cargo to PATH
+        if: matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-22.04'
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
       - name: Install Tauri CLI
         run: cargo install tauri-cli --locked
 
