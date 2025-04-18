@@ -72,6 +72,6 @@ jobs:
       - name: "Upload to Release"
         run: |
           cd ${{github.workspace}}
-          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/*"  --prerelease
+          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/*"
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
