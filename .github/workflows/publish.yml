@@ -43,6 +43,9 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --locked
+
       - name: Build Tauri app
         run: cargo tauri build ${{ matrix.args }}
 
