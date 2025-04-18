@@ -30,25 +30,26 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -y
+          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
 
       - name: Install prerequisites (Windows)
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
-          $progressPreference = 'silentlyContinue'
-          Write-Host "Installing WinGet PowerShell module from PSGallery..."
-          Install-PackageProvider -Name NuGet -Force | Out-Null
-          Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
-          Write-Host "Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet..."
-          Repair-WinGetPackageManager
-          Write-Host "Done."
+          $URL = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
+          $URL = (Invoke-WebRequest -Uri $URL).Content | ConvertFrom-Json |
+          Select-Object -ExpandProperty "assets" |
+          Where-Object "browser_download_url" -Match '.msixbundle' |
+          Select-Object -ExpandProperty "browser_download_url"
+          Invoke-WebRequest -Uri $URL -OutFile "Setup.msix" -UseBasicParsing
+          Add-AppxPackage -Path "Setup.msix"
+          Remove-Item "Setup.msix"
           winget install --id Rustlang.Rustup -y
 
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
-          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -y
+          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
