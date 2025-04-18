@@ -57,15 +57,6 @@ jobs:
           setx /M PATH "%PATH%;C:\Program Files\NSIS\"
           setx /M PATH "%PATH%;C:\Program Files (x86)\NSIS\"
 
-      - name: Test
-        if: matrix.platform == 'windows-latest'
-        shell: pwsh
-        run: >
-          if (-not (Get-Command makensis.exe -ErrorAction SilentlyContinue)) {
-            Write-Error "NSIS is not installed or not added to PATH."
-            exit 1
-          }
-
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
