@@ -91,6 +91,45 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           cd ${{github.workspace}}
-          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/nsis/*""
+          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/nsis/*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-latest-json:
+    needs: publish-tauri
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create latest.json
+        run: >
+          jq '{
+            version:        .tag_name,
+            notes:          .body,
+            pub_date:       .published_at,
+            platforms: {
+              "darwin-x86_64": {
+                url:       (.assets[] | select(.name == "app-x86_64.app.tar.gz")      | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-x86_64.app.tar.gz.sig")  | .browser_download_url)
+              },
+              "darwin-aarch64": {
+                url:       (.assets[] | select(.name == "app-aarch64.app.tar.gz")     | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-aarch64.app.tar.gz.sig") | .browser_download_url)
+              },
+              "linux-x86_64": {
+                url:       (.assets[] | select(.name == "app-amd64.AppImage.tar.gz")     | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-amd64.AppImage.tar.gz.sig") | .browser_download_url)
+              },
+              "windows-x86_64": {
+                url:       (.assets[] | select(.name == "app-x64-setup.nsis.zip")    | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-x64-setup.nsis.zip.sig")| .browser_download_url)
+              }
+            }
+          }' release.json > latest.json
+
+      - name: Upload latest.json
+        run: >
+          gh release upload ${{ github.event.release.tag_name }} "latest.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
