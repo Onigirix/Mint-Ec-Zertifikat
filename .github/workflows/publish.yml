@@ -41,7 +41,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
-          winget install --id Rustlang.Rustup
+          winget install --id Rustlang.Rustup --silent --accept-source-agreements
 
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
