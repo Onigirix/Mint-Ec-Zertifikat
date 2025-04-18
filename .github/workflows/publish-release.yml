@@ -1,9 +1,8 @@
 name: 'publish-release'
 
 on:
-  push:
-    branches:
-      - 'releases/**'
+  release:
+    types: [published]
 
 env:
   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -69,3 +68,8 @@ jobs:
         with:
           name: tauri-app-${{ matrix.platform }}
           path: src-tauri/target/release/bundle
+
+      - name: "Upload to Release"
+        run: |
+          cd ${{github.workspace}}
+          gh release upload ${{ github.event.release.tag_name }} "${{ github.event.release.name }}"  --prerelease
