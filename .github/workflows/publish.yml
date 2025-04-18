@@ -50,6 +50,13 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --locked
 
+      - name: Install Windows bundler deps
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          choco install 7zip --no-progress
+          choco install nsis --no-progress
+
       - name: Build Tauri app
         run: cargo tauri build ${{ matrix.args }}
 
