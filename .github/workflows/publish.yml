@@ -59,7 +59,7 @@ jobs:
 
       - name: Install tauri
         run: |
-          cargo install create-tauri-app --locked
+          cargo install tauri-cli --version "^2.0.0" --locked
 
       - name: Build tauri app
         run: |
