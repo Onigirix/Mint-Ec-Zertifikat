@@ -83,6 +83,8 @@ async function populateWettbewerbeTable() {
     } else {
       competitionSearchBox.value = firstRow.cells[1].textContent;
     }
+  }else{
+    updateStufenTable(0);
   }
 
   updateErreichteWettbewerbeTable();
@@ -98,6 +100,8 @@ function updateStufenTable(additional_mint_activity_id) {
   let selectedCompetition;
 
   if (additional_mint_activity_id === 0) {
+    editCompetitionButton.disabled = true;
+    deleteCompetitionButton.disabled = true;
     selectedCompetition = {
       level_one: "",
       level_two: "",

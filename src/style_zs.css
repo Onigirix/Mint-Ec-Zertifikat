@@ -755,3 +755,16 @@ table[disabled] tbody {
 	color: #666;
 	cursor: not-allowed;
 }
+
+.btn[disabled] {
+	background-color: #ccc !important;
+	color: #666 !important;
+	cursor: not-allowed !important;
+}
+
+/* You have to call it via id, otherwise it gets overridden*/
+#delete-competition[disabled] {
+	background-color: #ccc !important;
+	color: #666 !important;
+	cursor: not-allowed !important;
+}
