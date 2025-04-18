@@ -80,8 +80,17 @@ jobs:
           path: src-tauri/target/release/bundle
 
       - name: "Upload to Release"
+        if: matrix.platform != 'windows-latest'
         run: |
           cd ${{github.workspace}}
           gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/*"
         env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Upload to Release (Windows)"
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd ${{github.workspace}}
+          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/nsis/*""
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
