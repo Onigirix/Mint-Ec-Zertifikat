@@ -176,7 +176,6 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
       [db_result.lastInsertId]
     );
     newRow.remove();
-    console.log(temp);
     e.stopPropagation();
   });
   deleteCell.appendChild(deleteButton);
@@ -315,8 +314,6 @@ toggleSwitchTable.addEventListener("change", async () => {
   }
 });
 
-await init();
-
 document.addEventListener("studentChanged", (e) => {
   updateErreichteWettbewerbeTable();
 });
@@ -434,6 +431,6 @@ addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
 editCompetitionButton.addEventListener("click", async (e) => await showEditWettbewerbForm()) //TODO: Figure out if async is helpful
 deleteCompetitionButton.addEventListener("click", async (e) => await deleteCompetition())
 
-await listen("competitions-changed", (event) => populateWettbewerbeTable());
+await init();
 
-//TODO: Move everything down, when starting to type
+await listen("competitions-changed", (event) => populateWettbewerbeTable());
