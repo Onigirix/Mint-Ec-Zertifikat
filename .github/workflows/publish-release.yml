@@ -44,6 +44,12 @@ jobs:
         run: >
           winget install --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
 
+      - name: Install prerequisites 2(Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: >
+          winget install -e --id NSIS.NSIS --accept-source-agreements --accept-package-agreements
+
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
