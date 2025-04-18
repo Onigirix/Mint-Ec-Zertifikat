@@ -41,6 +41,15 @@
         "languages": ["German", "English"],
         "installerIcon": "C:/Users/aliek/Documents/Programming Stuff/Mint-Ec/Mint-Ec/src-tauri/icons/icon.ico"
       }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM3Q0M5QTZCMzI0NUE1OUIKUldTYnBVVXlhNXJNTjhYS2t0UWZLSm1ON1FBZkVxNU5UTkRUek92Tm9mN1gweHgwYU5kb3pwZU8K",
+      "endpoints": [
+        "https://github.com/Onigirix/Mint/releases/latest/download/latest.json"
+      ]
     }
   }
 }
