@@ -40,7 +40,7 @@ jobs:
       - name: Install prerequisites (Windows)
         if: matrix.platform == 'windows-latest'
         shell: pwsh
-        run: |
+        run: >
           winget install --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
 
       - name: Install prerequisites (macOS)
