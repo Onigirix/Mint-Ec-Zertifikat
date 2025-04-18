@@ -50,6 +50,18 @@ jobs:
         run: >
           winget install -e --id NSIS.NSIS --accept-source-agreements --accept-package-agreements
 
+      - name: Test
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          where makensis.exe
+
+
+      - name: Add NSIS to PATH (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: setx /M PATH "%PATH%;C:\Program Files\NSIS\"
+
+
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
