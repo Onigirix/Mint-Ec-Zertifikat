@@ -34,7 +34,7 @@
       "icons/icon.ico",
       "icons/icon.icns"
     ],
-    "resources": ["icons/*", "resources/*"],
+    "resources": ["icons/*", "resources/Template_v3_L.pdf", "resources/Template_v3_M.pdf"],
     "publisher": "Finn Arved Lieker",
     "windows": {
       "nsis": {
