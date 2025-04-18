@@ -32,18 +32,15 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
           curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
 
+
+      - name: Install winget (Windows)
+        if: matrix.platform == 'windows-latest'
+        uses: Cyberboss/install-winget@v1
+
       - name: Install prerequisites (Windows)
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
-          $URL = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
-          $URL = (Invoke-WebRequest -Uri $URL).Content | ConvertFrom-Json |
-          Select-Object -ExpandProperty "assets" |
-          Where-Object "browser_download_url" -Match '.msixbundle' |
-          Select-Object -ExpandProperty "browser_download_url"
-          Invoke-WebRequest -Uri $URL -OutFile "Setup.msix" -UseBasicParsing
-          Add-AppxPackage -Path "Setup.msix"
-          Remove-Item "Setup.msix"
           winget install --id Rustlang.Rustup -y
 
       - name: Install prerequisites (macOS)
