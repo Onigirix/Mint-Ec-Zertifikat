@@ -6,6 +6,10 @@ on:
     branches:
       - release
 
+env:
+  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
 jobs:
   publish-tauri:
     permissions:
@@ -56,6 +60,10 @@ jobs:
       - name: Install tauri
         run: |
           cargo install create-tauri-app --locked
+
+      - name: Build tauri app
+        run: |
+          cargo tauri build ${{ matrix.args }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
