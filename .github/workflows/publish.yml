@@ -41,7 +41,13 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
-          winget install --id Rustlang.Rustup --silent --accept-source-agreements
+          Ensure the Microsoft Store source is registered non‑interactively
+          winget source add --name msstore --accept-source-agreements
+          $Env:WINGET_SOURCE_REGION = 'US'
+          winget install --id Rustlang.Rustup `
+            --silent `
+            --accept-source-agreements `
+            --accept-package-agreements
 
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
