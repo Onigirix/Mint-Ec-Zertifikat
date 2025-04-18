@@ -1,10 +1,9 @@
-name: 'publish-major-release'
+name: 'add-binaries-to-release'
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - major-release
+      - 'releases/**'
 
 env:
   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
