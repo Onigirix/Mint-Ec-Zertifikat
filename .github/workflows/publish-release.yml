@@ -1,10 +1,13 @@
-name: 'publish'
+name: 'publish-release'
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - release
+  release:
+    types: [published]
+
+env:
+  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
 jobs:
   publish-tauri:
@@ -40,8 +43,8 @@ jobs:
       - name: Install prerequisites (Windows)
         if: matrix.platform == 'windows-latest'
         shell: pwsh
-        run: |
-          winget install --id Rustlang.Rustup
+        run: >
+          winget install --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
 
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
@@ -55,10 +58,19 @@ jobs:
 
       - name: Install tauri
         run: |
-          cargo install create-tauri-app --locked
+          cargo install tauri-cli --version "^2.0.0" --locked
+
+      - name: Build tauri app
+        run: |
+          cargo tauri build ${{ matrix.args }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-${{ matrix.platform }}
           path: src-tauri/target/release/bundle
+
+      - name: "Upload to Release"
+        run: |
+          #cd ${{github.workspace}}
+          #gh release upload ${{ github.event.release.tag_name }} "${{ github.event.release.name }}"  --prerelease
