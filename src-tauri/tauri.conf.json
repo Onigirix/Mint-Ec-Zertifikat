@@ -22,7 +22,7 @@
   "bundle": {
     "useLocalToolsDir": true,
     "active": true,
-    "targets": ["deb", "appimage", "nsis", "dmg"],
+    "targets": ["deb", "appimage", "nsis", "app"],
     "icon": [
       "icons/16x16.png",
       "icons/24x24.png",
