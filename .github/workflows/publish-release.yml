@@ -97,14 +97,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-x86_64
-          path: src-tauri/target/release/bundle/x86_64-apple-darwin/release/bundle/
+          path: src-tauri/target/x86_64-apple-darwin/release/bundle/
 
       - name: Upload artifacts (MacOS aarch64)
         if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-aarch64
-          path: src-tauri/target/release/bundle/aarch64-apple-darwin/release/bundle/
+          path: src-tauri/target/aarch64-apple-darwin/release/bundle/
 
       - name: "Upload to Release"
         if: matrix.platform != 'windows-latest'
