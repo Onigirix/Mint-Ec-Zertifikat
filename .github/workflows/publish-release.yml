@@ -121,6 +121,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: "Upload to Release (Ubuntu)"
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb" --name "Mint-EC-amd64.deb"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig" --name "Mint-EC-amd64.deb.sig"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage" --name "Mint-EC-amd64.AppImage"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage.sig" --name "Mint-EC-amd64.AppImage.sig"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm" --name "Mint-EC-amd64.rpm"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm.sig" --name "Mint-EC-amd64.rpm.sig"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: "Upload to Release (Windows)"
         if: matrix.platform == 'windows-latest'
         run: |
