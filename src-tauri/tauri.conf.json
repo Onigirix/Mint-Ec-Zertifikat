@@ -40,7 +40,6 @@
     "windows": {
       "nsis": {
         "languages": ["German"]
-        // "installerIcon": "/src-tauri/icons/icon.ico"
       }
     },
     "createUpdaterArtifacts": true
