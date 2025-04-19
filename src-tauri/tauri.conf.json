@@ -39,7 +39,7 @@
     "windows": {
       "nsis": {
         "languages": ["German", "English"],
-        "installerIcon": "C:/Users/aliek/Documents/Programming Stuff/Mint-Ec/Mint-Ec/src-tauri/icons/icon.ico"
+        "installerIcon": "/src-tauri/icons/icon.ico"
       }
     },
     "createUpdaterArtifacts": true
