@@ -63,6 +63,11 @@ jobs:
         run: >
           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
 
+      - name: Install NSIS & WiX again (Windows)
+        run: |
+          choco install nsis --no-progress --confirm
+          choco install wixtoolset --no-progress --confirm
+
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
