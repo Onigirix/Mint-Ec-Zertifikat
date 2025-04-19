@@ -103,28 +103,28 @@ jobs:
       - name: "Upload to Release (MacOS x86_64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
         run: |
-          mv src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC.app.tar.gz Mint-EC-x86_64.app.tar.gz
-          gh release upload ${{ github.event.release.tag_name }}    "Mint-EC-x86_64.app.tar.gz"
+          mv src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC.app.tar.gz src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC-x86_64.app.tar.gz
+          gh release upload ${{ github.event.release.tag_name }}    "src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC-x86_64.app.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Upload to Release (MacOS aarch64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
         run: |
-          mv src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC.app.tar.gz Mint-EC-aarch64.app.tar.gz
-          gh release upload ${{ github.event.release.tag_name }} "Mint-EC-aarch64.app.tar.gz"
+          mv src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC.app.tar.gz src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Upload to Release (Ubuntu)"
         if: matrix.platform == 'ubuntu-22.04'
         run: |
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb" --name "Mint-EC-amd64.deb"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig" --name "Mint-EC-amd64.deb.sig"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage" --name "Mint-EC-amd64.AppImage"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage.sig" --name "Mint-EC-amd64.AppImage.sig"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm" --name "Mint-EC-amd64.rpm"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm.sig" --name "Mint-EC-amd64.rpm.sig"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage.sig"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm"
+          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm.sig"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
