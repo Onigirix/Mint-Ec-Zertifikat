@@ -113,6 +113,7 @@ jobs:
         if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
         run: |
           cd ${{github.workspace}}
+          find . -type f
           mv src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC.app.tar.gz src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz
           gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz"
         env:
@@ -121,20 +122,18 @@ jobs:
       - name: "Upload to Release (Ubuntu)"
         if: matrix.platform == 'ubuntu-22.04'
         run: |
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage.sig"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm"
-          gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm.sig"
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/deb/Mint-EC_*.deb
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Upload to Release (Windows)"
         if: matrix.platform == 'windows-latest'
+        shell: pwsh
         run: |
           cd ${{github.workspace}}
-          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/nsis/*"
+          gh release upload ${{ github.event.release.tag_name }} (Get-Item \src-tauri\target\release\bundle\nsis\*.exe)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
