@@ -103,6 +103,7 @@ jobs:
       - name: "Upload to Release (MacOS x86_64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
         run: |
+          cd ${{github.workspace}}
           mv src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC.app.tar.gz src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC-x86_64.app.tar.gz
           gh release upload ${{ github.event.release.tag_name }}    "src-tauri/target/x86_64-apple-darwin/release/bundle/Mint-EC-x86_64.app.tar.gz"
         env:
@@ -111,6 +112,7 @@ jobs:
       - name: "Upload to Release (MacOS aarch64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
         run: |
+          cd ${{github.workspace}}
           mv src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC.app.tar.gz src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz
           gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/aarch64-apple-darwin/release/bundle/Mint-EC-aarch64.app.tar.gz"
         env:
