@@ -3,8 +3,11 @@ pub mod dialog;
 pub mod pdf;
 pub mod state;
 use tauri::{Builder, Manager};
-use tauri_plugin_prevent_default::WindowsOptions;
+use tauri_plugin_prevent_default;
 use tokio::sync::Mutex;
+
+#[cfg(target_os = "windows")]
+use tauri_plugin_prevent_default::WindowsOptions;
 
 #[derive(Default)]
 pub struct AppState {

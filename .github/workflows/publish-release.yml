@@ -5,10 +5,6 @@ on:
   release:
     types: [published]
 
-env:
-  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-
 jobs:
   publish-tauri:
     permissions:
@@ -17,8 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest'
-            args: '--target universal-apple-darwin'
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
           - platform: 'ubuntu-22.04'
             args: ''
           - platform: 'windows-latest'
@@ -46,10 +44,31 @@ jobs:
         run: >
           winget install --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
 
+      - name: Install prerequisites 2(Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: >
+          winget install -e --id NSIS.NSIS --accept-source-agreements --accept-package-agreements
+
+
+      - name: Add NSIS to PATH (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          setx /M PATH "%PATH%;C:\Program Files\NSIS\"
+          setx /M PATH "%PATH%;C:\Program Files (x86)\NSIS\"
+
+      - name: Enable long paths
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >
+          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
           curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -62,7 +81,10 @@ jobs:
 
       - name: Build tauri app
         run: |
-          cargo tauri build ${{ matrix.args }}
+          cargo tauri build ${{ matrix.args }} --verbose
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -70,7 +92,71 @@ jobs:
           name: tauri-app-${{ matrix.platform }}
           path: src-tauri/target/release/bundle
 
+      - name: Upload artifacts (MacOS x86)
+        if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-x86_64
+          path: src-tauri/target/x86_64-apple-darwin/release/bundle/
+
+      - name: Upload artifacts (MacOS aarch64)
+        if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-aarch64
+          path: src-tauri/target/aarch64-apple-darwin/release/bundle/
+
       - name: "Upload to Release"
+        if: matrix.platform != 'windows-latest'
         run: |
-          #cd ${{github.workspace}}
-          #gh release upload ${{ github.event.release.tag_name }} "${{ github.event.release.name }}"  --prerelease
+          cd ${{github.workspace}}
+          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Upload to Release (Windows)"
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd ${{github.workspace}}
+          gh release upload ${{ github.event.release.tag_name }} "/src-tauri/target/release/bundle/nsis/*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-latest-json:
+    needs: publish-tauri
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create latest.json
+        run: >
+          jq '{
+            version:        .tag_name,
+            notes:          .body,
+            pub_date:       .published_at,
+            platforms: {
+              "darwin-x86_64": {
+                url:       (.assets[] | select(.name == "app-x86_64.app.tar.gz")      | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-x86_64.app.tar.gz.sig")  | .browser_download_url)
+              },
+              "darwin-aarch64": {
+                url:       (.assets[] | select(.name == "app-aarch64.app.tar.gz")     | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-aarch64.app.tar.gz.sig") | .browser_download_url)
+              },
+              "linux-x86_64": {
+                url:       (.assets[] | select(.name == "app-amd64.AppImage.tar.gz")     | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-amd64.AppImage.tar.gz.sig") | .browser_download_url)
+              },
+              "windows-x86_64": {
+                url:       (.assets[] | select(.name == "app-x64-setup.nsis.zip")    | .browser_download_url),
+                signature: (.assets[] | select(.name == "app-x64-setup.nsis.zip.sig")| .browser_download_url)
+              }
+            }
+          }' release.json > latest.json
+
+      - name: Upload latest.json
+        run: >
+          gh release upload ${{ github.event.release.tag_name }} "latest.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
