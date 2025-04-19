@@ -39,7 +39,6 @@
     "publisher": "Finn Arved Lieker",
     "windows": {
       "nsis": {
-        "languages": ["German", "English"],
         "installerIcon": "/src-tauri/icons/icon.ico"
       }
     },
