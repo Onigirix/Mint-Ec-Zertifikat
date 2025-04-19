@@ -51,11 +51,12 @@ jobs:
 #          winget install -e --id NSIS.NSIS --accept-source-agreements --accept-package-agreements
 
 
-#      - name: Add NSIS to PATH (Windows)
-#        if: matrix.platform == 'windows-latest'
-#        run: |
-#          setx /M PATH "%PATH%;C:\Program Files\NSIS\"
-#          setx /M PATH "%PATH%;C:\Program Files (x86)\NSIS\"
+       - name: Add NSIS to PATH (Windows)
+         if: matrix.platform == 'windows-latest'
+         run: |
+           echo "C:\Program Files (x86)\NSIS" >> $GITHUB_PATH
+           echo "C:\Program Files\NSIS" >> $GITHUB_PATH
+         shell: bash
 
       - name: Enable long paths
         if: runner.os == 'Windows'
