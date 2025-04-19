@@ -117,7 +117,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Upload to Release (Ubuntu)"
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb" --name "Mint-EC-amd64.deb"
           gh release upload ${{ github.event.release.tag_name }} "src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig" --name "Mint-EC-amd64.deb.sig"
