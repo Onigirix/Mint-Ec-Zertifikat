@@ -114,7 +114,6 @@ jobs:
       - name: "Upload to Release (Ubuntu)"
         if: matrix.platform == 'ubuntu-22.04'
         run: |
-          find . -type f
           gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/deb/Mint-EC_*.deb
           gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage
           gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC-*.rpm
