@@ -57,6 +57,15 @@ jobs:
           setx /M PATH "%PATH%;C:\Program Files\NSIS\"
           setx /M PATH "%PATH%;C:\Program Files (x86)\NSIS\"
 
+      - name: Refresh environment
+        if: runner.os == 'Windows'
+        run: refreshenv
+
+      - name: Enable long paths
+        if: runner.os == 'Windows'
+        run: reg add HKLM\SYSTEM\CurrentControlSet\Control\FileSystem \
+              /v LongPathsEnabled /t REG_DWORD /d 1 /f
+
       - name: Install prerequisites (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
@@ -75,7 +84,7 @@ jobs:
 
       - name: Build tauri app
         run: |
-          cargo tauri build ${{ matrix.args }} --RUST_BACKTRACE=1
+          cargo tauri build ${{ matrix.args }}
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -85,6 +94,20 @@ jobs:
         with:
           name: tauri-app-${{ matrix.platform }}
           path: src-tauri/target/release/bundle
+
+      - name: Upload artifacts (MacOS x86)
+        if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-x86_64
+          path: src-tauri/target/release/bundle/x86_64-apple-darwin/release/bundle/
+
+      - name: Upload artifacts (MacOS aarch64)
+        if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-aarch64
+          path: src-tauri/target/release/bundle/aarch64-apple-darwin/release/bundle/
 
       - name: "Upload to Release"
         if: matrix.platform != 'windows-latest'
