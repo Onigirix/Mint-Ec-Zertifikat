@@ -117,7 +117,7 @@ jobs:
           find . -type f
           gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/deb/Mint-EC_*.deb
           gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC_*.rpm
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC-*.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
