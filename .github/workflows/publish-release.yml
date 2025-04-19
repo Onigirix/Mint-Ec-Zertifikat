@@ -98,7 +98,7 @@ jobs:
         run: |
           cd ${{github.workspace}}
           mv ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC_x86_64.app.tar.gz
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC_x86_64.app.tar.gz
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC_x86_64.app.tar.gz --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -107,16 +107,16 @@ jobs:
         run: |
           cd ${{github.workspace}}
           mv ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC_aarch64.app.tar.gz
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC_aarch64.app.tar.gz
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC_aarch64.app.tar.gz --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Upload to Release (Ubuntu)"
         if: matrix.platform == 'ubuntu-22.04'
         run: |
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/deb/Mint-EC_*.deb
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage
-          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC-*.rpm
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/deb/Mint-EC_*.deb --clobber
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage --clobber
+          gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/bundle/rpm/Mint-EC-*.rpm --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -125,7 +125,7 @@ jobs:
         shell: pwsh
         run: |
           cd ${{github.workspace}}
-          gh release upload ${{ github.event.release.tag_name }} (Get-Item ${{github.workspace}}\src-tauri\target\release\bundle\nsis\*.exe)
+          gh release upload ${{ github.event.release.tag_name }} (Get-Item ${{github.workspace}}\src-tauri\target\release\bundle\nsis\*.exe) --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
