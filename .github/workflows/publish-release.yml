@@ -101,7 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-aarch64
-          path: ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz.sig
+          path: ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz.sig
 
       - name: "Upload to Release (MacOS x86_64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
