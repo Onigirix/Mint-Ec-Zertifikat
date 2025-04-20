@@ -154,7 +154,7 @@ jobs:
             cd ${{github.workspace}}
             mkdir -p latest
             timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-            version=$(echo "${{ github.event.release.tag_name }}" | sed -E 's/.*v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/'
+            version=$(echo "${{ github.event.release.tag_name }}" | sed -E 's/.*v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
             echo "{
               \"version\": \"${{ github.event.release.tag_name }}\",
