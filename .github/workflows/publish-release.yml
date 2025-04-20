@@ -165,19 +165,19 @@ jobs:
               \"pub_date\": \"$timestamp\",
               \"platforms\": {
                   \"darwin-x86_64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/${{github.event.release.tag_name}}/download/Mint-EC_x86_64.app.tar.gz\",
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/tag/${{github.event.release.tag_name}}/download/Mint-EC_x86_64.app.tar.gz\",
                     \"signature\": \"$(cat ./tauri-app-x86_64/Mint-EC.app.tar.gz.sig)\"
                   },
                   \"darwin-aarch64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/${{github.event.release.tag_name}}/download/Mint-EC_aarch64.app.tar.gz\",
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/tag/${{github.event.release.tag_name}}/download/Mint-EC_aarch64.app.tar.gz\",
                     \"signature\": \"$(cat ./tauri-app-aarch64/Mint-EC.app.tar.gz.sig)\"
                   },
                   \"linux-x86_64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/${{github.event.release.tag_name}}/download/Mint-EC_${version}_amd64.AppImage\",
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/tag/${{github.event.release.tag_name}}/download/Mint-EC_${version}_amd64.AppImage\",
                     \"signature\": \"$(cat ./tauri-app-ubuntu-22.04/appimage/Mint-EC_${version}_amd64.AppImage.sig)\"
                   },
                   \"windows-x86_64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/${{github.event.release.tag_name}}/download/Mint-EC_${version}_x64-setup.exe\",
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec-Zertifikat/releases/tag/${{github.event.release.tag_name}}/download/Mint-EC_${version}_x64-setup.exe\",
                     \"signature\": \"$(cat ./tauri-app-x64/Mint-EC_${version}_x64-setup.exe.sig)\"
                   }
                 }
