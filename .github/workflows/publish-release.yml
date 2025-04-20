@@ -156,6 +156,7 @@ jobs:
             timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
             version=$(echo "${{ github.event.release.tag_name }}" | sed -E 's/.*v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
             echo "Version: $version"
+            version=$(echo "$version" )
 
             echo "{
               \"version\": \"${{ github.event.release.tag_name }}\",
@@ -171,12 +172,12 @@ jobs:
                     \"signature\": \"$(cat ./tauri-app-aarch64/Mint-EC.app.tar.gz.sig)\"
                   },
                   \"linux-x86_64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_$version_amd64.AppImage\",
-                    \"signature\": \"$(cat ./tauri-app-ubuntu-22.04/appimage/Mint-EC_$version_amd64.AppImage.sig)\"
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_${version}_amd64.AppImage\",
+                    \"signature\": \"$(cat ./tauri-app-ubuntu-22.04/appimage/Mint-EC_${version}_amd64.AppImage.sig)\"
                   },
                   \"windows-x86_64\": {
-                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_$version_x64-setup.exe\",
-                    \"signature\": \"$(cat ./tauri-app-x64/Mint-EC_$version_x64-setup.exe.sig)\"
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_${version}_x64-setup.exe\",
+                    \"signature\": \"$(cat ./tauri-app-x64/Mint-EC_${version}_x64-setup.exe.sig)\"
                   }
                 }" > latest/latest.json
             gh release upload ${{ github.event.release.tag_name }} ./latest/latest.json --clobber
