@@ -31,7 +31,6 @@ var _0x20b8f5=_0x5004;(function(_0x46913f,_0x12e900){var _0x188dee=_0x5004,_0x36
 	}
 	async function checkForAppUpdates() {
 		const update = await check();
-		console.log(update)
 		if (update === null) {
 				  return;
 		} else if (update?.available) {
