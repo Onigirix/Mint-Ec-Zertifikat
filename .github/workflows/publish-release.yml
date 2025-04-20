@@ -73,25 +73,36 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
-      - name: Upload artifacts
+      - name: Upload artifacts (Ubuntu)
+        if: matrix.platform == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-${{ matrix.platform }}
-          path: src-tauri/target/release/bundle
+          path: |
+            src-tauri/target/release/bundle/deb/Mint-EC_*.deb.sig
+            src-tauri/target/release/bundle/appimage/Mint-EC_*.AppImage.sig
+            src-tauri/target/release/bundle/rpm/Mint-EC-*.rpm.sig
+
+      - name: Upload artifacts (Windows)
+        if: matrix.platform == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-x64
+          path: src-tauri/target/release/bundle/nsis/*.exe.sig
 
       - name: Upload artifacts (MacOS x86)
         if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-x86_64
-          path: src-tauri/target/x86_64-apple-darwin/release/bundle/
+          path: ./src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz.sig
 
       - name: Upload artifacts (MacOS aarch64)
         if: matrix.platform == 'macos-latest' && matrix.args == '--target aarch64-apple-darwin'
         uses: actions/upload-artifact@v4
         with:
           name: tauri-app-aarch64
-          path: src-tauri/target/aarch64-apple-darwin/release/bundle/
+          path: ./src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Mint-EC.app.tar.gz.sig
 
       - name: "Upload to Release (MacOS x86_64)"
         if: matrix.platform == 'macos-latest' && matrix.args == '--target x86_64-apple-darwin'
@@ -133,37 +144,43 @@ jobs:
     needs: publish-tauri
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+        - uses: actions/download-artifact@v4
 
-      - name: Create latest.json
-        run: >
-          jq '{
-            version:        .tag_name,
-            notes:          .body,
-            pub_date:       .published_at,
-            platforms: {
-              "darwin-x86_64": {
-                url:       (.assets[] | select(.name == "app-x86_64.app.tar.gz")      | .browser_download_url),
-                signature: (.assets[] | select(.name == "app-x86_64.app.tar.gz.sig")  | .browser_download_url)
-              },
-              "darwin-aarch64": {
-                url:       (.assets[] | select(.name == "app-aarch64.app.tar.gz")     | .browser_download_url),
-                signature: (.assets[] | select(.name == "app-aarch64.app.tar.gz.sig") | .browser_download_url)
-              },
-              "linux-x86_64": {
-                url:       (.assets[] | select(.name == "app-amd64.AppImage.tar.gz")     | .browser_download_url),
-                signature: (.assets[] | select(.name == "app-amd64.AppImage.tar.gz.sig") | .browser_download_url)
-              },
-              "windows-x86_64": {
-                url:       (.assets[] | select(.name == "app-x64-setup.nsis.zip")    | .browser_download_url),
-                signature: (.assets[] | select(.name == "app-x64-setup.nsis.zip.sig")| .browser_download_url)
-              }
-            }
-          }' release.json > latest.json
+        - name: Display structure of downloaded files
+          run: ls -R
 
-      - name: Upload latest.json
-        run: >
-          gh release upload ${{ github.event.release.tag_name }} "latest.json"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: Upload latest.json
+          run: |
+            cd ${{github.workspace}}
+            mkdir -p latest
+            timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            version=$(echo "${{ github.event.release.tag_name }}" | sed -E 's/.*v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+
+            echo "{
+              \"version\": \"${{ github.event.release.tag_name }}\",
+              \"notes\": \"${{ github.event.release.body }}\",
+              \"pub_date\": \"$timestamp\",
+              \"platforms\": {
+                  \"darwin-x86_64\": {
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_x86_64.app.tar.gz\",
+                    \"signature\": \"$(cat ./tauri-app-x86_64/Mint-EC.app.tar.gz.sig)\"
+                  },
+                  \"darwin-aarch64\": {
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_aarch64.app.tar.gz\",
+                    \"signature\": \"$(cat ./tauri-app-aarch64/Mint-EC.app.tar.gz.sig)\"
+                  },
+                  \"linux-x86_64\": {
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_$version_amd64.AppImage\",
+                    \"signature\": \"$(cat ./tauri-app-ubuntu-22.04/appimage/Mint-EC_$version_amd64.AppImage.sig)\"
+                  },
+                  \"windows-x86_64\": {
+                    \"url\": \"https://github.com/Onigirix/Mint-Ec/releases/${{github.event.release.tag_name}}/download/Mint-EC_$version_x64-setup.exe\",
+                    \"signature\": \"$(cat ./tauri-app-x64/Mint-EC_$version_x64-setup.exe.sig)\"
+                  }
+                }" > latest/latest.json
+            gh release upload ${{ github.event.release.tag_name }} ./latest/latest.json --clobber
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Checkout
+          uses: actions/checkout@v4
