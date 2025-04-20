@@ -1,6 +1,6 @@
 {
   "productName": "Mint-EC",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "identifier": "de.mint-ec.app",
   "build": {
     "frontendDist": "../src"
