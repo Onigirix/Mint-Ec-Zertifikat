@@ -20,7 +20,7 @@ document.getElementById("manual").addEventListener("click", (event) => {
 });
 
 await message(
-  "Dies ist eine Betaversion. Es kann zu Fehlern kommen.\nDas Problem der Schriftgrößen und nicht funktionierenden Umlaute bei der Ausgabe des PDFs sind uns bekannt und werden in den nächsten Versionen behoben.\nDie Datenbankstruktur wird sich im Laufe der Zeit ändern. Bei jeder Änderung werden wir eine Automatische Migration der Datenbank durchführen. Dadurch werden jetzt eingegebene Daten auch in zukünftigen Versionen erhalten bleiben.\nVielen Dank für Ihr Verständnis!",
+  "Dies ist eine Betaversion. Es kann zu Fehlern kommen.\nDas Problem der nicht funktionierenden Umlaute bei der Ausgabe des PDFs ist uns bekannt und wird in den nächsten Versionen behoben. Da jedes PDF Programm bearbeitbare Felder anders anzeigt, ist es leider nicht möglich ein im Nachhinein bearbeitbares PDF zu erstellen, in dem die Namen der Schulleiter und MINT-Koordinatioren immer auf gleicher Höhe wie die Vorstandsvorsitzende von Mint-EC ist. Sie sind so angeordnet, dass dies in Adobe Acrobat passt.\nDie Datenbankstruktur wird sich im Laufe der Zeit ändern. Bei jeder Änderung werden wir eine Automatische Migration der Datenbank durchführen. Dadurch werden jetzt eingegebene Daten auch in zukünftigen Versionen erhalten bleiben.\nWir bitten um Ihr Verständnis!",
   { title: "Mint-EC", kind: "information" }
 );
 
