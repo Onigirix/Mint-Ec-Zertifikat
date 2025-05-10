@@ -29,7 +29,7 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     };
 
     let prepare_pdf = async {
-        let mut form = Form::load("resources/template_v3_M.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
+        let mut form = Form::load("resources/Template_L.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
         let current_date = chrono::Utc::now();
         let settings = db::get_all_settings().await;
         let birthday = chrono::NaiveDate::parse_from_str(
@@ -65,8 +65,8 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             form.set_text(0, format!("geboren am {}", birthday.format("%d.%m.%Y"))),
             form.set_text(1, format!("{}", settings[0])),
             form.set_text(2, field_2_text),
-            form.set_text(3, format!("{} \n\n{}", settings[2], settings[4])),
-            form.set_text(4, format!("{}\n\n{}", settings[3], settings[5])),
+            form.set_text(3, format!("{}\n{}", settings[2], settings[4])),
+            form.set_text(4, format!("{}\n{}", settings[3], settings[5])),
             form.set_text(
                 5,
                 format!(
