@@ -6,7 +6,56 @@ on:
     types: [published]
 
 jobs:
+  update-version-number:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push changes and update tags
+    outputs:
+      version: ${{ steps.extract_version.outputs.version_number }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }} # Checkout the commit the tag points to
+
+      - name: Extract version number from tag
+        id: extract_version
+        run: |
+          VERSION_FROM_TAG=$(echo "${{ github.event.release.tag_name }}" | sed -E 's/.*v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "version_number=$VERSION_FROM_TAG" >> $GITHUB_OUTPUT
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Update version in tauri.conf.json
+        run: |
+          jq --arg new_version "${{ steps.extract_version.outputs.version_number }}" \
+            '.package.version = $new_version | .tauri.bundle.version = $new_version' \
+            src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.tmp && \
+            mv src-tauri/tauri.conf.json.tmp src-tauri/tauri.conf.json
+          echo "src-tauri/tauri.conf.json updated."
+
+      - name: Update version in src-tauri/Cargo.toml
+        run: |
+          echo "Updating src-tauri/Cargo.toml to version ${{ steps.extract_version.outputs.version_number }}"
+          sed -i -E "s/^version = \"[0-9]+\.[0-9]+\.[0-9]+\"/version = \"${{ steps.extract_version.outputs.version_number }}\"/" src-tauri/Cargo.toml
+
+      - name: Commit and Push version changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+
+          git add src-tauri/tauri.conf.json src-tauri/Cargo.toml
+
+          if git diff --staged --quiet; then
+            echo "No version changes to commit. Files are already up-to-date with tag ${{ github.event.release.tag_name }}."
+          else
+            git commit -m "Bump version to ${{ steps.extract_version.outputs.version_number }} for release ${{ github.event.release.tag_name }}"
+            git push origin --force HEAD:refs/tags/${{ github.event.release.tag_name }}
   publish-tauri:
+    needs: update-version-number
     permissions:
       contents: write
     strategy:
