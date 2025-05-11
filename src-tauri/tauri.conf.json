@@ -22,7 +22,12 @@
   "bundle": {
     "useLocalToolsDir": true,
     "active": true,
-    "targets": ["deb", "appimage", "nsis", "app", "rpm"],
+    "targets": [
+      "deb",
+      "appimage",
+      "nsis",
+      "app",
+      "rpm"],
     "icon": [
       "icons/16x16.png",
       "icons/24x24.png",
@@ -35,11 +40,17 @@
       "icons/icon.ico",
       "icons/icon.icns"
     ],
-    "resources": ["icons/*", "resources/Template_L.pdf", "resources/Template_M.pdf"],
+    "resources": [
+      "icons/*",
+      "resources/Template_L.pdf",
+      "resources/Template_M.pdf"
+    ],
     "publisher": "Finn Arved Lieker",
     "windows": {
       "nsis": {
-        "languages": ["German"]
+        "languages": [
+          "German"
+        ]
       }
     },
     "createUpdaterArtifacts": true
