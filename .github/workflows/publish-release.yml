@@ -54,6 +54,7 @@ jobs:
           else
             git commit -m "Bump version to ${{ steps.extract_version.outputs.version_number }} for release ${{ github.event.release.tag_name }}"
             git push origin --force HEAD:refs/tags/${{ github.event.release.tag_name }}
+          fi
   publish-tauri:
     needs: update-version-number
     permissions:
