@@ -29,11 +29,7 @@ jobs:
 
       - name: Update version in tauri.conf.json
         run: |
-          jq --arg new_version "${{ steps.extract_version.outputs.version_number }}" \
-            '.package.version = $new_version | .tauri.bundle.version = $new_version' \
-            src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.tmp && \
-            mv src-tauri/tauri.conf.json.tmp src-tauri/tauri.conf.json
-          echo "src-tauri/tauri.conf.json updated."
+          jq '.version = "'"${{ steps.extract_version.outputs.version_number }}"'"' src-tauri/tauri.conf.json
 
       - name: Update version in src-tauri/Cargo.toml
         run: |
