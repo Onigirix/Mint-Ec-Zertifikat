@@ -29,7 +29,8 @@ jobs:
 
       - name: Update version in tauri.conf.json
         run: |
-          jq '.version = "'"${{ steps.extract_version.outputs.version_number }}"'"' src-tauri/tauri.conf.json
+          jq '.version = "'"${{ steps.extract_version.outputs.version_number }}"'"' src-tauri/tauri.conf.json > tmp.json
+          mv tmp.json src-tauri/tauri.conf.json
 
       - name: Update version in src-tauri/Cargo.toml
         run: |
