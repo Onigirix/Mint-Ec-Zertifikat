@@ -9,14 +9,14 @@ jobs:
   update-version-number:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required to push changes and update tags
+      contents: write
     outputs:
       version: ${{ steps.extract_version.outputs.version_number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }} # Checkout the commit the tag points to
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Extract version number from tag
         id: extract_version
@@ -74,7 +74,15 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Wait for GitHub to update tag reference
+        run: |
+          sleep 30
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
 
       - name: Install prerequisites (Ubuntu)
         if: matrix.platform == 'ubuntu-22.04'
