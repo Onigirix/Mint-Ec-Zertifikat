@@ -57,7 +57,7 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
     #[cfg(target_os = "windows")]
     {
-        builder = builder.platform(WindowsOptions {
+        builder = builder.platform(PlatformOptions {
             general_autofill: false,
             password_autosave: false,
         });
