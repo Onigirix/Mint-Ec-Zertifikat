@@ -2,7 +2,7 @@
 
 [package]
 name = "Mint-EC"
-version = "0.0.1"
+version = "0.2.4"
 description = "Mint-EC-Zertifikat-Generator"
 authors = ["you"]
 edition = "2021"
