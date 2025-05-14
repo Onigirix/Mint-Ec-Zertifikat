@@ -129,7 +129,7 @@ jobs:
           BASE64_CERT: ${{ secrets.APPLE_CERTIFICATE }}
           CERT_PWD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
 
-      -name: Verify Identity (macOS)
+      - name: Verify Identity (macOS)
         if: matrix.platform == 'macos-latest'
         run: |
           security find-identity -v -p codesigning
