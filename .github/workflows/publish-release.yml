@@ -154,10 +154,6 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           cargo tauri build ${{ matrix.args }}
-        env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ env.CERT_ID }}
 
       - name: Upload artifacts (Ubuntu)
         if: matrix.platform == 'ubuntu-22.04'
