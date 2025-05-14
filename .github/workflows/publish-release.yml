@@ -124,7 +124,6 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           echo "$BASE64_CERT" | base64 --decode > cert.p12
-          openssl pkcs12 -info -in cert.p12 -noout -passin pass:$CERT_PWD
           security import cert.p12 -k build.keychain -P "$CERT_PWD" -T /usr/bin/codesign
         env:
           BASE64_CERT: ${{ secrets.APPLE_CERTIFICATE }}
