@@ -112,6 +112,28 @@ jobs:
           rustup target add x86_64-apple-darwin
           rustup target add aarch64-apple-darwin
 
+      - name: Create Custom Keychain (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+
+      - name: Import Apple Certificate (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          echo "$BASE64_CERT" | base64 --decode > cert.p12
+          security import cert.p12 -k build.keychain -P "$CERT_PWD" -T /usr/bin/codesign
+        env:
+          BASE64_CERT: ${{ secrets.APPLE_CERTIFICATE }}
+          CERT_PWD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+
+      -name: Verify Identity (macOS)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          security find-identity -v -p codesigning
+
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
