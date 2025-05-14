@@ -7,7 +7,7 @@ use tauri_plugin_prevent_default;
 use tokio::sync::Mutex;
 
 #[cfg(target_os = "windows")]
-use tauri_plugin_prevent_default::WindowsOptions;
+use tauri_plugin_prevent_default::PlatformOptions;
 
 #[derive(Default)]
 pub struct AppState {
