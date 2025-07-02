@@ -3,6 +3,21 @@ const Database = window.__TAURI__.sql;
 const db = await Database.load("sqlite://resources/db.sqlite");
 const emit = window.__TAURI__.event.emit;
 
+
+const closeButton = document.getElementById("schuelerAbbrechen");
+closeButton.addEventListener("click", () => {
+  closeWindow();
+});
+
+
+function closeWindow() {
+  const currentWindow = getCurrentWindow();
+  emit("popup-closed");
+  currentWindow.close();
+}
+
+
+
 window.addEventListener("DOMContentLoaded", () => {
 	const closePopupButton = document.getElementById("closePopup");
 
@@ -13,6 +28,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 });
+
 
 document
 	.getElementById("schuelerForm")

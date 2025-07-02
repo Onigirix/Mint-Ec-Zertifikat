@@ -28,6 +28,28 @@ for (const input of formInputs) {
 	});
 }
 
+const arbeitTypSelect = document.getElementById("arbeitTyp");
+const themaLabel = document.querySelector("label[for='thema']");
+
+arbeitTypSelect.addEventListener("change", () => {
+  const selectedValue = arbeitTypSelect.value;
+
+  switch (selectedValue) {
+    case "2":
+      themaLabel.textContent = "Fach:";
+      break;
+    case "5":
+      themaLabel.textContent = "Wettbewerb:";
+      break;
+    default:
+      themaLabel.textContent = "Thema:";
+  }
+});
+
+// Falls ein Wert vorausgewählt ist, gleich Label anpassen
+arbeitTypSelect.dispatchEvent(new Event("change"));
+
+
 async function fill_fields(studentId) {
 	if (studentId !== 0) {
 		const db_res = await db.select(

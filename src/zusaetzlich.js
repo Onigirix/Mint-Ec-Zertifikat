@@ -171,6 +171,7 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 
   // Löschen-Button hinzufügen
   const deleteCell = newRow.insertCell(2);
+
   const deleteButton = document.createElement("button");
   deleteButton.textContent = "Löschen";
   deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
@@ -183,6 +184,14 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     e.stopPropagation();
   });
   deleteCell.appendChild(deleteButton);
+
+  const hidenButton = document.createElement("button");
+  hidenButton.textContent = "Nicht zählen";
+  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
+  hidenButton.addEventListener("click", async (e) => {
+    "Logik musst du machen damit der Button ausgeblendet wird";
+  });
+  deleteCell.appendChild(hidenButton);
 }
 
 async function updateErreichteWettbewerbeTable() {
@@ -236,6 +245,13 @@ async function updateErreichteWettbewerbeTable() {
       e.stopPropagation();
     });
     deleteCell.appendChild(deleteButton);
+      const hidenButton = document.createElement("button");
+  hidenButton.textContent = "Nicht zählen";
+  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
+  hidenButton.addEventListener("click", async (e) => {
+    "Logik musst du machen damit der Button ausgeblendet wird";
+  });
+  deleteCell.appendChild(hidenButton);
   }
 }
 
