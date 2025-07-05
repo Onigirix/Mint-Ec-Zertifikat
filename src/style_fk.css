@@ -425,6 +425,7 @@ tr:not(.selected):hover {
   max-width: 100%;
   display: flex;
   justify-content: center; /* horizontal zentrieren */
+  gap: 2%;
 }
 
 .gesamt-div div{
