@@ -149,23 +149,26 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
                 _ => 3,
             };
 
+            // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
+            let best_average_str = format!("{:05.1}", best_average);
+
             let result = match best_combination {
-                0 => String::from(format!(
+                0 => format!(
                         "{} hat zwei F\u{00e4}cher auf erh\u{00f6}htem Niveau absolviert:\n{}\n{}\nDie Durchschnittsnote beträgt {} Punkte.",
-                        student_name, subjects[0], subjects[1], best_average
-                    )),
-                1 => String::from(format!(
+                        student_name, subjects[0], subjects[1], best_average_str
+                    ),
+                1 => format!(
                     "{} hat die F\u{00e4}cher {} und {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[1], subjects[2], best_average)),
-                2 => String::from(format!(
+                    student_name, subjects[0], subjects[1], subjects[2], best_average_str),
+                2 => format!(
                     "{} hat die F\u{00e4}cher {} und {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[1], subjects[3], best_average)),
-                3 => String::from(format!(
+                    student_name, subjects[0], subjects[1], subjects[3], best_average_str),
+                3 => format!(
                     "{} hat {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} und {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[2], subjects[3], best_average)),
-                4 => String::from(format!(
+                    student_name, subjects[0], subjects[2], subjects[3], best_average_str),
+                4 => format!(
                     "{} hat {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} und {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[1], subjects[2], subjects[3], best_average)),
+                    student_name, subjects[1], subjects[2], subjects[3], best_average_str),
                 _ => String::from("Errorcode: 69"),
             };
 
@@ -186,21 +189,23 @@ async fn fachwissenschaftliches_arbeiten_text(
     student_name: String,
 ) -> (String, i32) {
     let (type_of_paper, topics, grade) = db::get_fachwissenschaftliches_arbeiten(student_id).await;
+    // Format grade as two digits with leading zero if needed
+    let grade_str = format!("{:02}", grade);
     let result_string = match type_of_paper {
         0 => String::from("Kein Eintrag im Beiech Fachwissenschaftliches Arbeiten"),
         1 => String::from(format!(
             "{} hat eine Facharbeit geschrieben. \nThema: {} \n{}\nDie Facharbeite wurde mit {} Punkten bewertet.",
-            student_name, topics[0], topics[1], grade
+            student_name, topics[0], topics[1], grade_str
         )),
-        2 => String::from(format!("{} hat das wissenschaftspropädeutische Fach {} belegt. \nEs wurden {} Punkte erreicht.", student_name, topics[0], grade)),
-        3 => String::from(format!("{} hat eine besondere Lernleistung erbracht. \nThema: {} \n{} \nDie besondere Lernleistung wurde mit {} Punkten bewertet.", student_name, topics[0], topics[1], grade)),
+        2 => String::from(format!("{} hat das wissenschaftspropädeutische Fach {} belegt. \nEs wurden {} Punkte erreicht.", student_name, topics[0], grade_str)),
+        3 => String::from(format!("{} hat eine besondere Lernleistung erbracht. \nThema: {} \n{} \nDie besondere Lernleistung wurde mit {} Punkten bewertet.", student_name, topics[0], topics[1], grade_str)),
         4 => String::from(format!("{} hat an Jugend Forscht mit dem Projekt \"{}\" teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
         5 => String::from(format!("{} hat an dem {} Wettbewerb teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
         _ => String::from("Error code 420"),
     };
     return match grade {
         x if x < 9 => (
-            String::from("Die Notenpunkte liegen unter 9, bitte prüfen sie Ihre Eingabe."),
+            String::from("Die Notenpunkte liegen unter 09, bitte prüfen sie Ihre Eingabe."),
             0,
         ),
         x if x < 11 => (result_string, 1),
@@ -216,7 +221,7 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String
     let mut sek_1_points = 0;
     let mut sek_2_points = 0;
     let mut niveau_in_sek_2 = 0; //Adding two for a niveau 3 in Sek II so I only need one variable
-    let mut sek_1_text = String::from("Sek I: \n");
+    let mut sek_1_text = String::from("Sekundar Stufe I: \n");
     for competition in sek_1_competitions {
         sek_1_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
         match competition.2 {
@@ -227,7 +232,7 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String
         }
     }
     sek_1_text.push_str("\n");
-    let mut sek_2_text = String::from("Sek II: \n");
+    let mut sek_2_text = String::from("Sekundar Stufe II: \n");
     for competition in sek_2_competitions {
         sek_2_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
         match competition.2 {

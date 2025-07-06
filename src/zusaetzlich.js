@@ -110,6 +110,8 @@ function updateStufenTable(additional_mint_activity_id) {
       level_three: ""
     };
   } else {
+    editCompetitionButton.disabled = false;
+     deleteCompetitionButton.disabled = false;
     const selectedCompetitionArray = competitionData.filter(
       (competition) =>
         competition.additional_mint_activity_id === additional_mint_activity_id

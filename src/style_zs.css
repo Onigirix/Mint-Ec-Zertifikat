@@ -782,8 +782,4 @@ table[disabled] tbody {
 	cursor: not-allowed !important;
 }
 
-#erreichte-wettbewerbe-table td:nth-child(3) {
-  max-width: 0px;
-  white-space: normal; /* Erlaubt Umbruch */
-  word-wrap: break-word;
-}
+
