@@ -84,6 +84,7 @@ async function populateWettbewerbeTable() {
       competitionSearchBox.value = firstRow.cells[1].textContent;
     }
   }else{
+   
     updateStufenTable(0);
   }
 
@@ -91,6 +92,7 @@ async function populateWettbewerbeTable() {
 }
 
 function updateStufenTable(additional_mint_activity_id) {
+  
   selectedCompetitionId = additional_mint_activity_id;
   const stufenTable = document
     .getElementById("stufen-table")
@@ -415,7 +417,7 @@ competitionSearchBox.addEventListener("click", async (e) => {
 });
 
 mainContent.addEventListener("click", () => {
-  if (competitionSearchBox) {
+  if (competitionSearchBox.checked) {
     setTimeout(() => {
       if (
         competitionSearchBox.value.trim() === "" ||
