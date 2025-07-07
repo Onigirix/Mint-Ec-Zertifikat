@@ -133,11 +133,6 @@ jobs:
           echo "CERT_ID=$CERT_ID" >> $GITHUB_ENV
           echo "Certificate imported."
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
-
       - name: Install tauri
         run: |
           cargo install tauri-cli --version "^2.0.0" --locked
