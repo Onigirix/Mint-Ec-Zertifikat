@@ -42,7 +42,7 @@ codegen-units = 1
 incremental = false
 lto = true
 opt-level = 3
-panic = "abort"
+panic = "unwind"
 strip = true
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
