@@ -25,7 +25,7 @@ sqlx = { version = "0.8.5", features = ["runtime-tokio-native-tls", "sqlite"] }
 tokio = { version = "1.46.1", features = ["full"] }
 pdf_forms = "0.3.4"
 chrono = "0.4.41"
-tauri-plugin-sql = { version = "2.2.0", features = ["sqlite"] }
+tauri-plugin-sql = { version = "2.2.1", features = ["sqlite"] }
 tauri-plugin-prevent-default = { version = "2.1", features = ["unstable-windows"] }
 tauri-plugin-dialog = "2.2.1"
 tauri-plugin-process = "2.2.1"
