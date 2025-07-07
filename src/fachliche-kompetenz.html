@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mint-EC</title>
+    <title>MINT-EC-Zertifikat</title>
     <script type="module" src="main.js" defer></script>
     <script type="module" src="createSchuelerPopup.js" defer></script>
     <script type="module" src="fachliche-kompetenz.js" defer></script>
@@ -30,7 +30,8 @@
           Schüler erstellen
         </button>
       </div>
-      <h1 class="rightHeading">Mint-EC Zertifikat</h1>
+      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
+     
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
@@ -59,7 +60,7 @@
     <!--Main Content-->
     <div id="main">
       <main id="content">
-        <h1>Fachliche Kompetenz</h1>
+        <h1 style="color: #4b7fc2">Fachliche Kompetenz</h1>
 
         <form id="notenForm">
           <table id="formTable" class="disabled-no-student" disabled>
@@ -260,11 +261,24 @@
           </table>
         </form>
         <div
-          class="gesamt-durchschnitt"
-          style="position: absolute; top: 64vh; left: 49vw; text-align: center"
+          class="gesamt-div"
         >
-          <label>Stufe:</label>
-          <span id="gesamtDurchschnitt">- </span>
+          <div>
+            <label>Gesamt Durchschnitt:</label>
+            <span id="gesamtDurchschnitt">- </span>
+          </div>
+
+          <div>
+            <label>Stufe:</label>
+            <span id="gesamtStufe">- </span>
+          </div>
+          
+          <div>
+            <label>AFB III zuordnen:</label>
+            <button disabled>Bestätigen
+            </button>
+          </div>
+
         </div>
         <button
           class="blauerButton"

@@ -1,6 +1,7 @@
 const noteInputs = document.querySelectorAll(".note");
 const courseAverages = document.querySelectorAll('[id^="avg-"]');
-const gesamtDurchschnittElement = document.getElementById("gesamtDurchschnitt");
+const gesamtDurchschnittElement = document.getElementById("gesamtStufe"); //namensverwechslung mit gesamtStufe
+const gesamtStufeElement = document.getElementById("gesamtDurchschnitt"); //namensverwechslung mit gesamtDurchschnitt
 
 // Function to calculate the average for a course
 function calculateCourseAverage(course) {
@@ -45,6 +46,8 @@ async function calculateBestAverage() {
 		"grade-yellow",
 		"grade-green",
 	);
+
+	gesamtStufeElement.textContent = bestAverage;
 
 	if (bestAverage === "0.00") {
 		gesamtDurchschnittElement.classList.add("grade-default");

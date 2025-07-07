@@ -84,6 +84,7 @@ async function populateWettbewerbeTable() {
       competitionSearchBox.value = firstRow.cells[1].textContent;
     }
   }else{
+   
     updateStufenTable(0);
   }
 
@@ -91,6 +92,7 @@ async function populateWettbewerbeTable() {
 }
 
 function updateStufenTable(additional_mint_activity_id) {
+  
   selectedCompetitionId = additional_mint_activity_id;
   const stufenTable = document
     .getElementById("stufen-table")
@@ -108,6 +110,8 @@ function updateStufenTable(additional_mint_activity_id) {
       level_three: ""
     };
   } else {
+    editCompetitionButton.disabled = false;
+     deleteCompetitionButton.disabled = false;
     const selectedCompetitionArray = competitionData.filter(
       (competition) =>
         competition.additional_mint_activity_id === additional_mint_activity_id
@@ -171,6 +175,7 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 
   // Löschen-Button hinzufügen
   const deleteCell = newRow.insertCell(2);
+
   const deleteButton = document.createElement("button");
   deleteButton.textContent = "Löschen";
   deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
@@ -183,6 +188,14 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     e.stopPropagation();
   });
   deleteCell.appendChild(deleteButton);
+
+  const hidenButton = document.createElement("button");
+  hidenButton.textContent = "Nicht zählen";
+  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
+  hidenButton.addEventListener("click", async (e) => {
+    "Logik musst du machen damit der Button ausgeblendet wird";
+  });
+  deleteCell.appendChild(hidenButton);
 }
 
 async function updateErreichteWettbewerbeTable() {
@@ -236,6 +249,13 @@ async function updateErreichteWettbewerbeTable() {
       e.stopPropagation();
     });
     deleteCell.appendChild(deleteButton);
+      const hidenButton = document.createElement("button");
+  hidenButton.textContent = "Nicht zählen";
+  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
+  hidenButton.addEventListener("click", async (e) => {
+    "Logik musst du machen damit der Button ausgeblendet wird";
+  });
+  deleteCell.appendChild(hidenButton);
   }
 }
 
@@ -399,7 +419,7 @@ competitionSearchBox.addEventListener("click", async (e) => {
 });
 
 mainContent.addEventListener("click", () => {
-  if (competitionSearchBox) {
+  if (competitionSearchBox.checked) {
     setTimeout(() => {
       if (
         competitionSearchBox.value.trim() === "" ||

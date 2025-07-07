@@ -625,6 +625,19 @@ th {
 	transition: background-color 0.3s ease;
 }
 
+
+.hide-btn {
+	background-color: #a8a11f;
+	color: white;
+	border: none;
+	margin-left: 1%;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s ease;
+}
+
 .delete-btn:hover {
 	background-color: #e53935;
 }
@@ -768,3 +781,5 @@ table[disabled] tbody {
 	color: #666 !important;
 	cursor: not-allowed !important;
 }
+
+
