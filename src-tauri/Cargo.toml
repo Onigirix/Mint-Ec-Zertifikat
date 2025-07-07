@@ -30,6 +30,8 @@ tauri-plugin-prevent-default = { version = "2.1", features = ["unstable-windows"
 tauri-plugin-dialog = "2.2.2"
 tauri-plugin-process = "2.2.1"
 rfd = { version = "0.15.3", default-features = false, features = ["gtk3"] }
+tauri-plugin-log = "2.6.0"
+log = "0.4"
 
 [profile.dev]
 incremental = false
