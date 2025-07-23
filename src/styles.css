@@ -220,7 +220,7 @@ input::-webkit-inner-spin-button {
 #navLinks a {
 	padding: 15px 25px;
 	text-decoration: none;
-	font-size: 24px;
+	font-size: 1.5vw;
 	color: #ecf0f1;
 	display: block;
 	transition: 0.3s;
