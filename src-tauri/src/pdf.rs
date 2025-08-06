@@ -106,48 +106,55 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
-            let mut grade_averages: [f32; 4] = [0.0; 4];
-            for i in 1..=4 {
-                for j in 0..4 {
-                    grade_averages[i - 1] =
-                        grade_averages[i - 1] + (grades[(i - 1) * 4 + j] as f32);
-                }
-                grade_averages[i - 1] = grade_averages[i - 1] / 4.0;
-            }
+            let has_any_failing_grade = grades
+                .iter()
+                .enumerate()
+                .any(|(i, &grade)| subjects[i / 4] != "..." && grade < 5);
 
-            let comb0 = (grade_averages[0] + grade_averages[1]) / 2.0;
-            let comb1 = (grade_averages[0] + grade_averages[1] + grade_averages[2]) / 3.0;
-            let comb2 = (grade_averages[0] + grade_averages[1] + grade_averages[3]) / 3.0;
-            let comb3 = (grade_averages[0] + grade_averages[2] + grade_averages[3]) / 3.0;
-            let comb4 = (grade_averages[1] + grade_averages[2] + grade_averages[3]) / 3.0;
-
-            let mut best_average = comb0;
+            let mut level = 0;
+            let mut best_average = 0.0;
             let mut best_combination = 0;
+            if !has_any_failing_grade {
+                let mut grade_averages: [f32; 4] = [0.0; 4];
+                for i in 0..=3 {
+                    for j in 0..4 {
+                        grade_averages[i] = grade_averages[i] + (grades[i * 4 + j] as f32);
+                    }
+                    grade_averages[i] = grade_averages[i] / 4.0;
+                }
+                let comb0 = (grade_averages[0] + grade_averages[1]) / 2.0;
+                let comb1 = (grade_averages[0] + grade_averages[1] + grade_averages[2]) / 3.0;
+                let comb2 = (grade_averages[0] + grade_averages[1] + grade_averages[3]) / 3.0;
+                let comb3 = (grade_averages[0] + grade_averages[2] + grade_averages[3]) / 3.0;
+                let comb4 = (grade_averages[1] + grade_averages[2] + grade_averages[3]) / 3.0;
 
-            if (comb1 > comb0) {
-                best_average = comb1;
-                best_combination = 1;
-            }
+                best_average = comb0;
 
-            if comb2 > best_average {
-                best_average = comb2;
-                best_combination = 2;
-            }
-            if comb3 > best_average {
-                best_average = comb3;
-                best_combination = 3;
-            }
-            if comb4 > best_average {
-                best_average = comb4;
-                best_combination = 4;
-            }
+                if comb1 > best_average {
+                    best_average = comb1;
+                    best_combination = 1;
+                }
 
-            let level = match best_average {
-                x if x < 9.0 => 0,
-                x if x < 11.0 => 1,
-                x if x > 13.0 => 2,
-                _ => 3,
-            };
+                if comb2 > best_average {
+                    best_average = comb2;
+                    best_combination = 2;
+                }
+                if comb3 > best_average {
+                    best_average = comb3;
+                    best_combination = 3;
+                }
+                if comb4 > best_average {
+                    best_average = comb4;
+                    best_combination = 4;
+                }
+
+                level = match best_average {
+                    x if x < 9.0 => 0,
+                    x if x < 11.0 => 1,
+                    x if x > 13.0 => 2,
+                    _ => 3,
+                };
+            }
 
             // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
             let best_average_str = format!("{:05.1}", best_average);

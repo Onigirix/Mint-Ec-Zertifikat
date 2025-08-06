@@ -18,11 +18,27 @@ function calculateCourseAverage(course) {
 	return count > 0 ? (sum / count).toFixed(2) : "0.00";
 }
 
+function hasAnyFailingGrade() {
+	for (let course = 1; course <= 4; course++) {
+		const inputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+		for (const input of inputs) {
+			const value = parseFloat(input.value);
+			if (value > 0 && value < 5) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 async function calculateBestAverage() {
+	let subject_under_9_points = false;
 	const avg1 = Number.parseFloat(document.getElementById("avg-1").textContent);
 	const avg2 = Number.parseFloat(document.getElementById("avg-2").textContent);
 	const avg3 = Number.parseFloat(document.getElementById("avg-3").textContent);
 	const avg4 = Number.parseFloat(document.getElementById("avg-4").textContent);
+
+	subject_under_9_points = [avg1, avg2, avg3, avg4].some(avg => avg < 9 && avg > 0);
 
 	const lk_average = (avg1 + avg2) / 2;
 	const combination1 = (avg1 + avg2 + avg3) / 3;
@@ -49,7 +65,7 @@ async function calculateBestAverage() {
 
 	gesamtStufeElement.textContent = bestAverage;
 
-	if (bestAverage === "0.00") {
+	if (bestAverage === "0.00" || subject_under_9_points || hasAnyFailingGrade()) {
 		gesamtDurchschnittElement.classList.add("grade-default");
 		return "-";
 	}

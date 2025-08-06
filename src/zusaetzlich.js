@@ -84,7 +84,7 @@ async function populateWettbewerbeTable() {
       competitionSearchBox.value = firstRow.cells[1].textContent;
     }
   }else{
-   
+
     updateStufenTable(0);
   }
 
@@ -92,7 +92,7 @@ async function populateWettbewerbeTable() {
 }
 
 function updateStufenTable(additional_mint_activity_id) {
-  
+
   selectedCompetitionId = additional_mint_activity_id;
   const stufenTable = document
     .getElementById("stufen-table")
@@ -251,7 +251,7 @@ async function updateErreichteWettbewerbeTable() {
     deleteCell.appendChild(deleteButton);
       const hidenButton = document.createElement("button");
   hidenButton.textContent = "Nicht zählen";
-  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
+  hidenButton.classList.add("hide-btn");
   hidenButton.addEventListener("click", async (e) => {
     "Logik musst du machen damit der Button ausgeblendet wird";
   });
@@ -349,7 +349,7 @@ competitionSearchBox.addEventListener("keydown", async (e) => {
       [`%${competitionSearchBox.value}%`, sek]
     );
     competitionSearchSuggestions.innerHTML = "";
-    for (let i = 0; i < suggestionResults.length && i < 3; i++) {
+    for (let i = 0; i < suggestionResults.length && i < 4; i++) {
       const item = document.createElement("li");
       item.textContent = suggestionResults[i].name;
       item.dataset.id = suggestionResults[i].additional_mint_activity_id;
