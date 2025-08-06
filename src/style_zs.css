@@ -754,6 +754,8 @@ input:checked + .slider:before {
 
 #competition-search{
 	width: 100%;
+	margin-top: 1%;
+	margin-bottom: 0px;
 }
 
 table[disabled] {
