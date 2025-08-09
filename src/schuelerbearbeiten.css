@@ -132,6 +132,7 @@ td {
 	display: flex;
 	justify-content: center;
 	gap: 50px;
+	margin-top: 10px;
 }
 
 #editButton[disabled] {
@@ -150,4 +151,9 @@ td {
 	background-color: #ccc !important;
 	color: #666 !important;
 	cursor: not-allowed !important;
+}
+.buttonWrapper {
+  display: flex;
+  justify-content: center; /* Zentriert horizontal */
+  margin-top: 20px; /* Optionaler Abstand nach oben */
 }
