@@ -14,7 +14,7 @@ name = "mint_ec_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.3.1", features = [] }
+tauri-build = { version = "2.4.0", features = [] }
 
 [dependencies]
 tauri = { version = "2.5.1", features = ["devtools"] }
