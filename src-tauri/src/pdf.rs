@@ -31,14 +31,25 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     };
 
     let prepare_pdf = async {
-        let mut form = Form::load("resources/Template_L.pdf").unwrap(); // M and L exist (M is font size 12 and L is font size 10 on the second page)
+        let mut form = match Form::load("resources/Template_L.pdf") {
+            Ok(f) => f,
+            Err(e) => {
+                eprintln!("Error loading PDF template: {}", e);
+                return Err(format!("Failed to load PDF template: {}", e));
+            }
+        };
         let current_date = chrono::Utc::now();
         let settings = db::get_all_settings().await;
-        let birthday = chrono::NaiveDate::parse_from_str(
+        let birthday = match chrono::NaiveDate::parse_from_str(
             db::get_student_birthday(student_id).await.as_str(),
             "%Y-%m-%d",
-        )
-        .unwrap();
+        ) {
+            Ok(d) => d,
+            Err(e) => {
+                eprintln!("Error parsing student birthday: {}", e);
+                return Err(format!("Failed to parse student birthday: {}", e));
+            }
+        };
 
         let (field_6_text, fachliche_kompetenz_level) =
             fachliche_kompetenz_text(student_id, student_name.clone()).await;
@@ -90,10 +101,10 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                 eprintln!("Error while filling the PDF: {}", e);
             }
         }
-        form
+        Ok(form)
     };
 
-    let (path, mut form) = tokio::join!(spawn_file_dialog, prepare_pdf);
+    let (path, form_result) = tokio::join!(spawn_file_dialog, prepare_pdf);
     if path.is_some() {
         let handle = path.unwrap();
         let path_buf = handle.path().to_path_buf();
@@ -105,26 +116,37 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             .unwrap_or(0);
         db::change_default_file_path(String::from(&path_string[..pos])).await;
 
-        form.save(&path_buf).unwrap();
-
-        let file_url = Url::from_file_path(&path_buf)
-            .map(|u| u.to_string())
-            .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
-
-        if let Err(e) = webbrowser::open(&file_url) {
-            eprintln!("Failed to open PDF in browser (webbrowser): {}", e);
-
-            #[cfg(target_os = "windows")]
-            {
-                use std::process::Command;
-
-                if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
-                    eprintln!("Fallback via explorer failed: {}", e2);
-                    let _ = Command::new("cmd")
-                        .args(["/C", "start", "", &file_url])
-                        .spawn()
-                        .map_err(|e3| eprintln!("Fallback via cmd start failed: {}", e3));
+        match form_result {
+            Ok(mut form) => {
+                if let Err(e) = form.save(&path_buf) {
+                    eprintln!("Error saving PDF: {}", e);
+                    return Err(format!("Failed to save PDF: {}", e));
                 }
+
+                let file_url = Url::from_file_path(&path_buf)
+                    .map(|u| u.to_string())
+                    .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
+
+                if let Err(e) = webbrowser::open(&file_url) {
+                    eprintln!("Failed to open PDF in browser (webbrowser): {}", e);
+
+                    #[cfg(target_os = "windows")]
+                    {
+                        use std::process::Command;
+
+                        if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
+                            eprintln!("Fallback via explorer failed: {}", e2);
+                            let _ = Command::new("cmd")
+                                .args(["/C", "start", "", &file_url])
+                                .spawn()
+                                .map_err(|e3| eprintln!("Fallback via cmd start failed: {}", e3));
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Aborting PDF generation: {}", e);
+                return Err(e);
             }
         }
     }
