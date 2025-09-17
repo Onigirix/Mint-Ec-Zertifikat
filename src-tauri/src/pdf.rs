@@ -16,23 +16,42 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     let state = state.lock().await;
     let student_name = state.student_name.clone();
     let student_id = state.student_id;
+    eprintln!(
+        "generate_pdf: start (student_id={}, name='{}')",
+        student_id, student_name
+    );
 
     let spawn_file_dialog = async {
+        let default_dir = db::get_default_file_path().await;
+        eprintln!(
+            "generate_pdf: opening save dialog, default dir: {}",
+            default_dir
+        );
+
         let file_handle = AsyncFileDialog::new()
             .add_filter("PDF Dokument", &["pdf"])
             .set_file_name(format!("Mint-EC Zertifikat {}", student_name))
-            .set_directory(db::get_default_file_path().await)
+            .set_directory(default_dir)
             .save_file()
             .await;
-        if file_handle.is_none() {
-            return None;
+
+        match &file_handle {
+            Some(h) => eprintln!(
+                "generate_pdf: user chose path: {}",
+                h.path().to_string_lossy()
+            ),
+            None => eprintln!("generate_pdf: user canceled save dialog"),
         }
         file_handle
     };
 
     let prepare_pdf = async {
+        eprintln!("generate_pdf: loading template: resources/Template_L.pdf");
         let mut form = match Form::load("resources/Template_L.pdf") {
-            Ok(f) => f,
+            Ok(f) => {
+                eprintln!("generate_pdf: template loaded");
+                f
+            }
             Err(e) => {
                 eprintln!("Error loading PDF template: {}", e);
                 return Err(format!("Failed to load PDF template: {}", e));
@@ -40,13 +59,14 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
         };
         let current_date = chrono::Utc::now();
         let settings = db::get_all_settings().await;
-        let birthday = match chrono::NaiveDate::parse_from_str(
-            db::get_student_birthday(student_id).await.as_str(),
-            "%Y-%m-%d",
-        ) {
-            Ok(d) => d,
+        let bday_str = db::get_student_birthday(student_id).await;
+        let birthday = match chrono::NaiveDate::parse_from_str(bday_str.as_str(), "%Y-%m-%d") {
+            Ok(d) => {
+                eprintln!("generate_pdf: parsed birthday: {}", d);
+                d
+            }
             Err(e) => {
-                eprintln!("Error parsing student birthday: {}", e);
+                eprintln!("Error parsing student birthday '{}': {}", bday_str, e);
                 return Err(format!("Failed to parse student birthday: {}", e));
             }
         };
@@ -65,6 +85,14 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             + zusätzliche_mint_aktivität_level) as f32
             / 3.0 as f32;
 
+        eprintln!(
+            "generate_pdf: levels => fachliche={}, fachwiss={}, extra={}, avg={:.2}",
+            fachliche_kompetenz_level,
+            fachwissenschaftliches_level,
+            zusätzliche_mint_aktivität_level,
+            average_level
+        );
+
         let field_2_text = match average_level {
             x if x < 1.0 => String::from(
                 "Die Durchschnittsnote liegt unter 1.0, bitte pr\u{00fc}fen sie Ihre Eingabe.",
@@ -73,7 +101,9 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             x if x < 2.5 => String::from("mit besonderem Erfolg"),
             _ => String::from("mit Auszeichnung"),
         };
+        eprintln!("generate_pdf: computed field_2_text: '{}'", field_2_text);
 
+        eprintln!("generate_pdf: filling form fields");
         let results = vec![
             form.set_text(0, format!("geboren am {}", birthday.format("%d.%m.%Y"))),
             form.set_text(1, format!("{}", settings[0])),
@@ -101,31 +131,46 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                 eprintln!("Error while filling the PDF: {}", e);
             }
         }
+        eprintln!("generate_pdf: form fields filled");
         Ok(form)
     };
 
     let (path, form_result) = tokio::join!(spawn_file_dialog, prepare_pdf);
+    eprintln!(
+        "generate_pdf: save dialog returned path: {} ; prepare_pdf: {}",
+        path.as_ref()
+            .map(|h| h.path().to_string_lossy().to_string())
+            .unwrap_or_else(|| "<none>".into()),
+        if form_result.is_ok() { "ok" } else { "error" }
+    );
+
     if path.is_some() {
         let handle = path.unwrap();
         let path_buf = handle.path().to_path_buf();
         let path_string = path_buf.to_string_lossy().to_string();
+        eprintln!("generate_pdf: target path: {}", path_string);
 
         let pos = path_string
             .rfind('\\')
             .or_else(|| path_string.rfind('/'))
             .unwrap_or(0);
-        db::change_default_file_path(String::from(&path_string[..pos])).await;
+        let new_default_dir = String::from(&path_string[..pos]);
+        eprintln!("generate_pdf: updating default dir to: {}", new_default_dir);
+        db::change_default_file_path(new_default_dir).await;
 
         match form_result {
             Ok(mut form) => {
+                eprintln!("generate_pdf: saving PDF...");
                 if let Err(e) = form.save(&path_buf) {
                     eprintln!("Error saving PDF: {}", e);
                     return Err(format!("Failed to save PDF: {}", e));
                 }
+                eprintln!("generate_pdf: PDF saved");
 
                 let file_url = Url::from_file_path(&path_buf)
                     .map(|u| u.to_string())
                     .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
+                eprintln!("generate_pdf: opening in browser: {}", file_url);
 
                 if let Err(e) = webbrowser::open(&file_url) {
                     eprintln!("Failed to open PDF in browser (webbrowser): {}", e);
@@ -133,15 +178,18 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                     #[cfg(target_os = "windows")]
                     {
                         use std::process::Command;
-
+                        eprintln!("generate_pdf: trying Windows fallback (explorer)...");
                         if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
                             eprintln!("Fallback via explorer failed: {}", e2);
+                            eprintln!("generate_pdf: trying Windows fallback (cmd start)...");
                             let _ = Command::new("cmd")
                                 .args(["/C", "start", "", &file_url])
                                 .spawn()
                                 .map_err(|e3| eprintln!("Fallback via cmd start failed: {}", e3));
                         }
                     }
+                } else {
+                    eprintln!("generate_pdf: opened PDF in browser via webbrowser");
                 }
             }
             Err(e) => {
@@ -149,8 +197,11 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                 return Err(e);
             }
         }
+    } else {
+        eprintln!("generate_pdf: no path chosen, nothing to do");
     }
 
+    eprintln!("generate_pdf: done");
     Ok(())
     //TODO: Add a success message (toast notification)
 }
