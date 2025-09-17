@@ -8,6 +8,8 @@ use pdf_forms::Form;
 use rfd::AsyncFileDialog;
 use tauri::State;
 use tokio::sync::Mutex;
+use url::Url;
+use webbrowser;
 
 #[tauri::command]
 pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
@@ -93,11 +95,40 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
 
     let (path, mut form) = tokio::join!(spawn_file_dialog, prepare_pdf);
     if path.is_some() {
-        let path_string = String::from(path.clone().unwrap().path().to_str().unwrap());
-        let pos = path_string.rfind("\\").unwrap();
+        let handle = path.unwrap();
+        let path_buf = handle.path().to_path_buf();
+        let path_string = path_buf.to_string_lossy().to_string();
+
+        let pos = path_string
+            .rfind('\\')
+            .or_else(|| path_string.rfind('/'))
+            .unwrap_or(0);
         db::change_default_file_path(String::from(&path_string[..pos])).await;
-        form.save(path.unwrap().path()).unwrap();
+
+        form.save(&path_buf).unwrap();
+
+        let file_url = Url::from_file_path(&path_buf)
+            .map(|u| u.to_string())
+            .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
+
+        if let Err(e) = webbrowser::open(&file_url) {
+            eprintln!("Failed to open PDF in browser (webbrowser): {}", e);
+
+            #[cfg(target_os = "windows")]
+            {
+                use std::process::Command;
+
+                if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
+                    eprintln!("Fallback via explorer failed: {}", e2);
+                    let _ = Command::new("cmd")
+                        .args(["/C", "start", "", &file_url])
+                        .spawn()
+                        .map_err(|e3| eprintln!("Fallback via cmd start failed: {}", e3));
+                }
+            }
+        }
     }
+
     Ok(())
     //TODO: Add a success message (toast notification)
 }
