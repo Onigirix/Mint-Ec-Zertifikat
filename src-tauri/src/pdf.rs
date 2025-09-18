@@ -210,13 +210,27 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
 }
 
 async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (String, i32) {
+    log::info!(
+        "fachliche_kompetenz_text: start (student_id={}, name='{}')",
+        student_id,
+        student_name
+    );
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
+            log::info!(
+                "fachliche_kompetenz_text: fetched (subjects={}, grades={})",
+                subjects.len(),
+                grades.len()
+            );
             let has_any_failing_grade = grades
                 .iter()
                 .enumerate()
                 .any(|(i, &grade)| subjects[i / 4] != "..." && grade < 5);
+            log::info!(
+                "fachliche_kompetenz_text: failing_grade_present={}",
+                has_any_failing_grade
+            );
 
             let mut level = 0;
             let mut best_average = 0.0;
@@ -261,6 +275,17 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
                     x if x > 13.0 => 2,
                     _ => 3,
                 };
+
+                log::info!(
+                    "fachliche_kompetenz_text: best_average={:.2}, best_combination={}, level={}",
+                    best_average,
+                    best_combination,
+                    level
+                );
+            } else {
+                log::info!(
+                    "fachliche_kompetenz_text: skipping averages due to failing grade; level=0"
+                );
             }
 
             // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
