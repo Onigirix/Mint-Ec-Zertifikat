@@ -11,7 +11,6 @@ const sortState = {
 	direction: "asc",    // asc | desc
 };
 
-// Added: toggle sort handler
 function toggleSort(column) {
 	if (sortState.column === column) {
 		sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
@@ -20,6 +19,21 @@ function toggleSort(column) {
 		sortState.direction = "asc";
 	}
 	generateTable();
+}
+
+function scrollRowIntoView(row) {
+	if (!row) return;
+	const container = document.getElementById("table-container");
+	if (container && container.scrollHeight > container.clientHeight) {
+		const rowRect = row.getBoundingClientRect();
+		const contRect = container.getBoundingClientRect();
+		const outOfView = rowRect.top < contRect.top || rowRect.bottom > contRect.bottom;
+		if (outOfView) {
+			row.scrollIntoView({ behavior: "smooth", block: "center" });
+		}
+	} else {
+		row.scrollIntoView({ behavior: "smooth", block: "center" });
+	}
 }
 
 async function init() {
@@ -63,7 +77,7 @@ async function generateTable() {
 				const aHas = !!a.birthday;
 				const bHas = !!b.birthday;
 				if (!aHas && !bHas) return 0;
-				if (!aHas) return 1; // empty birthdays last on asc
+				if (!aHas) return 1;
 				if (!bHas) return -1;
 				const da = Date.parse(a.birthday);
 				const dbb = Date.parse(b.birthday);
@@ -121,7 +135,10 @@ async function generateTable() {
 			const sel = document.querySelector(
 				`[data-id="${window.studentState.studentId}"]`,
 			);
-			if (sel) sel.classList.add("selected");
+			if (sel) {
+				sel.classList.add("selected");
+				scrollRowIntoView(sel);
+			}
 		}
 	}, 0);
 }
@@ -144,6 +161,7 @@ async function selectStudentInStudentEdit(row, studentId) {
 	deleteButton.removeAttribute("disabled");
 	editButton.removeAttribute("disabled");
 	deleteYearButton.removeAttribute("disabled");
+	scrollRowIntoView(row);
 }
 
 async function deselectStudent() {
