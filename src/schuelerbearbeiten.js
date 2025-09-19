@@ -6,6 +6,36 @@ const { ask } = window.__TAURI__.dialog;
 const db = await Database.load("sqlite://resources/db.sqlite");
 import { select_student } from "./main.js";
 
+const sortState = {
+	column: "name",      // name | graduation_year | birthday
+	direction: "asc",    // asc | desc
+};
+
+function toggleSort(column) {
+	if (sortState.column === column) {
+		sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+	} else {
+		sortState.column = column;
+		sortState.direction = "asc";
+	}
+	generateTable();
+}
+
+function scrollRowIntoView(row) {
+	if (!row) return;
+	const container = document.getElementById("table-container");
+	if (container && container.scrollHeight > container.clientHeight) {
+		const rowRect = row.getBoundingClientRect();
+		const contRect = container.getBoundingClientRect();
+		const outOfView = rowRect.top < contRect.top || rowRect.bottom > contRect.bottom;
+		if (outOfView) {
+			row.scrollIntoView({ behavior: "smooth", block: "center" });
+		}
+	} else {
+		row.scrollIntoView({ behavior: "smooth", block: "center" });
+	}
+}
+
 async function init() {
 	await generateTable();
 	if (window.studentState.studentId !== 0) {
@@ -35,39 +65,82 @@ async function generateTable() {
 	const studentData = await db.select(
 		"SELECT student_id, name, birthday, graduation_year FROM students",
 	);
+
+	const sorted = [...studentData].sort((a, b) => {
+		const dir = sortState.direction === "asc" ? 1 : -1;
+		switch (sortState.column) {
+			case "name":
+				return dir * (a.name || "").localeCompare(b.name || "", "de", { sensitivity: "base" });
+			case "graduation_year":
+				return dir * ((a.graduation_year ?? 0) - (b.graduation_year ?? 0));
+			case "birthday": {
+				const aHas = !!a.birthday;
+				const bHas = !!b.birthday;
+				if (!aHas && !bHas) return 0;
+				if (!aHas) return 1;
+				if (!bHas) return -1;
+				const da = Date.parse(a.birthday);
+				const dbb = Date.parse(b.birthday);
+				return dir * (da - dbb);
+			}
+			default:
+				return 0;
+		}
+	});
+
 	let table = "<table>";
-	table += "<thead>";
-	table += "<tr><th>Name</th><th>Abijahrgang</th><th>Geburtsdatum</th></tr>";
-	table += "</thead>";
-	table += "<tbody>";
-
-	for (const student of studentData) {
-		table += `<tr class="student-row" data-id="${student.student_id}" >
-                    <td>${student.name}</td>
-                    <td>${student.graduation_year}</td>
-                    <td>${
-											student.birthday
-												? student.birthday.split("-").reverse().join(".")
-												: ""
-										}</td>
-                  </tr>`;
+	const headers = [
+		{ label: "Name", col: "name" },
+		{ label: "Abijahrgang", col: "graduation_year" },
+		{ label: "Geburtsdatum", col: "birthday" },
+	];
+	table += "<thead><tr>";
+	for (const h of headers) {
+		const active = sortState.column === h.col;
+		const arrow = active ? (sortState.direction === "asc" ? " ▲" : " ▼") : "";
+		table += `<th data-sort="${h.col}" style="cursor:pointer; user-select:none;">${h.label}${arrow}</th>`;
 	}
+	table += "</tr></thead>";
 
-	// I don't know why, but it doesn't work without the Timeout of 0ms so just leave it in
+	table += "<tbody>";
+	for (const student of sorted) {
+		table += `<tr class="student-row" data-id="${student.student_id}">
+			<td>${student.name}</td>
+			<td>${student.graduation_year ?? ""}</td>
+			<td>${
+				student.birthday
+					? student.birthday.split("-").reverse().join(".")
+					: ""
+			}</td>
+		</tr>`;
+	}
+	table += "</tbody></table>";
+
+	document.getElementById("table-container").innerHTML = table;
+
+	document
+		.querySelectorAll("th[data-sort]")
+		.forEach((th) =>
+			th.addEventListener("click", () => toggleSort(th.getAttribute("data-sort")))
+		);
 	setTimeout(() => {
 		const rows = document.querySelectorAll(".student-row");
 		for (const row of rows) {
 			const studentId = row.getAttribute("data-id");
-			row.addEventListener("click", (event) =>
+			row.addEventListener("click", () =>
 				selectStudentInStudentEdit(row, studentId),
 			);
 		}
+		if (window.studentState?.studentId) {
+			const sel = document.querySelector(
+				`[data-id="${window.studentState.studentId}"]`,
+			);
+			if (sel) {
+				sel.classList.add("selected");
+				scrollRowIntoView(sel);
+			}
+		}
 	}, 0);
-
-	table += "</tbody>";
-	table += "</table>";
-
-	document.getElementById("table-container").innerHTML = table;
 }
 
 async function selectStudentInStudentEdit(row, studentId) {
@@ -88,6 +161,7 @@ async function selectStudentInStudentEdit(row, studentId) {
 	deleteButton.removeAttribute("disabled");
 	editButton.removeAttribute("disabled");
 	deleteYearButton.removeAttribute("disabled");
+	scrollRowIntoView(row);
 }
 
 async function deselectStudent() {
