@@ -13,9 +13,10 @@ use webbrowser;
 
 #[tauri::command]
 pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
-    let state = state.lock().await;
-    let student_name = state.student_name.clone();
-    let student_id = state.student_id;
+    let (student_name, student_id) = {
+        let s = state.lock().await;
+        (s.student_name.clone(), s.student_id)
+    };
     log::info!(
         "generate_pdf: start (student_id={}, name='{}')",
         student_id,
