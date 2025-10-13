@@ -30,8 +30,21 @@ Form.addEventListener("submit", async (e) => {
 });
 
 async function formSubmitted(e) {
+  const graduationYear = parseInt(graduationYearField.value);
+
+  // Check if graduation year is outside valid range
+  if (graduationYear < 2000 || graduationYear > 2100) {
+    const confirmSave = confirm(
+      `Der Abijahrgang ${graduationYear} liegt außerhalb des üblichen Bereichs (2000-2100). Möchten Sie den Schüler wirklich speichern?`
+    );
+
+    if (!confirmSave) {
+      return; // Don't save if user cancels
+    }
+  }
+
   await db.execute(
-    "UPDATE students SET name = $1, graduation_year = $2 birthday = $3 WHERE student_id = $4",
+    "UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4",
     [nameField.value, graduationYearField.value, geburtsdatumField.value, studentId]
   );
   closeWindow();
