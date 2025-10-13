@@ -20,7 +20,7 @@ tauri-build = { version = "2.3.1", features = [] }
 tauri = { version = "2.5.1", features = ["devtools"] }
 tauri-plugin-shell = "2.3.0"
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
+serde_json = "1.0.145"
 sqlx = { version = "0.8.6", features = ["runtime-tokio-native-tls", "sqlite"] }
 tokio = { version = "1.47.1", features = ["full"] }
 pdf_forms = "0.3.4"
