@@ -34,6 +34,20 @@ document
 	.getElementById("schuelerForm")
 	.addEventListener("submit", async (e) => {
 		e.preventDefault();
+		
+		const graduationYear = parseInt(e.target.abijahr.value);
+		
+		// Check if graduation year is outside valid range
+		if (graduationYear < 2000 || graduationYear > 2100) {
+			const confirmSave = confirm(
+				`Der Abijahrgang ${graduationYear} liegt außerhalb des üblichen Bereichs (2000-2100). Möchten Sie den Schüler wirklich speichern?`
+			);
+			
+			if (!confirmSave) {
+				return; // Don't save if user cancels
+			}
+		}
+		
 		const result = await db.execute(
 			"INSERT INTO students (name, birthday, graduation_year) VALUES ($1, $2, $3)",
 			[
