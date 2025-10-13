@@ -11,6 +11,32 @@ use tokio::sync::Mutex;
 use url::Url;
 use webbrowser;
 
+#[repr(usize)]
+#[derive(Clone, Copy)]
+enum SettingsIndex {
+    SchoolName = 0,
+    SchoolLocation = 1,
+    SchoolFunctionary1 = 2,
+    SchoolFunctionary2 = 3,
+    SchoolFunctionary1Position = 4,
+    SchoolFunctionary2Position = 5,
+}
+
+#[repr(usize)]
+#[derive(Clone, Copy)]
+enum FormField {
+    Birthday = 0,
+    SchoolName = 1,
+    CertificationLevel = 2,
+    Functionary1NameAndPosition = 3,
+    Functionary2NameAndPosition = 4,
+    LocationAndDate = 5,
+    FachlicheKompetenz = 6,
+    FachwissenschaftlichesArbeiten = 7,
+    StudentName = 8,
+    ZusaetzlicheMintAktivitaet = 9,
+}
+
 #[tauri::command]
 pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
     let (student_name, student_id) = {
@@ -99,33 +125,56 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             x if x < 1.0 => String::from(
                 "Die Durchschnittsnote liegt unter 1.0, bitte pr\u{00fc}fen sie Ihre Eingabe.",
             ),
-            x if x < 1.5 => String::from("mit Erfolg"),
-            x if x < 2.5 => String::from("mit besonderem Erfolg"),
-            _ => String::from("mit Auszeichnung"),
+            x if x < 1.5 => String::from("mit Erfolg (I)"),
+            x if x < 2.5 => String::from("mit besonderem Erfolg (II)"),
+            _ => String::from("mit Auszeichnung (III)"),
         };
         log::info!("generate_pdf: computed field_2_text: '{}'", field_2_text);
 
         log::info!("generate_pdf: filling form fields");
         let results = vec![
-            form.set_text(0, format!("geboren am {}", birthday.format("%d.%m.%Y"))),
-            form.set_text(1, format!("{}", settings[0])),
-            form.set_text(2, field_2_text),
-            form.set_text(3, format!("{}\n{}", settings[2], settings[4])),
-            form.set_text(4, format!("{}\n{}", settings[3], settings[5])),
             form.set_text(
-                5,
+                FormField::Birthday as usize,
+                format!("geboren am {}", birthday.format("%d.%m.%Y")),
+            ),
+            form.set_text(
+                FormField::SchoolName as usize,
+                format!("{}", settings[SettingsIndex::SchoolName as usize]),
+            ),
+            form.set_text(FormField::CertificationLevel as usize, field_2_text),
+            form.set_text(
+                FormField::Functionary1NameAndPosition as usize,
+                format!(
+                    "{}\n{}",
+                    settings[SettingsIndex::SchoolFunctionary1 as usize],
+                    settings[SettingsIndex::SchoolFunctionary1Position as usize]
+                ),
+            ),
+            form.set_text(
+                FormField::Functionary2NameAndPosition as usize,
+                format!(
+                    "{}\n{}",
+                    settings[SettingsIndex::SchoolFunctionary2 as usize],
+                    settings[SettingsIndex::SchoolFunctionary2Position as usize]
+                ),
+            ),
+            form.set_text(
+                FormField::LocationAndDate as usize,
                 format!(
                     "{} den {:02}.{:02}.{}",
-                    settings[1],
+                    settings[SettingsIndex::SchoolLocation as usize],
                     current_date.day(),
                     current_date.month(),
                     current_date.year()
                 ),
             ),
-            form.set_text(6, field_6_text),
-            form.set_text(7, field_7_text),
-            form.set_text(8, student_name.clone()),
-            form.set_text(9, field_9_text),
+            form.set_text(FormField::FachlicheKompetenz as usize, field_6_text),
+            form.set_text(
+                FormField::FachwissenschaftlichesArbeiten as usize,
+                field_7_text,
+            ),
+            form.set_text(FormField::StudentName as usize, student_name.clone()),
+            form.set_text(FormField::ZusaetzlicheMintAktivitaet as usize, field_9_text),
         ];
 
         for result in results {
