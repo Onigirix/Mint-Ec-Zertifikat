@@ -339,7 +339,7 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
             }
 
             // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
-            let best_average_str = format!("{:05.1}", best_average);
+            let best_average_str = format!("{:04.1}", best_average);
 
             let result = match best_combination {
                 0 => format!(
@@ -388,7 +388,7 @@ async fn fachwissenschaftliches_arbeiten_text(
         )),
         2 => String::from(format!("{} hat das wissenschaftspropädeutische Fach {} belegt. \nEs wurden {} Punkte erreicht.", student_name, topics[0], grade_str)),
         3 => String::from(format!("{} hat eine besondere Lernleistung erbracht. \nThema: {} \n{} \nDie besondere Lernleistung wurde mit {} Punkten bewertet.", student_name, topics[0], topics[1], grade_str)),
-        4 => String::from(format!("{} hat an Jugend Forscht mit dem Projekt \"{}\" teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
+        4 => String::from(format!("{} hat an Jugend Forscht mit dem Projekt \"{}\" teilgenommen. \n{} \n{} \n{}", student_name, topics[0], topics[1], grade_str, topics[2])),
         5 => String::from(format!("{} hat an dem {} Wettbewerb teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
         _ => String::from("Error code 420"),
     };
@@ -410,7 +410,7 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String
     let mut sek_1_points = 0;
     let mut sek_2_points = 0;
     let mut niveau_in_sek_2 = 0; //Adding two for a niveau 3 in Sek II so I only need one variable
-    let mut sek_1_text = String::from("Sekundar Stufe I: \n");
+    let mut sek_1_text = String::from("Sekundarstufe I: \n");
     for competition in sek_1_competitions {
         sek_1_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
         match competition.2 {
@@ -421,7 +421,7 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String
         }
     }
     sek_1_text.push_str("\n");
-    let mut sek_2_text = String::from("Sekundar Stufe II: \n");
+    let mut sek_2_text = String::from("Sekundarstufe II: \n");
     for competition in sek_2_competitions {
         sek_2_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
         match competition.2 {
