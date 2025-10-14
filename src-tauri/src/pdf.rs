@@ -1,10 +1,9 @@
 use std::result;
 
-use crate::{db, AppState};
+use crate::{db, pdf_lib::Form, AppState};
 use chrono::format;
 use chrono::Datelike;
 use chrono::NaiveDate;
-use pdf_forms::Form;
 use rfd::AsyncFileDialog;
 use tauri::State;
 use tokio::sync::Mutex;
@@ -81,8 +80,8 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                 f
             }
             Err(e) => {
-                log::error!("Error loading PDF template: {}", e);
-                return Err(format!("Failed to load PDF template: {}", e));
+                log::error!("Error loading PDF template: {:?}", e);
+                return Err(format!("Failed to load PDF template: {:?}", e));
             }
         };
         let current_date = chrono::Utc::now();
@@ -179,8 +178,14 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
 
         for result in results {
             if let Err(e) = result {
-                log::error!("Error while filling the PDF: {}", e);
+                log::error!("Error while filling the PDF: {:?}", e);
             }
+        }
+        if let Err(e) = form.set_need_appearances(true) {
+            log::warn!(
+                "generate_pdf: failed to set NeedAppearances flag on AcroForm: {:?}",
+                e
+            );
         }
         log::info!("generate_pdf: form fields filled");
         Ok(form)
@@ -454,3 +459,5 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String
         )
     }
 }
+
+//FONT is Calibri Bold

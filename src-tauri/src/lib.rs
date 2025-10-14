@@ -1,6 +1,8 @@
 pub mod db;
 pub mod dialog;
 pub mod pdf;
+pub mod pdf_lib;
+pub mod pdf_utils;
 pub mod state;
 use tauri::{Builder, Manager};
 use tauri_plugin_prevent_default;

@@ -18,22 +18,25 @@ tauri-build = { version = "2.4.1", features = [] }
 
 [dependencies]
 tauri = { version = "2.7.0", features = ["devtools"] }
-tauri-plugin-shell = "2.3.0"
-serde = { version = "1.0.219", features = ["derive"] }
+tauri-plugin-shell = "2.3.1"
+serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 sqlx = { version = "0.8.6", features = ["runtime-tokio-native-tls", "sqlite"] }
 tokio = { version = "1.47.1", features = ["full"] }
-pdf_forms = "0.3.4"
-chrono = "0.4.41"
+bitflags = "2.9.4"
+derive-error = "0.0.5"
+encoding_rs = "0.8.35"
+lopdf = "0.38.0"
+chrono = "0.4.42"
 tauri-plugin-sql = { version = "2.3.0", features = ["sqlite"] }
-tauri-plugin-prevent-default = { version = "2.1", features = ["unstable-windows"] }
+tauri-plugin-prevent-default = { version = "3.0.3", features = ["platform-windows"] }
 tauri-plugin-dialog = "2.4.0"
 tauri-plugin-process = "2.3.0"
 rfd = { version = "0.15.4", default-features = false, features = ["gtk3"] }
-tauri-plugin-log = "2.6.0"
-log = "0.4"
+tauri-plugin-log = "2.7.0"
+log = "0.4.28"
 webbrowser = "1"
-url = "2"
+url = "2.5.7"
 
 [profile.dev]
 incremental = false

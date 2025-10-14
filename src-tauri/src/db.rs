@@ -1,7 +1,8 @@
 use sqlx::{migrate::MigrateDatabase, Row, Sqlite, SqlitePool};
-use std::array;
+use std::{array, thread::current};
 
 const DATABASE: &str = "resources/db.sqlite";
+const CURRENT_SCHEMA_VERSION: i32 = 1;
 
 #[tokio::main]
 pub async fn setup_db() {
@@ -15,6 +16,7 @@ pub async fn setup_db() {
     create_students_table().await;
     create_additional_mint_activities_table().await;
     create_student_additional_mint_activities_table().await;
+    //run_migrations().await;
 }
 
 async fn create_settings_table() {
@@ -534,3 +536,31 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
         }
     }
 }
+
+/*async fn run_migrations() {
+    let db = SqlitePool::connect(DATABASE).await.unwrap();
+
+    let result = sqlx::query("PRAGMA user_version;").fetch_one(&db).await;
+
+    match result {
+        Ok(row) => {
+            let current_version: i32 = row.get(0);
+            while current_version < CURRENT_SCHEMA_VERSION {
+                match current_version {
+                    0 => {
+                        migrate_to_version_1(&db).await;
+                    }
+                    _ => {
+                        eprintln!("No migration path for version {}", current_version);
+                        break;
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error fetching user version: {}", e);
+        }
+    }
+}
+
+async fn migrate_to_version_1(db: &SqlitePool) {}*/
