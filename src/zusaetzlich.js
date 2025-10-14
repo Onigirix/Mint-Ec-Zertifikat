@@ -39,52 +39,48 @@ async function init() {
 }
 
 async function populateWettbewerbeTable() {
+
   competitionData = await db.select(
     "SELECT additional_mint_activity_id, name, level_one, level_two, level_three FROM additional_mint_activities WHERE sek = $1",
     [sek]
   );
+  // Sort alphabetically by name
+  competitionData.sort((a, b) => a.name.localeCompare(b.name));
 
   const wettbewerbeTable = document
     .getElementById("wettbewerbe-table")
     .getElementsByTagName("tbody")[0];
   wettbewerbeTable.innerHTML = "";
 
+
   if (competitionData.length === 0) {
     const row = wettbewerbeTable.insertRow();
-    row.insertCell(0).textContent = "-";
-    row.insertCell(1).textContent = "Noch kein Wettbewerb vorhanden";
+    row.insertCell(0).textContent = "Noch kein Wettbewerb vorhanden";
   }
 
   for (const wettbewerb of competitionData) {
     const row = wettbewerbeTable.insertRow();
-    row.insertCell(0).textContent = wettbewerb.additional_mint_activity_id;
-    const nameCell = row.insertCell(1);
+    const nameCell = row.insertCell(0);
     nameCell.textContent = wettbewerb.name;
 
     row.addEventListener("click", () => {
       const rows = wettbewerbeTable.getElementsByTagName("tr");
       for (const r of rows) {
-        //TODO: Test if a querySelector(All) would be faster, might be important with very large databases
         r.classList.remove("active-row");
       }
-
       row.classList.add("active-row");
-
       updateStufenTable(wettbewerb.additional_mint_activity_id);
     });
   }
 
   const firstRow = wettbewerbeTable.querySelector("tr");
-  if (firstRow.cells[0].textContent != "-") {
+  if (firstRow && firstRow.cells[0].textContent !== "Noch kein Wettbewerb vorhanden") {
     firstRow.classList.add("active-row");
-    updateStufenTable(Number.parseInt(firstRow.cells[0].textContent));
-    if (firstRow.cells[1].textContent === "Noch kein Wettbewerb vorhanden") {
-      competitionSearchBox.value = "";
-    } else {
-      competitionSearchBox.value = firstRow.cells[1].textContent;
-    }
-  }else{
-
+    // Find the first competition by name
+    const firstCompetition = competitionData[0];
+    updateStufenTable(firstCompetition ? firstCompetition.additional_mint_activity_id : 0);
+    competitionSearchBox.value = firstCompetition ? firstCompetition.name : "";
+  } else {
     updateStufenTable(0);
   }
 
