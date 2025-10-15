@@ -22,7 +22,7 @@ tauri-plugin-shell = "2.3.1"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 sqlx = { version = "0.8.6", features = ["runtime-tokio-native-tls", "sqlite"] }
-tokio = { version = "1.47.1", features = ["full"] }
+tokio = { version = "1.48.1", features = ["full"] }
 bitflags = "2.9.4"
 derive-error = "0.0.5"
 encoding_rs = "0.8.35"
