@@ -150,23 +150,16 @@ function updateStufenTable(additional_mint_activity_id) {
 }
 
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
-  const wettbewerbeTable = document
-    .getElementById("wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
-  const activeRow = wettbewerbeTable.querySelector(".active-row");
-  const wettbewerbName = activeRow.cells[1].textContent;
-  const wettbewerbId = Number.parseInt(activeRow.cells[0].textContent);
-
-  const db_result = await db.execute(
+    const db_result = await db.execute(
     `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
-    [window.studentState.studentId, wettbewerbId, stufe]
+    [window.studentState.studentId, selectedCompetitionId, stufe]
   );
 
   const erreichteWettbewerbeTable = document
     .getElementById("erreichte-wettbewerbe-table")
     .getElementsByTagName("tbody")[0];
   const newRow = erreichteWettbewerbeTable.insertRow();
-  newRow.insertCell(0).textContent = wettbewerbName;
+  newRow.insertCell(0).textContent = selectedCompetitionName;
   newRow.insertCell(1).textContent = `${stufe}: ${stufe_beschreibung}`;
 
   // Löschen-Button hinzufügen
