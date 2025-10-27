@@ -30,7 +30,7 @@ lopdf = "0.38.0"
 chrono = "0.4.42"
 tauri-plugin-sql = { version = "2.3.0", features = ["sqlite"] }
 tauri-plugin-prevent-default = { version = "3.0.3", features = ["platform-windows"] }
-tauri-plugin-dialog = "2.4.0"
+tauri-plugin-dialog = "2.4.1"
 tauri-plugin-process = "2.3.0"
 rfd = { version = "0.15.4", default-features = false, features = ["gtk3"] }
 tauri-plugin-log = "2.7.0"
