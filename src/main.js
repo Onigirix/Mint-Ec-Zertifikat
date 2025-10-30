@@ -16,6 +16,7 @@ const [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
 const openNavButton = document.querySelector("#openNav");
 const closeNavButton = document.querySelector("#closeNav");
 const mainContent = document.querySelector("#main");
+const backdrop = document.getElementById("backdrop");
 const searchBox = document.getElementById("student-search");
 const list = document.getElementById("suggestions");
 
@@ -30,6 +31,9 @@ async function init(new_student_id, new_student_name) {
 		searchBoxBlurred();
 		closeNav();
 	});
+  if (backdrop) {
+    backdrop.addEventListener("click", closeNav);
+  }
 	if (searchBox != null) {
 		searchBox.addEventListener("click", async (e) => {
 			e.stopPropagation();
@@ -53,11 +57,15 @@ async function generatePdf() {
 }
 
 function openNav() {
-	document.getElementById("sidenav").style.width = "30vw";
+	const sidenav = document.getElementById("sidenav");
+	if (sidenav) sidenav.style.width = "30vw";
+	if (backdrop) backdrop.classList.add("visible");
 }
 
 function closeNav() {
-	document.getElementById("sidenav").style.width = "0";
+	const sidenav = document.getElementById("sidenav");
+	if (sidenav) sidenav.style.width = "0";
+	if (backdrop) backdrop.classList.remove("visible");
 }
 
 async function searchBoxInputted(e) {
