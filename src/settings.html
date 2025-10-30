@@ -2,28 +2,12 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared.css" />
     <link rel="stylesheet" href="style_set.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script type="module" src="main.js" defer></script>
     <script type="module" src="settings.js" defer></script>
-
-    <style>
-      /* Fügt Flexbox hinzu, um die Labels und Eingabefelder nebeneinander anzuordnen */
-      .inline-inputs {
-        display: flex;
-        justify-content: center;
-        gap: 3vw; /* Abstand zwischen den beiden Eingabefeldern */
-      }
-      .inline-inputs label {
-        display: block; /* Labels bleiben block-level */
-        width: 150px; /* Festlegen der Breite für die Labels */
-      }
-      .inline-inputs input {
-        flex: 1; /* Eingabefelder nehmen den verfügbaren Raum ein */
-      }
-    </style>
   </head>
 
   <body>
@@ -65,35 +49,91 @@
         <h1>Einstellungen</h1>
 
         <form id="settingsForm">
-          <label for="schoolName">Prefix und Name der Schule: </label>
-          <input type="text" id="schoolName" />
+          <div class="form-section">
+            <h3>
+              <i class="material-icons">school</i>
+              Schulinformationen
+            </h3>
+            
+            <div class="form-group">
+              <label for="schoolName">
+                <i class="material-icons">business</i>
+                Prefix und Name der Schule:
+              </label>
+              <input type="text" id="schoolName" placeholder="z.B. Gymnasium Musterstadt" />
+            </div>
 
-          <label for="schoolLocation">Ort der Schule</label>
-          <input type="text" id="schoolLocation" />
-
-          <label for="outputPath">Ausgabepfad</label>
-          <div class="folder-input">
-            <input type="text" id="outputPath" />
-            <button type="button" id="folderSelectButton">
-              <i class="material-icons">folder</i>
-            </button>
+            <div class="form-group">
+              <label for="schoolLocation">
+                <i class="material-icons">location_on</i>
+                Ort der Schule:
+              </label>
+              <input type="text" id="schoolLocation" placeholder="z.B. Musterstadt" />
+            </div>
           </div>
 
-          <!-- Neue Eingabefelder für Unterzeichner in einer flexiblen Zeile -->
-          <div class="inline-inputs">
-            <div class="labels">
-              <span>Name</span><br />
-              <span>Position</span>
+          <div class="form-section">
+            <h3>
+              <i class="material-icons">folder</i>
+              Ausgabeeinstellungen
+            </h3>
+            
+            <div class="form-group">
+              <label for="outputPath">
+                <i class="material-icons">save</i>
+                Ausgabepfad:
+              </label>
+              <div class="folder-input">
+                <input type="text" id="outputPath" placeholder="Pfad auswählen..." />
+                <button type="button" id="folderSelectButton" class="folder-button">
+                  <i class="material-icons">folder_open</i>
+                </button>
+              </div>
             </div>
-            <div class="inputs">
-              <label for="namePos1">Linksunterzeichner:</label>
-              <input type="text" id="namePos1" />
-              <input type="text" id="pos1" />
-            </div>
-            <div class="inputs">
-              <label for="namePos2">Rechtsunterzeichner:</label>
-              <input type="text" id="namePos2" />
-              <input type="text" id="pos2" />
+          </div>
+
+          <div class="form-section">
+            <h3>
+              <i class="material-icons">edit</i>
+              Unterzeichner
+            </h3>
+            
+            <div class="signers-container">
+              <div class="signer-group">
+                <h4>Linksunterzeichner</h4>
+                <div class="form-group">
+                  <label for="namePos1">
+                    <i class="material-icons">person</i>
+                    Name:
+                  </label>
+                  <input type="text" id="namePos1" placeholder="Vollständiger Name" />
+                </div>
+                <div class="form-group">
+                  <label for="pos1">
+                    <i class="material-icons">work</i>
+                    Position:
+                  </label>
+                  <input type="text" id="pos1" placeholder="z.B. Schulleiter/in" />
+                </div>
+              </div>
+
+              <div class="signer-group">
+                <h4>Rechtsunterzeichner</h4>
+                <div class="form-group">
+                  <label for="namePos2">
+                    <i class="material-icons">person</i>
+                    Name:
+                  </label>
+                  <input type="text" id="namePos2" placeholder="Vollständiger Name" />
+                </div>
+                <div class="form-group">
+                  <label for="pos2">
+                    <i class="material-icons">work</i>
+                    Position:
+                  </label>
+                  <input type="text" id="pos2" placeholder="z.B. MINT-Koordinator/in" />
+                </div>
+              </div>
             </div>
           </div>
         </form>

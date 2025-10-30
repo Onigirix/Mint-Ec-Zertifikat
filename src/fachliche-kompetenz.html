@@ -2,6 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="shared.css" />
     <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
@@ -260,40 +261,42 @@
             </tbody>
           </table>
         </form>
-        <div
-          class="gesamt-div"
-        >
-          <div>
+        <div class="gesamt-div">
+          <div class="stat-card">
             <label>Gesamt Durchschnitt:</label>
-            <span id="gesamtDurchschnitt">- </span>
+            <span id="gesamtDurchschnitt" class="stat-value">-</span>
           </div>
 
-          <div>
+          <div class="stat-card">
             <label>Stufe:</label>
-            <span id="gesamtStufe">- </span>
+            <span id="gesamtStufe" class="stat-value">-</span>
           </div>
           
-          <div>
+          <div class="stat-card">
             <label>AFB III zuordnen:</label>
-            <button disabled>Bestätigen
+            <button disabled class="btn">
+              <i class="material-icons">check</i>
+              Bestätigen
             </button>
           </div>
-
         </div>
-        <button
-          class="blauerButton"
-          onclick="window.location.href='schuelerbearbeiten.html';"
-          style="position: absolute; top: 69vh; left: 12vw"
-        >
-          Zurück
-        </button>
-        <button
-          class="blauerButton"
-          onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
-          style="position: absolute; top: 69vh; left: 85vw"
-        >
-          Weiter
-        </button>
+
+        <div class="navigation-buttons">
+          <button
+            class="blauerButton"
+            onclick="window.location.href='schuelerbearbeiten.html';"
+          >
+            <i class="material-icons">arrow_back</i>
+            Zurück
+          </button>
+          <button
+            class="blauerButton"
+            onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
+          >
+            Weiter
+            <i class="material-icons">arrow_forward</i>
+          </button>
+        </div>
       </main>
     </div>
   </body>

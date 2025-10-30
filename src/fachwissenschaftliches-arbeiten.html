@@ -2,6 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="shared.css" />
     <link rel="stylesheet" href="style_fwa.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
@@ -65,68 +66,94 @@
         <h1 style="color: #6C9644">Fachwissenschaftliches Arbeiten</h1>
 
         <form id="facharbeitForm" class="darken">
-          <label for="arbeitTyp">Typ der Arbeit:</label>
-          <select id="arbeitTyp" required class="disabled-no-student" disabled>
-            <option value="0" disabled selected>Bitte wählen</option>
-            <option value="1">Facharbeit</option>
-            <option value="2">wissenschaftspropädeutisches Fach</option>
-            <option value="3">besondere Lernleistung</option>
-            <option value="4">Jugend forscht Projekt</option>
-            <option value="5">Anderer Wettbewerb</option>
-          </select>
+          <div class="form-group">
+            <label for="arbeitTyp">
+              <i class="material-icons">category</i>
+              Typ der Arbeit:
+            </label>
+            <select id="arbeitTyp" required class="disabled-no-student" disabled>
+              <option value="0" disabled selected>Bitte wählen</option>
+              <option value="1">Facharbeit</option>
+              <option value="2">wissenschaftspropädeutisches Fach</option>
+              <option value="3">besondere Lernleistung</option>
+              <option value="4">Jugend forscht Projekt</option>
+              <option value="5">Anderer Wettbewerb</option>
+            </select>
+          </div>
 
-          <label for="thema">Thema:</label>
-          <input
-            type="text"
-            id="thema"
-            required
-            class="disabled-no-student"
-            disabled
-          />
+          <div class="form-group">
+            <label for="thema">
+              <i class="material-icons">title</i>
+              Thema:
+            </label>
+            <input
+              type="text"
+              id="thema"
+              required
+              class="disabled-no-student"
+              disabled
+              placeholder="Thema der Arbeit eingeben..."
+            />
+          </div>
 
-          <label for="beschreibung">Beschreibung:</label>
-          <textarea
-            id="beschreibung"
-            rows="4"
-            class="disabled-no-student"
-            disabled
-          ></textarea>
+          <div class="form-group">
+            <label for="beschreibung">
+              <i class="material-icons">description</i>
+              Beschreibung:
+            </label>
+            <textarea
+              id="beschreibung"
+              rows="6"
+              class="disabled-no-student"
+              disabled
+              placeholder="Beschreibung der Arbeit eingeben..."
+            ></textarea>
+          </div>
 
-          <label for="level" id="note_label">Note:</label>
-          <input
-            type="number"
-            id="level"
-            min="1"
-            max="15"
-            step="1"
-            class="disabled-no-student"
-            disabled
-          />
+          <div class="form-group">
+            <label for="level" id="note_label">
+              <i class="material-icons">grade</i>
+              Note:
+            </label>
+            <input
+              type="number"
+              id="level"
+              min="1"
+              max="15"
+              step="1"
+              class="disabled-no-student"
+              disabled
+              placeholder="1-15"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn submit-btn"
+            id="submitBtn submitFachwissenschaftlichesArbeiten"
+          >
+            <i class="material-icons">save</i>
+            Speichern
+          </button>
         </form>
 
-        <button
-          class="blauerButton"
-          onclick="window.location.href='fachliche-kompetenz.html';"
-          style="position: absolute; top: 92vh; left: 12vw"
-        >
-          Zurück
-        </button>
-        <button
-          form="facharbeitForm"
-          type="submit"
-          class="btn zentriert"
-          id="submitBtn submitFachwissenschaftlichesArbeiten"
-        >
-          Speichern
-        </button>
-        <button
-          class="blauerButton"
-          id="submitBtn"
-          onclick="window.location.href='zusaetzlich.html';"
-          style="position: absolute; top: 92vh; left: 85vw"
-        >
-          Weiter
-        </button>
+        <div class="navigation-buttons">
+          <button
+            class="blauerButton"
+            onclick="window.location.href='fachliche-kompetenz.html';"
+          >
+            <i class="material-icons">arrow_back</i>
+            Zurück
+          </button>
+          <button
+            class="blauerButton"
+            id="submitBtn"
+            onclick="window.location.href='zusaetzlich.html';"
+          >
+            Weiter
+            <i class="material-icons">arrow_forward</i>
+          </button>
+        </div>
       </main>
     </div>
   </body>

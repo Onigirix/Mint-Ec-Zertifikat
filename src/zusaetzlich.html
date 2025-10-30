@@ -2,6 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="shared.css" />
     <link rel="stylesheet" href="style_zs.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
@@ -64,18 +65,20 @@
             <!-- Tabellen nebeneinander -->
             <div class="tables-container">
               <!-- Tabelle 1: Wettbewerbe -->
-              <div class="table-container scrollable-table">
+              <div class="table-wrapper">
                 <h2>Aktivitäten</h2>
-                <table id="wettbewerbe-table" class="darken clickable">
-                  <thead>
-                    <tr>
-                        <th style="width: 100%;">Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <div class="scrollable-table">
+                  <table id="wettbewerbe-table" class="darken clickable">
+                    <thead>
+                      <tr>
+                          <th style="width: 100%;">Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
 
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               <div id="wettbewerbsSuche">
@@ -83,7 +86,7 @@
                   class="search-box"
                   type="text"
                   id="competition-search"
-                  placeholder="Aktivität..."
+                  placeholder="Aktivität suchen..."
                   value />
                   <ul id="competition-suggestions"
                     class="competition-suggestions-list">
@@ -91,75 +94,90 @@
               </div>
 
               <!-- Tabelle 2: Stufen -->
-              <div class="table-container scrollable-table">
+              <div class="table-wrapper">
                 <h2>Erreichte Stufen</h2>
-                <table id="stufen-table" class="disabled-no-student" disabled>
+                <div class="scrollable-table">
+                  <table id="stufen-table" class="disabled-no-student" disabled>
+                    <thead>
+                      <tr>
+                        <th>Stufe</th>
+                        <th>Voraussetzung</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr> <td>1</td><td></td></tr>
+                      <tr> <td>2</td><td></td></tr>
+                      <tr> <td>3</td><td></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="toggle-controls">
+              <div class="toggle-group">
+                <label class="switch">
+                  <input type="checkbox" id="toggleSwitch">
+                  <span class="slider round sek_slider"></span>
+                </label>
+                <h4 id="sekText">SEK II</h4>
+              </div>
+
+              <div class="toggle-group">
+                <label class="switch">
+                  <input type="checkbox" id="toggleSwitchTable">
+                  <span class="slider round"></span>
+                </label>
+                <h4>Suchleiste</h4>
+              </div>
+            </div>
+
+            <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
+            <div class="table-wrapper full-width">
+              <h2>Absolvierte Aktivitäten</h2>
+              <div class="scrollable-table">
+                <table id="erreichte-wettbewerbe-table" class="disabled-no-student" disabled>
                   <thead>
                     <tr>
+                      <th>Aktivitäten</th>
                       <th>Stufe</th>
-                      <th>Voraussetzung</th>
+                      <th>Aktion</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr> <td>1</td><td></td></tr>
-                    <tr> <td>2</td><td></td></tr>
-                    <tr> <td>3</td><td></td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
-            <div style="display: flex; gap: 10px; padding-top: 5px;">
-              <label class="switch">
-                <input type="checkbox" id="toggleSwitch">
-                <span class="slider round sek_slider"></span>
-              </label>
-              <h4 style="padding-top: 10px" id="sekText">SEK II</h4>
-
-              <label class="switch"
-                style="margin-left: 8%; position: absolute">
-                <input type="checkbox" id="toggleSwitchTable">
-                <span class="slider round"></span>
-              </label>
-              <h4
-                style="padding-top: 10px; margin-left: 11%; position: absolute">Suchleiste</h4>
-            </div>
-
-              <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
-
-              <h2>Absolvierte Aktivitäten</h2>
-                <div class="scrollable-table">
-                  <table id="erreichte-wettbewerbe-table" class="disabled-no-student" disabled>
-                    <thead>
-                      <tr>
-                        <th>Aktivitäten</th>
-                        <th>Stufe</th>
-                        <th>Aktion</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
-            </div>
 
           </div>
-        </div>
-      </form>
+        </form>
 
-      <button class="blauerButton"
-        onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
-        style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
-      <button class="btn" id="add-competition"
-        style="position: absolute; top: 92vh; left: 29vw;">Wettbewerb
-        hinzufügen</button>
-        <button class="btn" id="edit-competition"
-        style="position: absolute; top: 92vh; left: 43vw;">Wettbewerb
-        bearbeiten</button>
-        <button class="delete-btn" id="delete-competition"
-        style="position: absolute; top: 92vh; left: 57vw;">Wettbewerb
-        löschen</button>
-      <button class="blauerButton" onclick="window.location.href='export.html';"
-        style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
+        <div class="navigation-buttons">
+          <button class="blauerButton"
+            onclick="window.location.href='fachwissenschaftliches-arbeiten.html';">
+            <i class="material-icons">arrow_back</i>
+            Zurück
+          </button>
+          <div class="action-buttons">
+            <button class="btn" id="add-competition">
+              <i class="material-icons">add</i>
+              Aktivität hinzufügen
+            </button>
+            <button class="btn" id="edit-competition">
+              <i class="material-icons">edit</i>
+              Aktivität bearbeiten
+            </button>
+            <button class="delete-btn" id="delete-competition">
+              <i class="material-icons">delete</i>
+              Aktivität löschen
+            </button>
+          </div>
+          <button class="blauerButton" onclick="window.location.href='export.html';">
+            Weiter
+            <i class="material-icons">arrow_forward</i>
+          </button>
+        </div>
     </main>
 
   </body>

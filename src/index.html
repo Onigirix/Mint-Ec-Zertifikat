@@ -2,6 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="shared.css" />
     <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
@@ -47,32 +48,27 @@
       <main id="content">
         <h1>Mint-EC PDF Generator</h1>
         <div class="slideshow-container">
-          <div>
+          <div class="image-container">
             <img
               src="bilder/Mintec_slogan.png"
-              style="
-                height: 100%;
-                width: 80%;
-                display: block;
-                margin: 20px auto;
-              "
+              alt="MINT-EC Slogan"
             />
           </div>
         </div>
-        <div style="display: flex; gap: 3%; margin-left: 40%; margin-top: 1%">
+        <div class="button-group">
           <button
-            class="manualButton blauerButton startButton"
+            class="blauerButton manualButton"
             id="manual"
-            style="padding: 10px 20px"
           >
+            <i class="material-icons">menu_book</i>
             Handbuch
           </button>
           <button
             id="startButton"
             class="blauerButton"
             onclick="window.location.href='schuelerbearbeiten.html';"
-            style="padding: 10px 20px"
           >
+            <i class="material-icons">arrow_forward</i>
             Start
           </button>
         </div>

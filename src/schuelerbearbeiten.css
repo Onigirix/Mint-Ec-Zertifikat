@@ -1,153 +1,148 @@
-table {
-	width: 100%;
-	max-width: 1200px;
-	margin: 20px auto;
-	border-collapse: collapse;
-	background-color: #ffffff;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
-	overflow: hidden;
+/* ============================================
+   Student List Page Specific Styles
+   ============================================ */
+
+.table-wrapper {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-xl) auto;
+  max-width: 95%;
 }
 
-th {
-	color: black;
-	background-color: #f4f4f4;
+#table-container {
+  max-height: calc(100vh - 400px);
+  min-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
-thead {
-	background-color: #212225;
-	color: #ffffff;
-	font-weight: bold;
+/* Student table specific styles */
+#table-container table {
+  margin: 0;
 }
 
-th,
-td {
-	padding: 10px;
-	text-align: center;
-	color: black;
-	border-bottom: 1px solid #dddddd;
+.student-row {
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-th {
-	font-size: 1rem;
-	text-transform: uppercase;
+.student-row:hover {
+  background-color: rgba(74, 144, 226, 0.08);
+  transform: scale(1.005);
 }
 
-td input[type="text"] {
-	width: 100%;
-	padding: 8px;
-	border-radius: 4px;
-	border: 1px solid #ccc;
-	font-size: 0.8em;
+.student-row.selected {
+  background-color: rgba(76, 175, 80, 0.2);
+  font-weight: var(--font-weight-medium);
 }
 
-td input[type="number"] {
-	width: 60px;
-	padding: 8px;
-	border-radius: 4px;
-	border: 1px solid #ccc;
-	font-size: 0.8rem;
-	text-align: center;
+.student-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-success);
 }
 
-td span {
-	font-size: 0.8rem;
-	color: #333;
-}
-
-/* Hover Effekt für die Tabelle */
-tr:not(.selected):hover {
-	background-color: rgba(33, 34, 37, 0.1);
-}
-
-.selected {
-	background-color: rgba(33, 34, 37, 0.3);
-}
-
-.selected-student {
-	position: absolute;
-	bottom: 20px;
-	text-align: center;
-	font-size: 14px;
-	color: #121212;
-	justify-content: center;
-	background-color: #aa00ff;
-	width: 100%;
-	border-radius: 10px; /* Abgerundete Ecken */
-	padding: 10px;
-}
-
-th,
-td {
-	padding: 8px;
-	padding-left: 13px;
-	border: 1px solid #dddada;
-	text-align: left;
-}
-
-.add-button {
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	background-color: #4caf50;
-	color: white;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
-
-#editButton {
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	background-color: #4caf50;
-	color: white;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
-#deleteButton {
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	background-color: #4caf50;
-	color: white;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
-#deleteYearButton {
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	background-color: #4caf50;
-	color: white;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
-
+/* Button container */
 .button-container {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	gap: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-#editButton[disabled] {
-	background-color: #ccc !important;
-	color: #666 !important;
-	cursor: not-allowed !important;
+.spacer {
+  flex: 1;
+  min-width: var(--spacing-md);
 }
 
-#deleteButton[disabled] {
-	background-color: #ccc !important;
-	color: #666 !important;
-	cursor: not-allowed !important;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #table-container {
+    max-height: calc(100vh - 500px);
+    min-height: 300px;
+  }
+  
+  .button-container {
+    flex-direction: column;
+  }
+  
+  .button-container button {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .spacer {
+    display: none;
+  }
+  
+  .table-wrapper {
+    padding: var(--spacing-md);
+  }
 }
 
-#deleteYearButton[disabled] {
-	background-color: #ccc !important;
-	color: #666 !important;
-	cursor: not-allowed !important;
+@media (min-width: 1920px) {
+  #table-container {
+    max-height: calc(100vh - 350px);
+    min-height: 600px;
+  }
+  
+  .table-wrapper {
+    max-width: 90%;
+  }
+}
+
+/* Student input styles in header */
+#schülerEingabe {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+#student-search {
+  width: 100%;
+  max-width: 350px;
+}
+
+#create-student {
+  white-space: nowrap;
+}
+
+.rightHeading {
+  text-decoration: none;
+  color: var(--color-white-alpha);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
+  white-space: nowrap;
+  transition: color var(--transition-base);
+}
+
+.rightHeading:hover {
+  color: var(--color-white);
+}
+
+@media (max-width: 768px) {
+  .rightHeading {
+    font-size: var(--font-size-lg);
+  }
+  
+  #schülerEingabe {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  #student-search {
+    max-width: 100%;
+  }
 }

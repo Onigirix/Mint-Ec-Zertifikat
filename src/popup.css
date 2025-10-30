@@ -1,0 +1,205 @@
+/* ============================================
+   Popup/Modal Styles
+   ============================================ */
+
+body {
+  background-color: var(--color-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+}
+
+.popup-container {
+  background: var(--color-white);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  max-width: 600px;
+  width: 100%;
+  animation: fadeIn var(--transition-base);
+}
+
+.popup-container h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
+  text-transform: none;
+  letter-spacing: normal;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+  max-width: 100%;
+}
+
+.popup-container h2 .material-icons {
+  font-size: 32px;
+  color: var(--color-primary);
+}
+
+/* Form groups */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group:last-of-type {
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-base);
+}
+
+.form-group label .material-icons {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"] {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-base);
+  background-color: var(--color-white);
+}
+
+.form-group input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  outline: none;
+}
+
+/* Checkbox groups */
+.checkbox-group {
+  display: flex;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.checkbox-item label {
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-dark);
+  font-size: var(--font-size-base);
+}
+
+/* Button group */
+.button-group {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.button-group button {
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: var(--spacing-md);
+  }
+  
+  .popup-container {
+    padding: var(--spacing-lg);
+    max-width: 100%;
+  }
+  
+  .popup-container h2 {
+    font-size: var(--font-size-xl);
+    flex-wrap: wrap;
+  }
+  
+  .popup-container h2 .material-icons {
+    font-size: 28px;
+  }
+  
+  .form-group {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-group button {
+    width: 100%;
+    min-width: 100%;
+  }
+  
+  .checkbox-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (min-width: 1920px) {
+  .popup-container {
+    max-width: 700px;
+    padding: var(--spacing-3xl);
+  }
+  
+  .popup-container h2 {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .form-group label,
+  .form-group input {
+    font-size: var(--font-size-lg);
+  }
+}
+

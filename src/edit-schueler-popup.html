@@ -2,30 +2,65 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared.css" />
+    <link rel="stylesheet" href="popup.css" />
     <script src="edit-popup.js" type="module" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Schüler erstellen</title>
+    <title>Schüler bearbeiten</title>
   </head>
   <body>
-    <div id="schuelerPopup">
-      <h2>Schüler bearbeiten</h2>
+    <div id="schuelerPopup" class="popup-container">
+      <h2>
+        <i class="material-icons">edit</i>
+        Schüler bearbeiten
+      </h2>
       <form id="schuelerForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required /><br />
-        <label for="abijahr">Abijahrgang:</label>
-        <input type="text" id="abijahr" name="Abijahr"
-          style="margin-left: 2px; max-width: 97%;" required /><br />
-        <label for="geburtsdatum">Geburtsdatum:</label>
-        <input
-          type="date"
-          id="geburtsdatum"
-          name="geburtsdatum"
-          required /><br />
-        <button type="submit" class="blauerButton">Fertig</button>
-        <button type="button" class="roterButton" id="schuelerAbbrechen">
-          Abbrechen
-        </button>
+        <div class="form-group">
+          <label for="name">
+            <i class="material-icons">person</i>
+            Name:
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Vollständiger Name..."
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="abijahr">
+            <i class="material-icons">school</i>
+            Abijahrgang:
+          </label>
+          <input
+            type="text"
+            id="abijahr"
+            name="Abijahr"
+            placeholder="z.B. 2024"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="geburtsdatum">
+            <i class="material-icons">cake</i>
+            Geburtsdatum:
+          </label>
+          <input type="date" id="geburtsdatum" name="geburtsdatum" required />
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="blauerButton">
+            <i class="material-icons">check</i>
+            Fertig
+          </button>
+          <button type="button" class="roterButton" id="schuelerAbbrechen">
+            <i class="material-icons">close</i>
+            Abbrechen
+          </button>
+        </div>
       </form>
     </div>
   </body>
