@@ -33,7 +33,7 @@ tauri-plugin-prevent-default = { version = "3.0.3", features = ["platform-window
 tauri-plugin-dialog = "2.4.0"
 tauri-plugin-process = "2.3.0"
 rfd = { version = "0.15.4", default-features = false, features = ["gtk3"] }
-tauri-plugin-log = "2.7.0"
+tauri-plugin-log = "2.7.1"
 log = "0.4.28"
 webbrowser = "1"
 url = "2.5.7"
