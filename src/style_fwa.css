@@ -330,9 +330,10 @@ tr:not(.selected):hover {
 
 
 .zentriert {
-  display: block; /* Button blockieren, um die volle Breite einzunehmen */
-  margin: 20px auto; 
+  margin: 0;      /* Kein extra Abstand */
+  padding: 0;
 }
+
 
 .btn {
   background-color: #4CAF50;
@@ -433,4 +434,18 @@ select {
 
 .suggestions-list li:hover {
   background-color: #f0f0f0;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* Buttons zentrieren */
+  align-items: center;
+  gap: 8px; /* Abstand zwischen Buttons – kleiner als vorher */
+  margin-top: 19px;
+}
+
+
+.btn {
+  height: 40px; /* gleiche Höhe für beide Buttons */
+  
 }
