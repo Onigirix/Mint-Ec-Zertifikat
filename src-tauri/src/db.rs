@@ -377,6 +377,8 @@ async fn create_additional_mint_activities_table() {
     .execute(&db)
     .await
     .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
+
+
 }
 
 async fn create_student_additional_mint_activities_table() {
