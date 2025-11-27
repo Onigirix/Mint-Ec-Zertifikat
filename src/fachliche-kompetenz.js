@@ -112,3 +112,8 @@ document.addEventListener("fields_filled", () => {
 		});
 	}
 });
+
+function toggleAfBZuordnung() {
+	const afbZuordnungDiv = document.querySelector(".afb-zuordnung");
+	afbZuordnungDiv.classList.toggle("hidden");
+}
