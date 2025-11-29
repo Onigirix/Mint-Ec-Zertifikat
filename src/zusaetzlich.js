@@ -55,7 +55,7 @@ async function populateWettbewerbeTable() {
 
   if (competitionData.length === 0) {
     const row = wettbewerbeTable.insertRow();
-    row.insertCell(0).textContent = "Noch kein Wettbewerb vorhanden";
+    row.insertCell(0).textContent = "Noch keine Aktivitäten vorhanden";
   }
 
   for (const wettbewerb of competitionData) {
