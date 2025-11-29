@@ -3,8 +3,10 @@ const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
 const {ask} = window.__TAURI__.dialog;
+const invoke = window.__TAURI__.core.invoke;
 
-const db = await Database.load("sqlite://resources/db.sqlite");
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
@@ -177,14 +179,6 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     e.stopPropagation();
   });
   deleteCell.appendChild(deleteButton);
-
-  const hidenButton = document.createElement("button");
-  hidenButton.textContent = "Nicht zählen";
-  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
-  hidenButton.addEventListener("click", async (e) => {
-    "Logik musst du machen damit der Button ausgeblendet wird";
-  });
-  deleteCell.appendChild(hidenButton);
 }
 
 async function updateErreichteWettbewerbeTable() {
@@ -238,13 +232,7 @@ async function updateErreichteWettbewerbeTable() {
       e.stopPropagation();
     });
     deleteCell.appendChild(deleteButton);
-      const hidenButton = document.createElement("button");
-  hidenButton.textContent = "Nicht zählen";
-  hidenButton.classList.add("hide-btn");
-  hidenButton.addEventListener("click", async (e) => {
-    "Logik musst du machen damit der Button ausgeblendet wird";
-  });
-  deleteCell.appendChild(hidenButton);
+
   }
 }
 

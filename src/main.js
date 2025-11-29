@@ -1,6 +1,8 @@
 const invoke = window.__TAURI__.core.invoke;
 const Database = window.__TAURI__.sql;
-const db = await Database.load("sqlite://resources/db.sqlite");
+
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 const listen = window.__TAURI__.event.listen;
 
 await listen("student-added", (event) => {

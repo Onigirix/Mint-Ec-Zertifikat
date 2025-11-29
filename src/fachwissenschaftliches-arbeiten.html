@@ -66,14 +66,24 @@
 
         <form id="facharbeitForm" class="darken">
           <label for="arbeitTyp">Typ der Arbeit:</label>
-          <select id="arbeitTyp" required class="disabled-no-student" disabled>
-            <option value="0" disabled selected>Bitte wählen</option>
-            <option value="1">Facharbeit</option>
-            <option value="2">wissenschaftspropädeutisches Fach</option>
-            <option value="3">besondere Lernleistung</option>
-            <option value="4">Jugend forscht Projekt</option>
-            <option value="5">Anderer Wettbewerb</option>
-          </select>
+          <div class="custom-select-wrapper">
+            <input
+              type="text"
+              id="arbeitTyp"
+              class="custom-select-input disabled-no-student"
+              placeholder="Bitte wählen"
+              readonly
+              disabled
+            />
+            <input type="hidden" id="arbeitTypValue" value="0" />
+            <ul id="arbeitTypOptions" class="custom-select-list">
+              <li data-value="1">Facharbeit</li>
+              <li data-value="2">wissenschaftspropädeutisches Fach</li>
+              <li data-value="3">besondere Lernleistung</li>
+              <li data-value="4">Jugend forscht Projekt</li>
+              <li data-value="5">Anderer Wettbewerb</li>
+            </ul>
+          </div>
 
           <label for="thema">Thema:</label>
           <input
@@ -109,7 +119,7 @@
           onclick="window.location.href='fachliche-kompetenz.html';"
           style="position: absolute; top: 92vh; left: 12vw"
         >
-          Zurück
+          🡸
         </button>
         <div class="button-container">
           <button
@@ -137,7 +147,7 @@
           onclick="window.location.href='zusaetzlich.html';"
           style="position: absolute; top: 92vh; left: 85vw"
         >
-          Weiter
+          🡺
         </button>
       </main>
     </div>

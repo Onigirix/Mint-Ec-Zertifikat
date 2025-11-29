@@ -436,6 +436,56 @@ select {
   background-color: #f0f0f0;
 }
 
+/* Custom Select Dropdown */
+.custom-select-wrapper {
+  position: relative;
+  width: 99%;
+}
+
+.custom-select-input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: white;
+}
+
+.custom-select-input:disabled {
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+.custom-select-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.custom-select-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: black;
+}
+
+.custom-select-list li:hover {
+  background-color: #f0f0f0;
+}
+
 .button-container {
   display: flex;
   justify-content: center; /* Buttons zentrieren */

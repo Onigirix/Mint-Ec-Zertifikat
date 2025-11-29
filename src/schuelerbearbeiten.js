@@ -3,13 +3,18 @@ const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
 const { ask } = window.__TAURI__.dialog;
-const db = await Database.load("sqlite://resources/db.sqlite");
+const invoke = window.__TAURI__.core.invoke;
+
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 import { select_student } from "./main.js";
 
 const sortState = {
 	column: "name",      // name | graduation_year | birthday
 	direction: "asc",    // asc | desc
 };
+
+let allStudents = []; // Store all students for filtering
 
 function toggleSort(column) {
 	if (sortState.column === column) {
@@ -37,6 +42,12 @@ function scrollRowIntoView(row) {
 }
 
 async function init() {
+	const yearFilterInput = document.getElementById("year-filter");
+	if (yearFilterInput) {
+		yearFilterInput.placeholder = `z.B. ${new Date().getFullYear()}`;
+	}
+
+	await loadStudents();
 	await generateTable();
 	if (window.studentState.studentId !== 0) {
 		const row = document.querySelector(
@@ -48,13 +59,32 @@ async function init() {
 	}
 }
 
+async function loadStudents() {
+	allStudents = await db.select(
+		"SELECT student_id, name, birthday, graduation_year FROM students",
+	);
+}
+
+function getFilteredStudents() {
+	const searchTerm = document.getElementById("student-filter").value.toLowerCase().trim();
+	const yearFilter = document.getElementById("year-filter").value;
+
+	return allStudents.filter(student => {
+		const matchesSearch = !searchTerm || student.name.toLowerCase().includes(searchTerm);
+		const matchesYear = !yearFilter || yearFilter.length != 4 || student.graduation_year == yearFilter;
+		return matchesSearch && matchesYear;
+	});
+}
+
 document
 	.getElementById("deleteButton")
 	.addEventListener("click", async () =>
 		deleteStudent(window.studentState.studentId)
 	);
 document.getElementById("editButton").addEventListener("click", editStudent);
-document.getElementById("deleteYearButton").addEventListener("click", async () => deleteYear(window.studentState.studentId))
+document.getElementById("deleteYearButton").addEventListener("click", async () => deleteYear(window.studentState.studentId));
+document.getElementById("student-filter").addEventListener("input", () => generateTable());
+document.getElementById("year-filter").addEventListener("input", () => generateTable());
 document.getElementById("main").addEventListener("click", (event) => {
 	if (!document.getElementById("content").contains(event.target)) {
 		deselectStudent();
@@ -62,9 +92,7 @@ document.getElementById("main").addEventListener("click", (event) => {
 });
 
 async function generateTable() {
-	const studentData = await db.select(
-		"SELECT student_id, name, birthday, graduation_year FROM students",
-	);
+	const studentData = getFilteredStudents();
 
 	const sorted = [...studentData].sort((a, b) => {
 		const dir = sortState.direction === "asc" ? 1 : -1;
@@ -98,7 +126,7 @@ async function generateTable() {
 	for (const h of headers) {
 		const active = sortState.column === h.col;
 		const arrow = active ? (sortState.direction === "asc" ? " ▲" : " ▼") : "";
-		table += `<th data-sort="${h.col}" style="cursor:pointer; user-select:none;">${h.label}${arrow}</th>`;
+		table += `<th data-sort="${h.col}" style="cursor:pointer; user-select:none; position:sticky; top:0; background-color:#f4f4f4; z-index:10;">${h.label}${arrow}</th>`;
 	}
 	table += "</tr></thead>";
 
@@ -130,15 +158,6 @@ async function generateTable() {
 			row.addEventListener("click", () =>
 				selectStudentInStudentEdit(row, studentId),
 			);
-		}
-		if (window.studentState?.studentId) {
-			const sel = document.querySelector(
-				`[data-id="${window.studentState.studentId}"]`,
-			);
-			if (sel) {
-				sel.classList.add("selected");
-				scrollRowIntoView(sel);
-			}
 		}
 	}, 0);
 }
@@ -203,8 +222,9 @@ async function deleteStudent(studentId) {
 		[studentId],
 	);
 	await db.execute("DELETE FROM students WHERE student_id = $1", [studentId]);
+	allStudents = allStudents.filter(s => s.student_id !== studentId);
 	deselectStudent();
-	init();
+	generateTable();
 }
 
 async function deleteYear(student_id) {
