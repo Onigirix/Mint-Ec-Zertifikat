@@ -107,6 +107,30 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
         let (field_9_text, zusätzliche_mint_aktivität_level) =
             zusätzliche_mint_aktivität_text(student_id, student_name.clone()).await;
 
+        // Check if any Anforderungsfeld has level 0
+        let anforderungsfelder = [
+            (fachliche_kompetenz_level, "Fachliche Kompetenz"),
+            (
+                fachwissenschaftliches_level,
+                "Fachwissenschaftliches Arbeiten",
+            ),
+            (zusätzliche_mint_aktivität_level, "Zusätzliche Aktivitäten"),
+        ];
+
+        let mut level_zero_error: Option<String> = None;
+        for (index, (level, name)) in anforderungsfelder.iter().enumerate() {
+            if *level == 0 {
+                let error_msg = format!(
+                    "Anforderungsfeld {} ({}) wurde mit Stufe 0 bewertet. Kein Zertifikat kann ausgegeben werden.",
+                    index + 1,
+                    name
+                );
+                log::error!("{}", error_msg);
+                level_zero_error = Some(error_msg);
+                break;
+            }
+        }
+
         let average_level: f32 = (fachliche_kompetenz_level
             + fachwissenschaftliches_level
             + zusätzliche_mint_aktivität_level) as f32
@@ -120,13 +144,17 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
             average_level
         );
 
-        let field_2_text = match average_level {
-            x if x < 1.0 => String::from(
-                "Die Durchschnittsnote liegt unter 1.0, bitte pr\u{00fc}fen sie Ihre Eingabe.",
-            ),
-            x if x < 1.5 => String::from("mit Erfolg (I)"),
-            x if x < 2.5 => String::from("mit besonderem Erfolg (II)"),
-            _ => String::from("mit Auszeichnung (III)"),
+        let field_2_text = if let Some(error) = level_zero_error {
+            error
+        } else {
+            match average_level {
+                x if x < 1.0 => String::from(
+                    "Die Durchschnittsbewertung liegt unter 1.0, bitte prüfen Sie Ihre Eingaben.",
+                ),
+                x if x < 1.5 => String::from("mit Erfolg"),
+                x if x < 2.5 => String::from("mit besonderem Erfolg"),
+                _ => String::from("mit Auszeichnung"),
+            }
         };
         log::info!("generate_pdf: computed field_2_text: '{}'", field_2_text);
 
@@ -223,32 +251,32 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
                 }
                 log::info!("generate_pdf: PDF saved");
 
-                let file_url = Url::from_file_path(&path_buf)
-                    .map(|u| u.to_string())
-                    .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
-                log::info!("generate_pdf: opening in browser: {}", file_url);
+                // let file_url = Url::from_file_path(&path_buf)
+                //     .map(|u| u.to_string())
+                //     .unwrap_or_else(|_| format!("file:///{}", path_string.replace('\\', "/")));
+                // log::info!("generate_pdf: opening in browser: {}", file_url);
 
-                if let Err(e) = webbrowser::open(&file_url) {
-                    log::error!("Failed to open PDF in browser (webbrowser): {}", e);
+                // if let Err(e) = webbrowser::open(&file_url) {
+                //     log::error!("Failed to open PDF in browser (webbrowser): {}", e);
 
-                    #[cfg(target_os = "windows")]
-                    {
-                        use std::process::Command;
-                        log::info!("generate_pdf: trying Windows fallback (explorer)...");
-                        if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
-                            log::error!("Fallback via explorer failed: {}", e2);
-                            log::info!("generate_pdf: trying Windows fallback (cmd start)...");
-                            let _ = Command::new("cmd")
-                                .args(["/C", "start", "", &file_url])
-                                .spawn()
-                                .map_err(|e3| {
-                                    log::error!("Fallback via cmd start failed: {}", e3);
-                                });
-                        }
-                    }
-                } else {
-                    log::info!("generate_pdf: opened PDF in browser via webbrowser");
-                }
+                //     #[cfg(target_os = "windows")]
+                //     {
+                //         use std::process::Command;
+                //         log::info!("generate_pdf: trying Windows fallback (explorer)...");
+                //         if let Err(e2) = Command::new("explorer").arg(&file_url).spawn() {
+                //             log::error!("Fallback via explorer failed: {}", e2);
+                //             log::info!("generate_pdf: trying Windows fallback (cmd start)...");
+                //             let _ = Command::new("cmd")
+                //                 .args(["/C", "start", "", &file_url])
+                //                 .spawn()
+                //                 .map_err(|e3| {
+                //                     log::error!("Fallback via cmd start failed: {}", e3);
+                //                 });
+                //         }
+                //     }
+                // } else {
+                //     log::info!("generate_pdf: opened PDF in browser via webbrowser");
+                // }
             }
             Err(e) => {
                 log::error!("Aborting PDF generation: {}", e);
