@@ -20,7 +20,7 @@ document.getElementById("manual").addEventListener("click", (event) => {
 });
 
 await message(
-  "Dies ist eine Betaversion. Es kann zu Fehlern kommen.\nWenn etwas nicht funktioniert, drücken Sie bitte Strg + Shift + I und machen Sie mit der Windowstaste + Shift + S einen Screenshot von der/den Fehlermeldung(en), die im neu geöffneten Fenster unten in rot erscheinen. Fügen Sie diesen dann mittels Strg + V in eine E-Mail an mintec.feedback@gmail.com ein. Falls Sie Verbesserungsvorschläge haben, schreiben Sie uns gerne eine E-Mail.\nWir bitten um Ihr Verständnis!",
+  "Dies ist eine Betaversion. Es kann zu Fehlern kommen.\nWenn etwas nicht funktioniert oder Sie Verbesserungsvorschläge haben, schreiben Sie bitte eine E-Mail an mintec.feedback@gmail.com.",
   { title: "Mint-EC", kind: "information" }
 );
 

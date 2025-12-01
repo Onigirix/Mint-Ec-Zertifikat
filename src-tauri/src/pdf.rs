@@ -5,7 +5,7 @@ use chrono::format;
 use chrono::Datelike;
 use chrono::NaiveDate;
 use rfd::AsyncFileDialog;
-use tauri::State;
+use tauri::{AppHandle, Manager, State};
 use tokio::sync::Mutex;
 use url::Url;
 use webbrowser;
@@ -37,7 +37,7 @@ enum FormField {
 }
 
 #[tauri::command]
-pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
+pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> Result<(), String> {
     let (student_name, student_id) = {
         let s = state.lock().await;
         (s.student_name.clone(), s.student_id)
@@ -47,6 +47,16 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
         student_id,
         student_name
     );
+
+    // Resolve the template path using Tauri's resource resolver
+    let template_path = app
+        .path()
+        .resource_dir()
+        .map_err(|e| format!("Failed to get resource directory: {}", e))?
+        .join("resources")
+        .join("Template_L.pdf");
+
+    log::info!("generate_pdf: resolved template path: {:?}", template_path);
 
     let spawn_file_dialog = async {
         let default_dir = db::get_default_file_path().await;
@@ -73,8 +83,8 @@ pub async fn generate_pdf(state: State<'_, Mutex<AppState>>) -> Result<(), Strin
     };
 
     let prepare_pdf = async {
-        log::info!("generate_pdf: loading template: resources/Template_L.pdf");
-        let mut form = match Form::load("resources/Template_L.pdf") {
+        log::info!("generate_pdf: loading template: {:?}", template_path);
+        let mut form = match Form::load(&template_path) {
             Ok(f) => {
                 log::info!("generate_pdf: template loaded");
                 f
