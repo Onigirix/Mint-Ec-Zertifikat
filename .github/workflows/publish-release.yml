@@ -133,12 +133,8 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
-          # Use a stable cache key that doesn't change with every commit
-          key: ${{ runner.os }}-${{ matrix.platform }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          # Share cache across different releases for the same Cargo.lock
-          shared-key: "release-build"
-          # Cache for 7 days to balance storage and freshness
-          cache-all-crates: true
+          shared-key: "release-${{ runner.os }}-${{ matrix.args }}"
+          cache-all-crates: "true"
 
       - name: Install tauri
         run: |
