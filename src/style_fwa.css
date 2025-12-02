@@ -387,14 +387,15 @@ select {
 }
 
 @font-face {
-  font-family: "Material Icons";
+  font-family: "Material Symbols Rounded";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 700;
   src: url("assets/MaterialSymbolsRounded.woff2") format("woff2");
 }
 
-.material-icons {
-  font-family: "Material Icons";
+.material-icons,
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -405,6 +406,7 @@ select {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -436,6 +438,56 @@ select {
   background-color: #f0f0f0;
 }
 
+/* Custom Select Dropdown */
+.custom-select-wrapper {
+  position: relative;
+  width: 99%;
+}
+
+.custom-select-input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: white;
+}
+
+.custom-select-input:disabled {
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+.custom-select-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.custom-select-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: black;
+}
+
+.custom-select-list li:hover {
+  background-color: #f0f0f0;
+}
+
 .button-container {
   display: flex;
   justify-content: center; /* Buttons zentrieren */
@@ -447,5 +499,10 @@ select {
 
 .btn {
   height: 40px; /* gleiche Höhe für beide Buttons */
-  
+}
+
+.btn[disabled] {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
 }

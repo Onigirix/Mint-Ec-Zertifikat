@@ -1,6 +1,8 @@
 const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
-const db = await Database.load("sqlite://resources/db.sqlite");
+
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 const form = document.getElementById("facharbeitForm");
 
 const gesamtDurchschnittElement = document.getElementById("gesamtDurchschnitt");
@@ -28,26 +30,55 @@ for (const input of formInputs) {
 	});
 }
 
-const arbeitTypSelect = document.getElementById("arbeitTyp");
+// Custom dropdown logic
+const arbeitTypInput = document.getElementById("arbeitTyp");
+const arbeitTypValue = document.getElementById("arbeitTypValue");
+const arbeitTypOptions = document.getElementById("arbeitTypOptions");
 const themaLabel = document.querySelector("label[for='thema']");
 
-arbeitTypSelect.addEventListener("change", () => {
-  const selectedValue = arbeitTypSelect.value;
-
-  switch (selectedValue) {
-    case "2":
-      themaLabel.textContent = "Fach:";
-      break;
-    case "5":
-      themaLabel.textContent = "Wettbewerb:";
-      break;
-    default:
-      themaLabel.textContent = "Thema:";
-  }
+// Toggle dropdown on click
+arbeitTypInput.addEventListener("click", () => {
+	if (!arbeitTypInput.disabled) {
+		arbeitTypOptions.style.display = arbeitTypOptions.style.display === "block" ? "none" : "block";
+	}
 });
 
-// Falls ein Wert vorausgewählt ist, gleich Label anpassen
-arbeitTypSelect.dispatchEvent(new Event("change"));
+// Handle option selection
+arbeitTypOptions.querySelectorAll("li").forEach((option) => {
+	option.addEventListener("click", () => {
+		const value = option.getAttribute("data-value");
+		arbeitTypInput.value = option.textContent;
+		arbeitTypValue.value = value;
+		arbeitTypOptions.style.display = "none";
+
+		// Trigger change event
+		const event = new Event("change", { bubbles: true });
+		arbeitTypValue.dispatchEvent(event);
+	});
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+	if (!e.target.closest(".custom-select-wrapper")) {
+		arbeitTypOptions.style.display = "none";
+	}
+});
+
+// Handle label change based on selection
+arbeitTypValue.addEventListener("change", () => {
+	const selectedValue = arbeitTypValue.value;
+
+	switch (selectedValue) {
+		case "2":
+			themaLabel.textContent = "Fach:";
+			break;
+		case "5":
+			themaLabel.textContent = "Wettbewerb:";
+			break;
+		default:
+			themaLabel.textContent = "Thema:";
+	}
+});
 
 
 async function fill_fields(studentId) {
@@ -57,7 +88,16 @@ async function fill_fields(studentId) {
 			[studentId],
 		);
 		const type_of_paper = Number.parseInt(db_res[0].type_of_paper);
-		document.getElementById("arbeitTyp").value = type_of_paper;
+
+		// Set the custom dropdown value
+		arbeitTypValue.value = type_of_paper;
+		const selectedOption = arbeitTypOptions.querySelector(`li[data-value="${type_of_paper}"]`);
+		if (selectedOption) {
+			arbeitTypInput.value = selectedOption.textContent;
+		} else {
+			arbeitTypInput.value = "";
+		}
+
 		typeChanged(type_of_paper);
 		document.getElementById("thema").value = db_res[0].topic_of_paper;
 		document.getElementById("beschreibung").value =
@@ -81,7 +121,7 @@ async function save_form() {
 		await db.execute(
 			"UPDATE students SET type_of_paper = $1, topic_of_paper = $2, description_of_paper = $3, grade_of_paper = $4 WHERE student_id = $5",
 			[
-				document.getElementById("arbeitTyp").value,
+				arbeitTypValue.value,
 				document.getElementById("thema").value,
 				document.getElementById("beschreibung").value,
 				document.getElementById("level").value,
@@ -92,7 +132,7 @@ async function save_form() {
 		await db.execute(
 			"UPDATE students SET type_of_paper = $1, topic_of_paper = $2, description_of_paper = $3, grade_of_paper = $4, level_of_competition = $5 WHERE student_id = $6",
 			[
-				document.getElementById("arbeitTyp").value,
+				arbeitTypValue.value,
 				document.getElementById("thema").value,
 				document.getElementById("beschreibung").value,
 				document.getElementById("level").value,
@@ -111,7 +151,7 @@ document
 		await save_form();
 	});
 
-document.getElementById("arbeitTyp").addEventListener("change", (e) => {
+arbeitTypValue.addEventListener("change", (e) => {
 	typeChanged(Number.parseInt(e.target.value));
 });
 

@@ -182,7 +182,7 @@ input::-webkit-inner-spin-button {
 	height: 100%;
 	width: 0;
 	position: fixed;
-	z-index: 1;
+	z-index: 100;
 	top: 0;
 	left: 0;
 	background-color: #212225;
@@ -542,14 +542,15 @@ textarea {
 }
 
 @font-face {
-	font-family: "Material Icons";
+	font-family: "Material Symbols Rounded";
 	font-style: normal;
-	font-weight: 400;
+	font-weight: 100 700;
 	src: url("assets/MaterialSymbolsRounded.woff2") format("woff2");
 }
 
-.material-icons {
-	font-family: "Material Icons", sans-serif;
+.material-icons,
+.material-symbols-rounded {
+	font-family: "Material Symbols Rounded", sans-serif;
 	font-weight: normal;
 	font-style: normal;
 	font-size: 24px;
@@ -560,6 +561,7 @@ textarea {
 	white-space: nowrap;
 	word-wrap: normal;
 	direction: ltr;
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 	-webkit-font-smoothing: antialiased;
 }
 

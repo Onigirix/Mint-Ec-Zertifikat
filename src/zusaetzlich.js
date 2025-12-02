@@ -3,8 +3,10 @@ const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
 const {ask} = window.__TAURI__.dialog;
+const invoke = window.__TAURI__.core.invoke;
 
-const db = await Database.load("sqlite://resources/db.sqlite");
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
@@ -39,52 +41,48 @@ async function init() {
 }
 
 async function populateWettbewerbeTable() {
+
   competitionData = await db.select(
     "SELECT additional_mint_activity_id, name, level_one, level_two, level_three FROM additional_mint_activities WHERE sek = $1",
     [sek]
   );
+  // Sort alphabetically by name
+  competitionData.sort((a, b) => a.name.localeCompare(b.name));
 
   const wettbewerbeTable = document
     .getElementById("wettbewerbe-table")
     .getElementsByTagName("tbody")[0];
   wettbewerbeTable.innerHTML = "";
 
+
   if (competitionData.length === 0) {
     const row = wettbewerbeTable.insertRow();
-    row.insertCell(0).textContent = "-";
-    row.insertCell(1).textContent = "Noch kein Wettbewerb vorhanden";
+    row.insertCell(0).textContent = "Noch keine Aktivitäten vorhanden";
   }
 
   for (const wettbewerb of competitionData) {
     const row = wettbewerbeTable.insertRow();
-    row.insertCell(0).textContent = wettbewerb.additional_mint_activity_id;
-    const nameCell = row.insertCell(1);
+    const nameCell = row.insertCell(0);
     nameCell.textContent = wettbewerb.name;
 
     row.addEventListener("click", () => {
       const rows = wettbewerbeTable.getElementsByTagName("tr");
       for (const r of rows) {
-        //TODO: Test if a querySelector(All) would be faster, might be important with very large databases
         r.classList.remove("active-row");
       }
-
       row.classList.add("active-row");
-
       updateStufenTable(wettbewerb.additional_mint_activity_id);
     });
   }
 
   const firstRow = wettbewerbeTable.querySelector("tr");
-  if (firstRow.cells[0].textContent != "-") {
+  if (firstRow && firstRow.cells[0].textContent !== "Noch kein Wettbewerb vorhanden") {
     firstRow.classList.add("active-row");
-    updateStufenTable(Number.parseInt(firstRow.cells[0].textContent));
-    if (firstRow.cells[1].textContent === "Noch kein Wettbewerb vorhanden") {
-      competitionSearchBox.value = "";
-    } else {
-      competitionSearchBox.value = firstRow.cells[1].textContent;
-    }
-  }else{
-   
+    // Find the first competition by name
+    const firstCompetition = competitionData[0];
+    updateStufenTable(firstCompetition ? firstCompetition.additional_mint_activity_id : 0);
+    competitionSearchBox.value = firstCompetition ? firstCompetition.name : "";
+  } else {
     updateStufenTable(0);
   }
 
@@ -92,7 +90,7 @@ async function populateWettbewerbeTable() {
 }
 
 function updateStufenTable(additional_mint_activity_id) {
-  
+
   selectedCompetitionId = additional_mint_activity_id;
   const stufenTable = document
     .getElementById("stufen-table")
@@ -154,23 +152,16 @@ function updateStufenTable(additional_mint_activity_id) {
 }
 
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
-  const wettbewerbeTable = document
-    .getElementById("wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
-  const activeRow = wettbewerbeTable.querySelector(".active-row");
-  const wettbewerbName = activeRow.cells[1].textContent;
-  const wettbewerbId = Number.parseInt(activeRow.cells[0].textContent);
-
-  const db_result = await db.execute(
+    const db_result = await db.execute(
     `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
-    [window.studentState.studentId, wettbewerbId, stufe]
+    [window.studentState.studentId, selectedCompetitionId, stufe]
   );
 
   const erreichteWettbewerbeTable = document
     .getElementById("erreichte-wettbewerbe-table")
     .getElementsByTagName("tbody")[0];
   const newRow = erreichteWettbewerbeTable.insertRow();
-  newRow.insertCell(0).textContent = wettbewerbName;
+  newRow.insertCell(0).textContent = selectedCompetitionName;
   newRow.insertCell(1).textContent = `${stufe}: ${stufe_beschreibung}`;
 
   // Löschen-Button hinzufügen
@@ -188,14 +179,6 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     e.stopPropagation();
   });
   deleteCell.appendChild(deleteButton);
-
-  const hidenButton = document.createElement("button");
-  hidenButton.textContent = "Nicht zählen";
-  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
-  hidenButton.addEventListener("click", async (e) => {
-    "Logik musst du machen damit der Button ausgeblendet wird";
-  });
-  deleteCell.appendChild(hidenButton);
 }
 
 async function updateErreichteWettbewerbeTable() {
@@ -249,13 +232,7 @@ async function updateErreichteWettbewerbeTable() {
       e.stopPropagation();
     });
     deleteCell.appendChild(deleteButton);
-      const hidenButton = document.createElement("button");
-  hidenButton.textContent = "Nicht zählen";
-  hidenButton.classList.add("hide-btn"); // Anwendung des neuen Stils
-  hidenButton.addEventListener("click", async (e) => {
-    "Logik musst du machen damit der Button ausgeblendet wird";
-  });
-  deleteCell.appendChild(hidenButton);
+
   }
 }
 
@@ -349,7 +326,7 @@ competitionSearchBox.addEventListener("keydown", async (e) => {
       [`%${competitionSearchBox.value}%`, sek]
     );
     competitionSearchSuggestions.innerHTML = "";
-    for (let i = 0; i < suggestionResults.length && i < 3; i++) {
+    for (let i = 0; i < suggestionResults.length && i < 4; i++) {
       const item = document.createElement("li");
       item.textContent = suggestionResults[i].name;
       item.dataset.id = suggestionResults[i].additional_mint_activity_id;

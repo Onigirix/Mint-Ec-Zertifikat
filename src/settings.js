@@ -1,6 +1,8 @@
 const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
-const db = await Database.load("sqlite://resources/db.sqlite");
+
+const dbPath = await invoke("get_database_path");
+const db = await Database.load(`sqlite://${dbPath}`);
 
 const schoolNameField = document.getElementById("schoolName");
 const schoolLocationField = document.getElementById("schoolLocation");

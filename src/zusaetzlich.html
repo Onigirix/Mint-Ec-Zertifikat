@@ -69,8 +69,7 @@
                 <table id="wettbewerbe-table" class="darken clickable">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
+                        <th style="width: 100%;">Name</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -84,7 +83,7 @@
                   class="search-box"
                   type="text"
                   id="competition-search"
-                  placeholder="Wettbewerb..."
+                  placeholder="Aktivität..."
                   value />
                   <ul id="competition-suggestions"
                     class="competition-suggestions-list">
@@ -109,7 +108,7 @@
                 </table>
               </div>
             </div>
-            <div style="display: flex; gap: 10px">
+            <div style="display: flex; gap: 10px; padding-top: 5px;">
               <label class="switch">
                 <input type="checkbox" id="toggleSwitch">
                 <span class="slider round sek_slider"></span>
@@ -132,7 +131,7 @@
                   <table id="erreichte-wettbewerbe-table" class="disabled-no-student" disabled>
                     <thead>
                       <tr>
-                        <th>Aktivitäten</th>
+                        <th>Aktivität</th>
                         <th>Stufe</th>
                         <th>Aktion</th>
                       </tr>
@@ -149,18 +148,18 @@
 
       <button class="blauerButton"
         onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
-        style="position: absolute; top: 92vh; left: 12vw;">Zurück</button>
+        style="position: absolute; top: 92vh; left: 12vw;"><span class="material-symbols-rounded">arrow_back</span></button>
       <button class="btn" id="add-competition"
-        style="position: absolute; top: 92vh; left: 29vw;">Wettbewerb
+        style="position: absolute; top: 92vh; left: 29vw;">Aktivität
         hinzufügen</button>
         <button class="btn" id="edit-competition"
-        style="position: absolute; top: 92vh; left: 43vw;">Wettbewerb
+        style="position: absolute; top: 92vh; left: 43vw;">Aktivität
         bearbeiten</button>
         <button class="delete-btn" id="delete-competition"
-        style="position: absolute; top: 92vh; left: 57vw;">Wettbewerb
+        style="position: absolute; top: 92vh; left: 57vw;">Aktivität
         löschen</button>
       <button class="blauerButton" onclick="window.location.href='export.html';"
-        style="position: absolute; top: 92vh; left: 85vw;">Weiter</button>
+        style="position: absolute; top: 92vh; left: 85vw;"><span class="material-symbols-rounded">arrow_forward</span></button>
     </main>
 
   </body>

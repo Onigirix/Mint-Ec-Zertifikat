@@ -1,12 +1,12 @@
 table {
 	width: 100%;
 	max-width: 1200px;
-	margin: 20px auto;
-	border-collapse: collapse;
+	margin: 0 auto;
+	border-collapse: separate;
+	border-spacing: 0;
 	background-color: #ffffff;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 	border-radius: 8px;
-	overflow: hidden;
 }
 
 th {
@@ -15,9 +15,16 @@ th {
 }
 
 thead {
-	background-color: #212225;
-	color: #ffffff;
+	background-color: #f4f4f4;
+	color: black;
 	font-weight: bold;
+}
+
+thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background-color: #f4f4f4;
 }
 
 th,
@@ -156,4 +163,52 @@ td {
   display: flex;
   justify-content: center; /* Zentriert horizontal */
   margin-top: 20px; /* Optionaler Abstand nach oben */
+}
+
+#filter-container .search-box {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  height: 36px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+#filter-container label {
+  font-weight: 500;
+}
+
+#table-container {
+  position: relative;
+}
+
+#table-container table {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  overflow: visible !important;
+}
+
+#table-container thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10;
+  background-color: #f4f4f4 !important;
+}
+
+#table-container thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+#table-container thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+#table-container tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+#table-container tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
 }

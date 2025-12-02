@@ -18,26 +18,59 @@ function calculateCourseAverage(course) {
 	return count > 0 ? (sum / count).toFixed(2) : "0.00";
 }
 
+function hasFailingGradeInCourse(course) {
+	const inputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+	for (const input of inputs) {
+		const value = parseFloat(input.value);
+		if (value < 5) {
+			return true;
+		}
+	}
+	return false;
+}
+
 async function calculateBestAverage() {
 	const avg1 = Number.parseFloat(document.getElementById("avg-1").textContent);
 	const avg2 = Number.parseFloat(document.getElementById("avg-2").textContent);
 	const avg3 = Number.parseFloat(document.getElementById("avg-3").textContent);
 	const avg4 = Number.parseFloat(document.getElementById("avg-4").textContent);
 
-	const lk_average = (avg1 + avg2) / 2;
-	const combination1 = (avg1 + avg2 + avg3) / 3;
-	const combination2 = (avg1 + avg2 + avg4) / 3;
-	const combination3 = (avg1 + avg3 + avg4) / 3;
-	const combination4 = (avg2 + avg3 + avg4) / 3;
+	const isValid1 = avg1 >= 9 && !hasFailingGradeInCourse(1);
+	const isValid2 = avg2 >= 9 && !hasFailingGradeInCourse(2);
+	const isValid3 = avg3 >= 9 && !hasFailingGradeInCourse(3);
+	const isValid4 = avg4 >= 9 && !hasFailingGradeInCourse(4);
 
-	// Find the highest average among the combinations
-	const bestAverage = Math.max(
-		lk_average,
-		combination1,
-		combination2,
-		combination3,
-		combination4,
-	).toFixed(2);
+	const validCombinations = [];
+
+	// LK average (courses 1 and 2) - only if both are valid
+	if (isValid1 && isValid2) {
+		validCombinations.push((avg1 + avg2) / 2);
+	}
+
+	// Combination 1: courses 1, 2, 3
+	if (isValid1 && isValid2 && isValid3) {
+		validCombinations.push((avg1 + avg2 + avg3) / 3);
+	}
+
+	// Combination 2: courses 1, 2, 4
+	if (isValid1 && isValid2 && isValid4) {
+		validCombinations.push((avg1 + avg2 + avg4) / 3);
+	}
+
+	// Combination 3: courses 1, 3, 4
+	if (isValid1 && isValid3 && isValid4) {
+		validCombinations.push((avg1 + avg3 + avg4) / 3);
+	}
+
+	// Combination 4: courses 2, 3, 4
+	if (isValid2 && isValid3 && isValid4) {
+		validCombinations.push((avg2 + avg3 + avg4) / 3);
+	}
+
+	// Find the highest average among valid combinations
+	const bestAverage = validCombinations.length > 0
+		? Math.max(...validCombinations).toFixed(2)
+		: "0.00";
 
 	gesamtDurchschnittElement.classList.remove(
 		"grade-default",

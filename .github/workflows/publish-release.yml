@@ -89,10 +89,6 @@ jobs:
           curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
 
 
-      - name: Install winget (Windows)
-        if: matrix.platform == 'windows-latest'
-        uses: Cyberboss/install-winget@v1
-
       - name: Install prerequisites (Windows)
         if: matrix.platform == 'windows-latest'
         shell: pwsh
@@ -137,6 +133,8 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+          shared-key: "release-${{ runner.os }}-${{ matrix.args }}"
+          cache-all-crates: "true"
 
       - name: Install tauri
         run: |

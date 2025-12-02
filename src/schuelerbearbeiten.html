@@ -18,7 +18,7 @@
       </button>
       <div></div>
       <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
-     
+
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
@@ -44,20 +44,35 @@
     <!--Main Content-->
     <div id="main">
       <main id="content">
-        <h1>Schülerliste</h1>
-        <div id="table-container"
-          style="max-height: 69vh; overflow-y: scroll;"></div>
-        <br \>
-        <div class="buttonWrapper">
-        <button class="blauerButton" id="filterButton">
-              Filter hinzufügen
-            </button>
+        <h1 style="margin-bottom: 10px;">Schülerliste</h1>
+        <div id="filter-container" style="display: flex; gap: 20px; margin-bottom: 10px; align-items: center; justify-content: center;">
+          <input
+            class="search-box"
+            type="text"
+            id="student-filter"
+            placeholder="Schüler suchen..."
+            autocomplete="off"
+            style="width: 250px;"
+          />
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label for="year-filter" style="color: #333;">Jahrgang:</label>
+            <input
+              class="search-box"
+              type="text"
+              id="year-filter"
+              placeholder="z.B. 2027"
+              autocomplete="off"
+              style="width: 100px;"
+            />
+          </div>
         </div>
+        <div id="table-container"
+          style="max-height: 55vh; overflow: auto;"></div>
           <div class="button-container">
             <button class="add-button" class="grünerButton" id="add-student">
               Neuen Schüler hinzufügen
             </button>
-            
+
             <button id="deleteButton" class="grünerButton" disabled>
               Ausgewählten Schüler löschen
             </button>
@@ -69,7 +84,7 @@
             </button>
             <button class="blauerButton"
               onclick="window.location.href='fachliche-kompetenz.html';"
-              style="margin-left: 5%;">Weiter</button>
+              style="margin-left: 5%;"><span class="material-symbols-rounded">arrow_forward</span></button>
 
           </div>
         </main>

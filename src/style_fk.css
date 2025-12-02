@@ -502,15 +502,16 @@ textarea {
 }
 
 @font-face {
-	font-family: "Material Icons";
+	font-family: "Material Symbols Rounded";
 	font-style: normal;
-	font-weight: 400;
+	font-weight: 100 700;
 	src: url("assets/MaterialSymbolsRounded.woff2") format("woff2");
 }
 
-.material-icons {
+.material-icons,
+.material-symbols-rounded {
 	/* biome-ignore lint/a11y/useGenericFontNames: Otherwise the fallback font will be loaded instead of the icons */
-	font-family: "Material Icons";
+	font-family: "Material Symbols Rounded";
 	font-weight: normal;
 	font-style: normal;
 	font-size: 24px;
@@ -521,6 +522,7 @@ textarea {
 	white-space: nowrap;
 	word-wrap: normal;
 	direction: ltr;
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 	-webkit-font-smoothing: antialiased;
 }
 

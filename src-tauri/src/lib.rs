@@ -1,6 +1,8 @@
 pub mod db;
 pub mod dialog;
 pub mod pdf;
+pub mod pdf_lib;
+pub mod pdf_utils;
 pub mod state;
 use tauri::{Builder, Manager};
 use tauri_plugin_prevent_default;
@@ -15,10 +17,26 @@ pub struct AppState {
     student_id: i32,
 }
 
+#[tauri::command]
+fn get_database_path() -> String {
+    db::get_database_path().to_string()
+}
+
 pub fn run() {
-    db::setup_db();
     Builder::default()
         .setup(|app| {
+            // Get app data directory
+            let app_data_dir = app
+                .path()
+                .app_data_dir()
+                .expect("Failed to get app data directory");
+
+            // Get resource directory (for migration from old location)
+            let resource_dir = app.path().resource_dir().ok();
+
+            // Setup database with correct paths
+            db::setup_db(app_data_dir, resource_dir);
+
             app.manage(Mutex::new(AppState::default()));
             Ok(())
         })
@@ -28,12 +46,22 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(prevent_default())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::LogDir {
+                        file_name: Some("logs".to_string()),
+                    },
+                ))
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             pdf::generate_pdf,
             state::get_state,
             state::set_state,
             state::get_student_id,
-            dialog::folder_select
+            dialog::folder_select,
+            get_database_path
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { .. } => {
