@@ -55,7 +55,7 @@ async function generatePdf() {
 }
 
 function openNav() {
-	document.getElementById("sidenav").style.width = "30vw";
+	document.getElementById("sidenav").style.width = "max(30vw, 420px)";
 }
 
 function closeNav() {
