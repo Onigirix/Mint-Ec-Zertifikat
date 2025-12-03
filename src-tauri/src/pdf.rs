@@ -65,23 +65,28 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
             }
         };
         let current_date = chrono::Utc::now();
-        let settings = db::get_all_settings().await;
-        let bday_str = db::get_student_birthday(student_id).await;
+
+        // Parallelize all database calls for better performance
+        let (
+            settings,
+            bday_str,
+            (field_6_text, fachliche_kompetenz_level),
+            (field_7_text, fachwissenschaftliches_level),
+            (field_9_text, zusätzliche_mint_aktivität_level),
+        ) = tokio::join!(
+            db::get_all_settings(),
+            db::get_student_birthday(student_id),
+            fachliche_kompetenz_text(student_id, &student_name),
+            fachwissenschaftliches_arbeiten_text(student_id, &student_name),
+            zusätzliche_mint_aktivität_text(student_id, &student_name),
+        );
+
         let birthday = match chrono::NaiveDate::parse_from_str(bday_str.as_str(), "%Y-%m-%d") {
             Ok(d) => d,
             Err(e) => {
                 return Err(format!("Failed to parse student birthday: {}", e));
             }
         };
-
-        let (field_6_text, fachliche_kompetenz_level) =
-            fachliche_kompetenz_text(student_id, student_name.clone()).await;
-
-        let (field_7_text, fachwissenschaftliches_level) =
-            fachwissenschaftliches_arbeiten_text(student_id, student_name.clone()).await;
-
-        let (field_9_text, zusätzliche_mint_aktivität_level) =
-            zusätzliche_mint_aktivität_text(student_id, student_name.clone()).await;
 
         // Check if any Anforderungsfeld has level 0
         let anforderungsfelder = [
@@ -234,7 +239,7 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
     //TODO: Add a success message (toast notification)
 }
 
-async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (String, i32) {
+async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (String, i32) {
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
@@ -288,7 +293,6 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
                 };
             }
 
-            // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
             let best_average_str = format!("{:04.1}", best_average);
 
             let result = match best_combination {
@@ -322,7 +326,7 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
 
 async fn fachwissenschaftliches_arbeiten_text(
     student_id: i32,
-    student_name: String,
+    student_name: &str,
 ) -> (String, i32) {
     let (type_of_paper, topics, grade) = db::get_fachwissenschaftliches_arbeiten(student_id).await;
     // Format grade as two digits with leading zero if needed
@@ -350,16 +354,15 @@ async fn fachwissenschaftliches_arbeiten_text(
     };
 }
 
-async fn zusätzliche_mint_aktivität_text(
-    student_id: i32,
-    _student_name: String,
-) -> (String, i32) {
-    let sek_1_competitions = db::get_sek1_competitions(student_id).await;
-    let sek_2_competitions = db::get_sek2_competitions(student_id).await;
+async fn zusätzliche_mint_aktivität_text(student_id: i32, _student_name: &str) -> (String, i32) {
+    let (sek_1_competitions, sek_2_competitions) = tokio::join!(
+        db::get_sek1_competitions(student_id),
+        db::get_sek2_competitions(student_id)
+    );
 
     let mut sek_1_points = 0;
     let mut sek_2_points = 0;
-    let mut niveau_in_sek_2 = 0; //Adding two for a niveau 3 in Sek II so I only need one variable
+    let mut niveau_in_sek_2 = 0;
     let mut sek_1_text = String::from("Sekundarstufe I: \n");
     for competition in sek_1_competitions {
         sek_1_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));

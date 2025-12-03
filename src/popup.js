@@ -1,9 +1,9 @@
+import { getDb } from './db-connection.js';
+
 const { getCurrentWindow } = window.__TAURI__.window;
-const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+const db = await getDb();
 const emit = window.__TAURI__.event.emit;
 
 // Async confirmation dialog

@@ -1,8 +1,8 @@
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
+
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+const db = await getDb();
 const gradeFields = document.querySelectorAll(".note");
 const subjectFields = document.querySelectorAll(".subject");
 

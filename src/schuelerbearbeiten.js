@@ -1,12 +1,12 @@
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
+
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
 const { ask } = window.__TAURI__.dialog;
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+const db = await getDb();
 import { select_student } from "./main.js";
 
 const sortState = {
