@@ -1,14 +1,8 @@
-use std::result;
-
 use crate::{db, pdf_lib::Form, AppState};
-use chrono::format;
 use chrono::Datelike;
-use chrono::NaiveDate;
 use rfd::AsyncFileDialog;
 use tauri::{AppHandle, Manager, State};
 use tokio::sync::Mutex;
-use url::Url;
-use webbrowser;
 
 #[repr(usize)]
 #[derive(Clone, Copy)]
@@ -42,13 +36,7 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
         let s = state.lock().await;
         (s.student_name.clone(), s.student_id)
     };
-    log::info!(
-        "generate_pdf: start (student_id={}, name='{}')",
-        student_id,
-        student_name
-    );
 
-    // Resolve the template path using Tauri's resource resolver
     let template_path = app
         .path()
         .resource_dir()
@@ -56,14 +44,8 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
         .join("resources")
         .join("Template_L.pdf");
 
-    log::info!("generate_pdf: resolved template path: {:?}", template_path);
-
     let spawn_file_dialog = async {
         let default_dir = db::get_default_file_path().await;
-        log::info!(
-            "generate_pdf: opening save dialog, default dir: {}",
-            default_dir
-        );
 
         let file_handle = AsyncFileDialog::new()
             .add_filter("PDF Dokument", &["pdf"])
@@ -72,25 +54,13 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
             .save_file()
             .await;
 
-        match &file_handle {
-            Some(h) => log::info!(
-                "generate_pdf: user chose path: {}",
-                h.path().to_string_lossy()
-            ),
-            None => log::info!("generate_pdf: user canceled save dialog"),
-        }
         file_handle
     };
 
     let prepare_pdf = async {
-        log::info!("generate_pdf: loading template: {:?}", template_path);
         let mut form = match Form::load(&template_path) {
-            Ok(f) => {
-                log::info!("generate_pdf: template loaded");
-                f
-            }
+            Ok(f) => f,
             Err(e) => {
-                log::error!("Error loading PDF template: {:?}", e);
                 return Err(format!("Failed to load PDF template: {:?}", e));
             }
         };
@@ -98,12 +68,8 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
         let settings = db::get_all_settings().await;
         let bday_str = db::get_student_birthday(student_id).await;
         let birthday = match chrono::NaiveDate::parse_from_str(bday_str.as_str(), "%Y-%m-%d") {
-            Ok(d) => {
-                log::info!("generate_pdf: parsed birthday: {}", d);
-                d
-            }
+            Ok(d) => d,
             Err(e) => {
-                log::error!("Error parsing student birthday '{}': {}", bday_str, e);
                 return Err(format!("Failed to parse student birthday: {}", e));
             }
         };
@@ -135,7 +101,6 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
                     index + 1,
                     name
                 );
-                log::error!("{}", error_msg);
                 level_zero_error = Some(error_msg);
                 break;
             }
@@ -145,14 +110,6 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
             + fachwissenschaftliches_level
             + zusätzliche_mint_aktivität_level) as f32
             / 3.0 as f32;
-
-        log::info!(
-            "generate_pdf: levels => fachliche={}, fachwiss={}, extra={}, avg={:.2}",
-            fachliche_kompetenz_level,
-            fachwissenschaftliches_level,
-            zusätzliche_mint_aktivität_level,
-            average_level
-        );
 
         let field_2_text = if let Some(error) = level_zero_error {
             error
@@ -166,9 +123,6 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
                 _ => String::from("mit Auszeichnung"),
             }
         };
-        log::info!("generate_pdf: computed field_2_text: '{}'", field_2_text);
-
-        log::info!("generate_pdf: filling form fields");
         let results = vec![
             form.set_text(
                 FormField::Birthday as usize,
@@ -215,51 +169,33 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
         ];
 
         for result in results {
-            if let Err(e) = result {
-                log::error!("Error while filling the PDF: {:?}", e);
+            if let Err(_e) = result {
+                // Error while filling the PDF
             }
         }
-        if let Err(e) = form.set_need_appearances(true) {
-            log::warn!(
-                "generate_pdf: failed to set NeedAppearances flag on AcroForm: {:?}",
-                e
-            );
-        }
-        log::info!("generate_pdf: form fields filled");
+        let _ = form.set_need_appearances(true);
         Ok(form)
     };
 
     let (path, form_result) = tokio::join!(spawn_file_dialog, prepare_pdf);
-    log::info!(
-        "generate_pdf: save dialog returned path: {} ; prepare_pdf: {}",
-        path.as_ref()
-            .map(|h| h.path().to_string_lossy().to_string())
-            .unwrap_or_else(|| "<none>".into()),
-        if form_result.is_ok() { "ok" } else { "error" }
-    );
 
     if path.is_some() {
         let handle = path.unwrap();
         let path_buf = handle.path().to_path_buf();
         let path_string = path_buf.to_string_lossy().to_string();
-        log::info!("generate_pdf: target path: {}", path_string);
 
         let pos = path_string
             .rfind('\\')
             .or_else(|| path_string.rfind('/'))
             .unwrap_or(0);
         let new_default_dir = String::from(&path_string[..pos]);
-        log::info!("generate_pdf: updating default dir to: {}", new_default_dir);
         db::change_default_file_path(new_default_dir).await;
 
         match form_result {
             Ok(mut form) => {
-                log::info!("generate_pdf: saving PDF...");
                 if let Err(e) = form.save(&path_buf) {
-                    log::error!("Error saving PDF: {}", e);
                     return Err(format!("Failed to save PDF: {}", e));
                 }
-                log::info!("generate_pdf: PDF saved");
 
                 // let file_url = Url::from_file_path(&path_buf)
                 //     .map(|u| u.to_string())
@@ -289,41 +225,23 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
                 // }
             }
             Err(e) => {
-                log::error!("Aborting PDF generation: {}", e);
                 return Err(e);
             }
         }
-    } else {
-        log::info!("generate_pdf: no path chosen, nothing to do");
     }
 
-    log::info!("generate_pdf: done");
     Ok(())
     //TODO: Add a success message (toast notification)
 }
 
 async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (String, i32) {
-    log::info!(
-        "fachliche_kompetenz_text: start (student_id={}, name='{}')",
-        student_id,
-        student_name
-    );
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
-            log::info!(
-                "fachliche_kompetenz_text: fetched (subjects={}, grades={})",
-                subjects.len(),
-                grades.len()
-            );
             let has_any_failing_grade = grades
                 .iter()
                 .enumerate()
                 .any(|(i, &grade)| subjects[i / 4] != "..." && grade < 5);
-            log::info!(
-                "fachliche_kompetenz_text: failing_grade_present={}",
-                has_any_failing_grade
-            );
 
             let mut level = 0;
             let mut best_average = 0.0;
@@ -368,17 +286,6 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
                     x if x > 13.0 => 2,
                     _ => 3,
                 };
-
-                log::info!(
-                    "fachliche_kompetenz_text: best_average={:.2}, best_combination={}, level={}",
-                    best_average,
-                    best_combination,
-                    level
-                );
-            } else {
-                log::info!(
-                    "fachliche_kompetenz_text: skipping averages due to failing grade; level=0"
-                );
             }
 
             // best_average auf 2 Nachkommastellen runden und als zweistellige Zahl mit führender Null darstellen
@@ -406,13 +313,10 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: String) -> (Str
 
             (result, level)
         }
-        Err(e) => {
-            log::error!("Error fetching students grades: {}", e);
-            (
-                String::from(format!("Error while fetching the grades: {}", e)),
-                0,
-            )
-        }
+        Err(e) => (
+            String::from(format!("Error while fetching the grades: {}", e)),
+            0,
+        ),
     }
 }
 
@@ -446,7 +350,10 @@ async fn fachwissenschaftliches_arbeiten_text(
     };
 }
 
-async fn zusätzliche_mint_aktivität_text(student_id: i32, student_name: String) -> (String, i32) {
+async fn zusätzliche_mint_aktivität_text(
+    student_id: i32,
+    _student_name: String,
+) -> (String, i32) {
     let sek_1_competitions = db::get_sek1_competitions(student_id).await;
     let sek_2_competitions = db::get_sek2_competitions(student_id).await;
 

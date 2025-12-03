@@ -27,7 +27,7 @@ await message(
 try {
   await checkForAppUpdates();
 } catch (error) {
-  console.error("Error checking for updates:", error);
+
 }
 async function checkForAppUpdates() {
   const update = await check();

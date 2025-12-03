@@ -96,7 +96,7 @@ document
 	/*const inputFields = document.querySelectorAll("input");
 	for (const inputField of inputFields){
 	inputField.addEventListener("keyup", (e) => {
-		console.log(e.target.value);
+
 		if (e.target.value != ""){
 		document.getElementById("schuelerForm").style.border = "2px solid red";}
 	else{

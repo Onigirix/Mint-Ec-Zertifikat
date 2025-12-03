@@ -49,7 +49,7 @@ async function generatePdf() {
 	try {
 		await invoke("generate_pdf");
 	} catch (error) {
-		console.error("Error generating PDF:", error);
+
 		alert("Failed to generate PDF. Please try again.");
 	}
 }

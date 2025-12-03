@@ -198,7 +198,7 @@ async function editStudent() {
 }
 
 async function openEditStudentPopup() {
-	console.log("openEditStudentPopup called");
+
 	const studentPopupWebview = new WebviewWindow("editStudentPopup", {
 		hiddenTitle: true,
 		title: "Schüler bearbeiten",
