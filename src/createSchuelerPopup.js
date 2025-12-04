@@ -22,7 +22,7 @@ async function openStudentPopup() {
 	const studentPopupWebview = new WebviewWindow("studentPopup", {
 		hiddenTitle: true,
 		title: "Neuen Schüler erstellen",
-		height: 460,
+		height: 560,
 		minimizable: false,
 		url: "schueler-popup.html",
 	});

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_set.css" />
+    <link rel="preload" href="assests/MaterialSymbolsRounded.woff2" as ="font" type="font/woff2" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script type="module" src="main.js" defer></script>
@@ -61,8 +62,41 @@
 
     <!--Main Content-->
     <div id="main">
+
+     
+
       <main id="content">
         <h1>Einstellungen</h1>
+        
+      <div class="tab">
+
+    <div class="tab-button-wrapper active">
+      <button class="tablinks " onclick="openSchool(event, 'schoolName')">
+        Internatsschule Schloss Hansenberg ddddddddddd
+      </button>
+    </div>
+    <div class="vertical_stripe">&#124;</div>
+      
+     <div class="tab-button-wrapper">
+      <button class="tablinks" onclick="openSchool(event, 'schoolName')">
+        Internatsschule Schloss Hansenberg mayakatzstinktschule
+      </button>
+      
+      <button class="close_tablinks" onclick="deleteSchool(event, 'schoolName')">
+        <span class="material-symbols-rounded icon">
+          close
+        </span>
+      </button>
+    </div>
+    <div class="new_tab" onclick="addSchool(event)">
+      <span class="material-symbols-rounded icon_add">
+      add_circle
+      </span>
+    </div>
+</div>
+
+       
+
 
         <form id="settingsForm">
           <label for="schoolName">Prefix und Name der Schule: </label>
