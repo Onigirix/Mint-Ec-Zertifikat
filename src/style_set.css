@@ -71,8 +71,8 @@ settingsForm.folder-input {
 
 .vertical_stripe {
   margin-left: -8px;
+  margin-right: -8px;
   margin-top: 8px;
-  position: absolute;
   font-size: 20px;
   display: inline;
   width: 2px;
@@ -89,7 +89,6 @@ settingsForm.folder-input {
 .icon_add{
   font-size: medium;
   margin-left: -1px;
-  position: absolute;
   padding-top: 14px;
 }
 

@@ -74,6 +74,11 @@
       <button class="tablinks " onclick="openSchool(event, 'schoolName')">
         Internatsschule Schloss Hansenberg ddddddddddd
       </button>
+      <button class="close_tablinks" onclick="deleteSchool(event, 'schoolName')">
+        <span class="material-symbols-rounded icon">
+          delete
+        </span>
+      </button>
     </div>
     <div class="vertical_stripe">&#124;</div>
       
@@ -84,15 +89,16 @@
       
       <button class="close_tablinks" onclick="deleteSchool(event, 'schoolName')">
         <span class="material-symbols-rounded icon">
-          close
+          delete
         </span>
       </button>
-    </div>
-    <div class="new_tab" onclick="addSchool(event)">
+      <div class="new_tab" onclick="addSchool(event)">
       <span class="material-symbols-rounded icon_add">
       add_circle
       </span>
     </div>
+    </div>
+    
 </div>
 
        
