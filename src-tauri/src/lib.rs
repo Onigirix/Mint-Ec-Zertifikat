@@ -25,16 +25,13 @@ fn get_database_path() -> String {
 pub fn run() {
     Builder::default()
         .setup(|app| {
-            // Get app data directory
             let app_data_dir = app
                 .path()
                 .app_data_dir()
                 .expect("Failed to get app data directory");
 
-            // Get resource directory (for migration from old location)
             let resource_dir = app.path().resource_dir().ok();
 
-            // Setup database with correct paths
             db::setup_db(app_data_dir, resource_dir);
 
             app.manage(Mutex::new(AppState::default()));
@@ -70,7 +67,6 @@ pub fn run() {
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     use tauri_plugin_prevent_default::Flags;
 
-    // start the builder with the common flags
     let mut builder = tauri_plugin_prevent_default::Builder::new()
         .with_flags(Flags::all().difference(Flags::DEV_TOOLS | Flags::RELOAD));
 
