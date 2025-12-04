@@ -16,6 +16,19 @@
 }
 */
 
+
+#donation {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	z-index: 99;
+}
+
+#donation:hover {
+	filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
+}
+
 body {
   font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
   overflow-x: hidden;

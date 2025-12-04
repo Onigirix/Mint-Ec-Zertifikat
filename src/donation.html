@@ -23,7 +23,7 @@
         <i class="material-icons">menu</i>
       </button>
       <div></div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large; cursor: pointer;" id="btn" class="rightHeading">Mint-EC Zertifikat<a>
+      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
      
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
@@ -59,7 +59,7 @@
         <section
           class="intro-section"
           style="
-            background: linear-gradient(90deg, #e0e7ff 0%, #cde0db 100%);
+            background: linear-gradient(90deg, #cde0db 0%, #e0e7ff 100%);
             border-radius: 16px;
             padding: 32px 24px 24px 24px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
@@ -77,7 +77,7 @@
               letter-spacing: 1px;
             "
           >
-            Willkommen beim
+            Unterstützen sie die Weiterentwicklung des
             <span style="color: #2563eb">MINT-EC PDF Generator</span>
           </h2>
           <p
@@ -88,80 +88,29 @@
               margin-bottom: 18px;
             "
           >
-            Dieses Tool ermöglicht es, individuelle
-            <b>MINT-EC-Zertifikate</b> für Schüler:innen einfach und schnell zu
-            erstellen. Geben sie die relevanten Schülerdaten und
-            MINT-Aktivitäten ein und der Generator fasst alles übersichtlich in
-            einem professionellen PDF-Dokument zusammen.
+            Dieses Tool wurde von Schülern in ihrer Freizeit entwickelt und
+            steht allen MINT-EC Schulen kostenlos zur Verfügung. Um die Weiterentwicklung und Wartung
+            dieses Projekts zu gewährleisten, sind wir auf Ihre Unterstützung angewiesen.
+            Jede Spende, egal wie klein, trägt dazu bei das wir den <b>MINT-EC PDF Generator</b> weiter verbessern können.
+            <br>
+            Vielen Dank für Ihre Unterstützung!
+            <br>
+            <span style="color: #0d9488; font-weight: 600">Arved Lieker</span>,
+            <span style="color: #2563eb; font-weight: 600">David Gallas</span>
+             &amp; 
+            <span style="color: #2563eb; font-weight: 600">Viola Kraut</span>
           </p>
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              gap: 18px;
-              margin-top: 10px;
-            "
-          >
-            <div>
-              <span style="color: #64748b; font-size: 1rem">Frontend:</span>
-              <span style="color: #2563eb; font-weight: 600">David Gallas</span>
-              &amp;
-              <span style="color: #2563eb; font-weight: 600">Viola Kraut</span
-              ><br />
-              <span style="color: #64748b; font-size: 1rem">Backend:</span>
-              <span style="color: #0d9488; font-weight: 600">Arved Lieker</span>
-            </div>
-          </div>
+          
         </section>
 
         <div style="display: flex; justify-content: center; margin-top: 20px">
-          <button
-            id="startButton"
-            class="blauerButton"
-            onclick="window.location.href='schuelerbearbeiten.html';"
-            style="padding: 10px 20px"
-          >
-            Start
-          </button>
+          <h2>IBAN: DE01 1000 1000 1000</h2> <!--würde hier einfach meine Iban angeben muss ja net fancy sein mit 
+          Spendenbutton aber wenn du willst kann du ne paypal anbindung schreiben aber mach ich auf keinen Fall-->
         </div>
       </main>
     </div>
   </body>
 </html>
-
-<script>
-let klicks = 0;
-
-document.getElementById("btn").addEventListener("click", function () {
-    klicks++;
-
-    if (klicks === 3) {
-        alert("Es passiert leider nichts mehr, sie sind schon auf der Seite.");
-    }
-    if (klicks === 6) {
-        alert("Es passiert leider nichts mehr, sie sind schon auf der Seite. :)");
-        
-    }
-    if (klicks === 9) {
-        alert("Es passiert leider nichts mehr, sie sind schon auf der Seite. :(");
-       
-    }
-    if (klicks === 12) {
-        alert("Wirklich hier ist nichts mehr.");
-       
-    }
-    if (klicks === 15) {
-        alert("Naja außer vielleicht eine Sache...");
-    }
-    if (klicks === 18) {
-        alert("Das wäre...");
-    }
-    if (klicks === 25) {
-        window.location.href = "donation.html";
-        alert("ʕ •ᴥ•ʔ");
-    }
-});
-</script>
 
 <!--TODO: Make the Sidenav closable by clicking back on main-->
 <!--TODO: Light and Dark mode toggle-->
