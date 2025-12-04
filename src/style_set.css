@@ -1,4 +1,4 @@
-.folder-input {
+settingsForm.folder-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,4 +19,130 @@
 .folder-input input, .folder-input button {
   margin: 0;
   flex-wrap: nowrap;
+}
+
+.tab {
+  overflow: hidden;
+  border: 3px solid #ccc;
+  border-radius: 5px;
+  background-color: #f1f1f1;
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tablinks {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  padding-left: 2px;
+  transition: 0.3s;
+  width: 15vw;
+  max-width: 15vw;
+  z-index: 5;
+  white-space: nowrap;
+  overflow: hidden;              /* wichtig */
+  text-overflow: clip;           /* kein ... */
+  display: flex;
+  align-items: center;
+
+  mask-image: linear-gradient(90deg,rgba(245, 248, 250, 255) 0%, rgba(245, 248, 250, 255) 85%, rgba(245, 248, 250, 0) 93%);
+}
+
+.tablinks::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3em;               
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    rgba(245, 248, 250, 0) 0%,
+    rgba(245, 248, 250, 1) 100%
+  );
+
+  pointer-events: none;    
+}
+
+.vertical_stripe {
+  margin-left: -8px;
+  margin-top: 8px;
+  position: absolute;
+  font-size: 20px;
+  display: inline;
+  width: 2px;
+  height: 100%;
+  color: rgba(116, 116, 116, 0.577);
+}
+
+.icon{
+  font-size: small;
+  margin-left: -6px;
+  margin-top: 4px;
+}
+
+.icon_add{
+  font-size: medium;
+  margin-left: -1px;
+  position: absolute;
+  padding-top: 14px;
+}
+
+.icon_add:hover{
+  color: rgb(65, 121, 58);
+}
+
+.tab-button-wrapper:hover {
+  background-color: rgb(206, 206, 206);
+}
+
+.active{
+  background-color: rgb(228, 228, 228);
+}
+
+.icon:hover {
+  color: red;
+}
+
+.new_tab{
+  justify-content: center;
+  display: inline;
+  cursor: pointer;
+}
+
+.close_tablinks {
+  z-index: 10;
+   background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: -8px;
+  color: rgb(0, 0, 0);
+  width: 8px;
+}
+
+.tab-button-wrapper {
+  display: inline-flex;
+}
+
+.tab-button-wrapper {
+  display: inline-flex;
+}
+
+
+
+
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
 }

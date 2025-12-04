@@ -29,6 +29,8 @@ body.dark-mode {
 	padding-bottom: 60px; /* Platz für den Footer */
 	width: 100vw;
 	height: 80vh;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 header {
 	background-color: #212225;

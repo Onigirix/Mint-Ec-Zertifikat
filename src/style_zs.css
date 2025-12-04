@@ -10,9 +10,10 @@
 	margin: 0;
 }
 
+
 body {
 	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
-	overflow: hidden;
+	overflow-x: hidden;
 	user-select: none;
 }
 
@@ -458,7 +459,7 @@ tr.hover:hover {
 }
 
 #mintAktivitaetForm {
-	height: 65vh;
+	height: 66vh;
 }
 
 label {

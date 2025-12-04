@@ -15,13 +15,22 @@
         <input type="text" id="name" name="name" required /><br />
         <label for="abijahr">Abijahrgang:</label>
         <input type="text" id="abijahr" name="Abijahr"
-          style="margin-left: 2px; max-width: 97%;" required /><br />
+          style="margin-left: 2px; max-width: 97%;" pattern="\d{4}" 
+        inputmode="numeric"
+        maxlength="4" required /><br />
         <label for="geburtsdatum">Geburtsdatum:</label>
         <input
           type="date"
           id="geburtsdatum"
           name="geburtsdatum"
           required /><br />
+          <label for="school">Schule:</label>
+      <select id="school" name="schule" style="margin-left: 2px; max-width: 97%;" required>
+        <option value="">Bitte wählen</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select><br />
         <button type="submit" class="blauerButton">Fertig</button>
         <button type="button" class="roterButton" id="schuelerAbbrechen">
           Abbrechen

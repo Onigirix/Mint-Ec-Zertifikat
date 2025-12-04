@@ -11,29 +11,39 @@
     <div id="schuelerPopup">
       <h2>Schüler erstellen</h2>
       <form id="schuelerForm">
-        <label for="vorname">Vorname:</label>
-        <input type="text" id="vorname" name="vorname"
-          style="margin-left: 2px; max-width: 97%;" required /><br />
-        <label for="nachname">Nachname:</label>
-        <input type="text" id="nachname" name="nachname"
-          style="margin-left: 2px; max-width: 97%;" required /><br />
-        <label for="abijahr">Abijahrgang:</label>
-        <input type="text" id="abijahr" name="Abijahr"
-          style="margin-left: 2px; max-width: 97%;" required /><br />
-        <label for="geburtsdatum">Geburtsdatum:</label>
-        <input style="margin-left: 2px; max-width: 96%;"
-          type="date"
-          id="geburtsdatum"
-          name="geburtsdatum"
-          required /><br />
-        <button type="submit" class="blauerButton" id="fertig">Fertig</button>
-        <button type="submit" class="blauerButton" id="save">
-          Speichern und neuen Schüler eingeben
-        </button>
-        <button type="button" class="roterButton" id="schuelerAbbrechen">
-          Abbrechen
-        </button>
-
+      <label for="vorname">Vorname:</label>
+      <input type="text" id="vorname" name="vorname"
+        style="margin-left: 2px; max-width: 97%;" required /><br />
+      <label for="nachname">Nachname:</label>
+      <input type="text" id="nachname" name="nachname"
+        style="margin-left: 2px; max-width: 97%;" required /><br />
+      <label for="abijahr">Abijahrgang:</label>
+      <input type="text" id="abijahr" name="Abijahr"
+        style="margin-left: 2px; max-width: 97%;" 
+        pattern="\d{4}" 
+        inputmode="numeric"
+        maxlength="4"
+        required /><br />
+      <label for="geburtsdatum">Geburtsdatum:</label>
+      <input style="margin-left: 2px; max-width: 96%;"
+        type="date"
+        id="geburtsdatum"
+        name="geburtsdatum"
+        required /><br />
+      <label for="school">Schule:</label>
+      <select id="school" name="schule" style="margin-left: 2px; max-width: 97%;" required>
+        <option value="">Bitte wählen</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select><br />
+      <button type="submit" class="blauerButton" id="fertig">Fertig</button>
+      <button type="submit" class="blauerButton" id="save">
+        Speichern und neuen Schüler eingeben
+      </button>
+      <button type="button" class="roterButton" id="schuelerAbbrechen">
+        Abbrechen
+      </button>
       </form>
     </div>
   </body>

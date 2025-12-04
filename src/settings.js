@@ -263,4 +263,29 @@ schoolNameField.addEventListener(
 	false,
   );
 
+/*
+Erklärung:
+Wenn nur noch eine Schule vorhanden ist soll der lösch button deaktiviert sein. 
+
+Wenn auf den tab_button_wrapper geklickt wird soll der tab aktiv werden und die daten der schule geladen werden.
+Wenn auf den lösch button geklickt wird soll die schule gelöscht werden (mit bestätigung).
+Wenn auf den + button geklickt wird soll eine neue schule angelegt werden und ein neuer tab_button_wrapper mit trennstrich (vertical_stripe) davor erstellt werden.
+
+
+*/
+
+window.openSchool = function(event, schoolName) {
+	alert("Opend " + schoolName);
+}
+
+window.deleteSchool = function(event, schoolName) {
+	if (confirm(`Sind Sie sicher das sie ${schoolName} löschen möchten?`)) {
+		alert("Deleting " + schoolName);
+	}
+}
+
+window.addSchool = function(event) {
+	alert("Added School");
+}
+
 init();
