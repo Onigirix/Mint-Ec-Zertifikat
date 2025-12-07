@@ -6,7 +6,8 @@ const listen = window.__TAURI__.event.listen;
 const {ask} = window.__TAURI__.dialog;
 const invoke = window.__TAURI__.core.invoke;
 
-const db = await getDb();
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 
 const deleteButton = document.createElement("button");
 const toggleSwitch = document.getElementById("toggleSwitch");
@@ -28,6 +29,7 @@ let sek = 2;
 
 async function init() {
   toggleSwitch.checked = true;
+  await dbReady;
   populateWettbewerbeTable();
   updateErreichteWettbewerbeTable();
   const [competitionSearchBoxValue] = await db.select(
@@ -41,7 +43,7 @@ async function init() {
 }
 
 async function populateWettbewerbeTable() {
-
+  await dbReady;
   competitionData = await db.select(
     "SELECT additional_mint_activity_id, name, level_one, level_two, level_three FROM additional_mint_activities WHERE sek = $1",
     [sek]
@@ -152,6 +154,7 @@ function updateStufenTable(additional_mint_activity_id) {
 }
 
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
+    await dbReady;
     const db_result = await db.execute(
     `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
     [window.studentState.studentId, selectedCompetitionId, stufe]
@@ -202,6 +205,7 @@ async function updateErreichteWettbewerbeTable() {
     emptyRow.insertCell(2).textContent = "-";
     return;
   }
+  await dbReady;
 
   const erreichteWettbewerbe = await db.select(
     "SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = $1;",
@@ -300,6 +304,7 @@ toggleSwitch.addEventListener("change", () => {
 });
 
 toggleSwitchTable.addEventListener("change", async () => {
+  await dbReady;
   if (toggleSwitchTable.checked) {
     myTable.style.display = "none";
     mySearch.style.display = "block";
@@ -321,6 +326,7 @@ document.addEventListener("studentChanged", (e) => {
 
 competitionSearchBox.addEventListener("keydown", async (e) => {
   if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
+    await dbReady;
     const suggestionResults = await db.select(
       "SELECT name, additional_mint_activity_id FROM additional_mint_activities WHERE name LIKE $1 AND sek = $2",
       [`%${competitionSearchBox.value}%`, sek]
@@ -412,6 +418,7 @@ mainContent.addEventListener("click", () => {
 });
 
 async function deleteCompetition(){
+  await dbReady;
   const selectedCompetitionIdLocal = selectedCompetitionId;
   const selectedCompetitionNameLocal = selectedCompetitionName; //Save the state of the variables when the dialog is spawned so the possibility of the competition being changed while the dialog is open, which would otherwise lead to the deleted competition being a different one, than the one displayed in the dialog.
   const first_confirm = await ask(`Möchten sie den Wettbewerb "${selectedCompetitionNameLocal}" wirklich unwiederruflich löchen? \nDies löscht auch alle Teilnahmen an dem Wettbewerb.`, { title: "Mint-EC", kind: "warning" })

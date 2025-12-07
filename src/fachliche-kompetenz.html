@@ -6,6 +6,13 @@
     <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
     <script type="module" src="main.js" defer></script>
     <script type="module" src="createSchuelerPopup.js" defer></script>
     <script type="module" src="fachliche-kompetenz.js" defer></script>
@@ -32,7 +39,7 @@
         </button>
       </div>
       <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
-     
+
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
@@ -273,7 +280,7 @@
             <label>Stufe:</label>
             <span id="gesamtStufe">- </span>
           </div>
-          
+
           <div class="afb-zuordnung" hidden>
             <label>AFB III zuordnen:</label>
             <button>Bestätigen

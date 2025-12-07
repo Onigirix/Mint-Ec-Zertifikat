@@ -13,7 +13,14 @@
 body {
 	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
 	overflow: hidden;
+	-webkit-user-select: none;
 	user-select: none;
+}
+
+input,
+textarea {
+	-webkit-user-select: text;
+	user-select: text;
 }
 
 body.dark-mode {

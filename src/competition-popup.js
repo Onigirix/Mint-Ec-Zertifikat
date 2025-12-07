@@ -2,7 +2,8 @@ import { getDb } from './db-connection.js';
 
 const invoke = window.__TAURI__.core.invoke;
 
-const db = await getDb();
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
 const { getCurrentWindow } = window.__TAURI__.window;
 const sekCheckboxes = document.querySelectorAll(".sek-checkbox");
@@ -25,6 +26,7 @@ document
     const checkedSekCheckboxes = [...sekCheckboxes].filter(
       (checkbox) => checkbox.checked
     );
+    await dbReady;
 
     for (const sekCheckbox of checkedSekCheckboxes) {
       await db.execute(

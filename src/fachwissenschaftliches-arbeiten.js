@@ -2,7 +2,8 @@ import { getDb } from './db-connection.js';
 
 const invoke = window.__TAURI__.core.invoke;
 
-const db = await getDb();
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const form = document.getElementById("facharbeitForm");
 
 const gesamtDurchschnittElement = document.getElementById("gesamtDurchschnitt");
@@ -82,6 +83,7 @@ arbeitTypValue.addEventListener("change", () => {
 
 
 async function fill_fields(studentId) {
+	await dbReady;
 	if (studentId !== 0) {
 		const db_res = await db.select(
 			"SELECT type_of_paper, topic_of_paper, description_of_paper, grade_of_paper, level_of_competition FROM students WHERE student_id = $1",
@@ -117,6 +119,7 @@ document.addEventListener("studentChanged", async (e) => {
 });
 
 async function save_form() {
+	await dbReady;
 	if (!option_4_5_selected) {
 		await db.execute(
 			"UPDATE students SET type_of_paper = $1, topic_of_paper = $2, description_of_paper = $3, grade_of_paper = $4 WHERE student_id = $5",

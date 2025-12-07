@@ -3,7 +3,8 @@ import { getDb } from './db-connection.js';
 const { getCurrentWindow } = window.__TAURI__.window;
 const invoke = window.__TAURI__.core.invoke;
 
-const db = await getDb();
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
 
 // Async confirmation dialog

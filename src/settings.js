@@ -2,7 +2,8 @@ import { getDb } from './db-connection.js';
 
 const invoke = window.__TAURI__.core.invoke;
 
-const db = await getDb();
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 
 const schoolNameField = document.getElementById("schoolName");
 const schoolLocationField = document.getElementById("schoolLocation");
@@ -14,6 +15,7 @@ const schoolFunctionary1PositionField = document.getElementById("pos1");
 const schoolFunctionary2PositionField = document.getElementById("pos2");
 
 async function init() {
+	await dbReady;
 	const [settings] = await db.select("SELECT * FROM settings WHERE id=1");
 
 	schoolNameField.value = settings.school_name;
@@ -30,6 +32,7 @@ async function init() {
 schoolNameField.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -49,6 +52,7 @@ schoolNameField.addEventListener(
 schoolLocationField.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -66,6 +70,7 @@ schoolLocationField.addEventListener(
 );
 
 outputPathField.addEventListener("keydown", async (e) => {
+	await dbReady;
 	if (e.keyCode === 13 || e.keyCode === 9) {
 		//Enter or Tab
 		const res1 = await db.execute(
@@ -83,6 +88,7 @@ outputPathField.addEventListener("keydown", async (e) => {
 schoolFunctionary1Field.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -102,6 +108,7 @@ schoolFunctionary1Field.addEventListener(
 schoolFunctionary2Field.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -121,6 +128,7 @@ schoolFunctionary2Field.addEventListener(
 schoolFunctionary1PositionField.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -142,6 +150,7 @@ schoolFunctionary1PositionField.addEventListener(
 schoolFunctionary2PositionField.addEventListener(
 	"keydown",
 	async (e) => {
+		await dbReady;
 		if (e.keyCode === 13 || e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -162,6 +171,7 @@ schoolFunctionary2PositionField.addEventListener(
 
 selectFolderButton.addEventListener("click", async () => {
 	try {
+		await dbReady;
 		const folderPath = await invoke("folder_select");
 		await db.execute(
 			"UPDATE settings SET default_file_path = $1 WHERE id = 1",

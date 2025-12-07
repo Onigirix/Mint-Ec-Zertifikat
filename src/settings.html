@@ -8,6 +8,15 @@
     <link rel="preload" href="assests/MaterialSymbolsRounded.woff2" as ="font" type="font/woff2" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service Worker registered'))
+            .catch(err => console.log('Service Worker registration failed:', err));
+        });
+      }
+    </script>
     <script type="module" src="main.js" defer></script>
     <script type="module" src="settings.js" defer></script>
 
