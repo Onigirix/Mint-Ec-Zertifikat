@@ -1,9 +1,10 @@
+import { getDb } from './db-connection.js';
+
 const { getCurrentWindow } = window.__TAURI__.window;
-const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
 
 // Async confirmation dialog
@@ -96,7 +97,7 @@ document
 	/*const inputFields = document.querySelectorAll("input");
 	for (const inputField of inputFields){
 	inputField.addEventListener("keyup", (e) => {
-		console.log(e.target.value);
+
 		if (e.target.value != ""){
 		document.getElementById("schuelerForm").style.border = "2px solid red";}
 	else{

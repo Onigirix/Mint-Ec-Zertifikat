@@ -13,7 +13,14 @@
 body {
 	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
 	overflow: hidden;
+	-webkit-user-select: none;
 	user-select: none;
+}
+
+input,
+textarea {
+	-webkit-user-select: text;
+	user-select: text;
 }
 
 body.dark-mode {
@@ -548,6 +555,7 @@ textarea {
 	font-style: normal;
 	font-weight: 100 700;
 	src: url("assets/MaterialSymbolsRounded.woff2") format("woff2");
+	font-display: block;
 }
 
 .material-icons,
@@ -565,6 +573,9 @@ textarea {
 	direction: ltr;
 	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 	-webkit-font-smoothing: antialiased;
+	width: 24px;
+	height: 24px;
+	overflow: hidden;
 }
 
 .grade-default {

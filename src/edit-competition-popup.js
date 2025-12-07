@@ -1,8 +1,9 @@
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
+
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
 const { getCurrentWindow } = window.__TAURI__.window;
 const competitionId = new URLSearchParams(window.location.search).get("id");
@@ -13,6 +14,7 @@ const levelThreeField = document.getElementById("thirdLevel");
 
 
 async function init(){
+  await dbReady;
   const [competition] = await db.select("SELECT name, level_one, level_two, level_three FROM additional_mint_activities WHERE additional_mint_activity_id = $1", [competitionId])
   nameField.value = competition.name;
   levelOneField.value = competition.level_one;
@@ -24,6 +26,7 @@ document
   .getElementById("competitionForm")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
+    await dbReady;
     await db.execute(
       "UPDATE additional_mint_activities SET name = $1,  level_one = $2, level_two = $3, level_three =$4 WHERE additional_mint_activity_id = $5",
       [

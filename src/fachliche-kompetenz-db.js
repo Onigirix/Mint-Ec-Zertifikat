@@ -1,8 +1,9 @@
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
+
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const gradeFields = document.querySelectorAll(".note");
 const subjectFields = document.querySelectorAll(".subject");
 
@@ -12,6 +13,7 @@ document.addEventListener("studentChanged", async (e) => {
 });
 
 async function fill_fields(studentId) {
+	await dbReady;
 	const res1 = await db.select("SELECT * FROM students WHERE student_id = $1", [
 		studentId,
 	]);
@@ -45,8 +47,9 @@ async function fill_fields(studentId) {
 }
 
 for (const field of gradeFields) {
-	field.addEventListener("keyup", (e) => {
+	field.addEventListener("keyup", async (e) => {
 		if (e.keyCode !== 13 && e.keyCode !== 9) {
+			await dbReady;
 			if (field.value !== "") {
 				field.style.border = "1px solid red";
 				field.style.backgroundColor = "rgb(255, 150, 150)";
@@ -54,6 +57,7 @@ for (const field of gradeFields) {
 		}
 	});
 	field.addEventListener("blur", async (e) => {
+		await dbReady;
 		const res1 = await db.execute(
 			`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
 			[field.value, window.studentState.studentId],
@@ -62,6 +66,7 @@ for (const field of gradeFields) {
 		field.style.backgroundColor = "white";
 	});
 	field.addEventListener("keydown", async (e) => {
+		await dbReady;
 		if (e.keyCode === 9) {
 			//Enter or Tab
 			const res1 = await db.execute(
@@ -92,6 +97,7 @@ for (const field of subjectFields) {
 		}
 	});
 	field.addEventListener("blur", async (e) => {
+		await dbReady;
 		await db.execute(
 			`UPDATE students SET subject_${field.dataset.course} = $1 WHERE student_id = $2`,
 			[field.value, window.studentState.studentId],

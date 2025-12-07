@@ -1,12 +1,13 @@
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
+
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 const listen = window.__TAURI__.event.listen;
 const { ask } = window.__TAURI__.dialog;
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 import { select_student } from "./main.js";
 
 const sortState = {
@@ -60,6 +61,7 @@ async function init() {
 }
 
 async function loadStudents() {
+	await dbReady;
 	allStudents = await db.select(
 		"SELECT student_id, name, birthday, graduation_year FROM students",
 	);
@@ -198,7 +200,7 @@ async function editStudent() {
 }
 
 async function openEditStudentPopup() {
-	console.log("openEditStudentPopup called");
+
 	const studentPopupWebview = new WebviewWindow("editStudentPopup", {
 		hiddenTitle: true,
 		title: "Schüler bearbeiten",
@@ -217,6 +219,7 @@ async function openEditStudentPopup() {
 }
 
 async function deleteStudent(studentId) {
+	await dbReady;
 	await db.execute(
 		"DELETE FROM student_additional_mint_activities WHERE student_id = $1",
 		[studentId],
@@ -229,6 +232,7 @@ async function deleteStudent(studentId) {
 
 async function deleteYear(student_id) {
 	if (!student_id) return;
+	await dbReady;
 
 	const student = await db.select(
 		"SELECT graduation_year FROM students WHERE student_id = $1",

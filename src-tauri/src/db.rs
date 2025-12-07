@@ -3,75 +3,92 @@ use std::array;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::OnceLock;
+use tokio::sync::OnceCell;
 
 static DATABASE_PATH: OnceLock<String> = OnceLock::new();
+static DB_POOL: OnceCell<SqlitePool> = OnceCell::const_new();
 const CURRENT_SCHEMA_VERSION: i32 = 1;
 
 pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
 }
 
-#[tokio::main]
-pub async fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
-    // Ensure app data directory exists
-    if let Err(e) = fs::create_dir_all(&app_data_dir) {
-        eprintln!("Error creating app data directory: {}", e);
-    }
+/// Returns the global database connection pool.
+/// Must be called after setup_db has completed.
+pub async fn get_pool() -> &'static SqlitePool {
+    DB_POOL
+        .get_or_init(|| async {
+            SqlitePool::connect(get_database_path())
+                .await
+                .expect("Failed to create database pool")
+        })
+        .await
+}
 
-    let db_path = app_data_dir.join("db.sqlite");
-    let db_path_str = db_path.to_string_lossy().to_string();
+pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
+    // Use tauri's async runtime instead of creating a new tokio runtime
+    tauri::async_runtime::block_on(async move {
+        // Ensure app data directory exists
+        if let Err(e) = fs::create_dir_all(&app_data_dir) {
+            eprintln!("Error creating app data directory: {}", e);
+        }
 
-    // Check if database exists in old resources location and move it
-    if let Some(res_dir) = resource_dir {
-        let old_db_path = res_dir.join("db.sqlite");
-        if old_db_path.exists() && !db_path.exists() {
-            println!("Moving database from resources to app data directory...");
-            if let Err(e) = fs::copy(&old_db_path, &db_path) {
-                eprintln!("Error copying database: {}", e);
-            } else {
-                // Optionally delete the old database after successful copy
-                let _ = fs::remove_file(&old_db_path);
-                println!("Database moved successfully to: {}", db_path_str);
+        let db_path = app_data_dir.join("db.sqlite");
+        let db_path_str = db_path.to_string_lossy().to_string();
+
+        // Check if database exists in old resources location and move it
+        if let Some(res_dir) = resource_dir {
+            let old_db_path = res_dir.join("db.sqlite");
+            if old_db_path.exists() && !db_path.exists() {
+                println!("Moving database from resources to app data directory...");
+                if let Err(e) = fs::copy(&old_db_path, &db_path) {
+                    eprintln!("Error copying database: {}", e);
+                } else {
+                    // Optionally delete the old database after successful copy
+                    let _ = fs::remove_file(&old_db_path);
+                    println!("Database moved successfully to: {}", db_path_str);
+                }
             }
         }
-    }
 
-    // Also check for database in the working directory (legacy location)
-    let legacy_db_path = PathBuf::from("resources/db.sqlite");
-    if legacy_db_path.exists() && !db_path.exists() {
-        println!("Moving database from legacy location to app data directory...");
-        if let Err(e) = fs::copy(&legacy_db_path, &db_path) {
-            eprintln!("Error copying database from legacy location: {}", e);
-        } else {
-            println!(
-                "Database moved successfully from legacy location to: {}",
-                db_path_str
-            );
+        // Also check for database in the working directory (legacy location)
+        let legacy_db_path = PathBuf::from("resources/db.sqlite");
+        if legacy_db_path.exists() && !db_path.exists() {
+            println!("Moving database from legacy location to app data directory...");
+            if let Err(e) = fs::copy(&legacy_db_path, &db_path) {
+                eprintln!("Error copying database from legacy location: {}", e);
+            } else {
+                println!(
+                    "Database moved successfully from legacy location to: {}",
+                    db_path_str
+                );
+            }
         }
-    }
 
-    // Store the database path globally
-    DATABASE_PATH
-        .set(db_path_str.clone())
-        .expect("Database path already set");
+        // Store the database path globally
+        DATABASE_PATH
+            .set(db_path_str.clone())
+            .expect("Database path already set");
 
-    let database = get_database_path();
+        let database = get_database_path();
 
-    if !Sqlite::database_exists(database).await.unwrap_or(false) {
-        let _result = Sqlite::create_database(database)
-            .await
-            .map_err(|e| eprintln!("Error creating database: {}", e));
-    }
+        if !Sqlite::database_exists(database).await.unwrap_or(false) {
+            let _result = Sqlite::create_database(database)
+                .await
+                .map_err(|e| eprintln!("Error creating database: {}", e));
+        }
 
-    create_settings_table().await;
-    create_students_table().await;
-    create_additional_mint_activities_table().await;
-    create_student_additional_mint_activities_table().await;
-    //run_migrations().await;
+        create_settings_table().await;
+        create_students_table().await;
+        create_additional_mint_activities_table().await;
+        create_student_additional_mint_activities_table().await;
+        create_indexes().await;
+        //run_migrations().await;
+    });
 }
 
 async fn create_settings_table() {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     // Create the settings table with default values
     let _creation_result = sqlx::query(
@@ -87,94 +104,94 @@ async fn create_settings_table() {
             competition_search_box INTEGER DEFAULT 0
         );",
     )
-    .execute(&db)
+    .execute(db)
     .await
     .map_err(|e| eprintln!("Error creating settings table: {}", e));
 
     // Insert the default row if it doesn't exist
     let _insert_result = sqlx::query("INSERT OR IGNORE INTO settings (id) VALUES (1);")
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error inserting default settings: {}", e));
 }
 
 pub async fn change_school_name(school_name: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query("UPDATE settings SET school_name = ? WHERE id = 1;")
         .bind(school_name)
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error changing school name: {}", e));
 }
 
 pub async fn change_school_location(school_location: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query("UPDATE settings SET school_location = ? WHERE id = 1;")
         .bind(school_location)
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error changing school location: {}", e));
 }
 
 pub async fn change_school_functionary_1(school_functionary_1: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query("UPDATE settings SET school_functionary_1 = ? WHERE id = 1;")
         .bind(school_functionary_1)
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error changing school functionary 1: {}", e));
 }
 
 pub async fn change_school_functionary_2(school_functionary_2: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query("UPDATE settings SET school_functionary_2 = ? WHERE id = 1;")
         .bind(school_functionary_2)
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error changing school functionary 2: {}", e));
 }
 
 pub async fn change_school_functionary_1_position(school_functionary_1_position: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result =
         sqlx::query("UPDATE settings SET school_functionary_1_position = ? WHERE id = 1;")
             .bind(school_functionary_1_position)
-            .execute(&db)
+            .execute(db)
             .await
             .map_err(|e| eprintln!("Error changing school functionary 1 position: {}", e));
 }
 
 pub async fn change_school_functionary_2_position(school_functionary_2_position: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result =
         sqlx::query("UPDATE settings SET school_functionary_2_position = ? WHERE id = 1;")
             .bind(school_functionary_2_position)
-            .execute(&db)
+            .execute(db)
             .await
             .map_err(|e| eprintln!("Error changing school functionary 2 position: {}", e));
 }
 
 pub async fn change_default_file_path(new_default_file_path: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query("UPDATE settings SET default_file_path = ? WHERE id = 1;")
         .bind(new_default_file_path)
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error changing default file path: {}", e));
 }
 
 pub async fn get_school_name() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_name FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -190,10 +207,10 @@ pub async fn get_school_name() -> String {
 }
 
 pub async fn get_school_location() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_location FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -209,10 +226,10 @@ pub async fn get_school_location() -> String {
 }
 
 pub async fn get_school_functionary_1() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_functionary_1 FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -228,10 +245,10 @@ pub async fn get_school_functionary_1() -> String {
 }
 
 pub async fn get_school_functionary_2() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_functionary_2 FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -247,10 +264,10 @@ pub async fn get_school_functionary_2() -> String {
 }
 
 pub async fn get_school_functionary_1_position() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_functionary_1_position FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -269,10 +286,10 @@ pub async fn get_school_functionary_1_position() -> String {
 }
 
 pub async fn get_school_functionary_2_position() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT school_functionary_2_position FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -291,10 +308,10 @@ pub async fn get_school_functionary_2_position() -> String {
 }
 
 pub async fn get_default_file_path() -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT default_file_path FROM settings WHERE id = 1;")
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -319,9 +336,9 @@ pub async fn get_default_file_path() -> String {
 - `4`: School Functionary 1 Position
 - `5`: School Functionary 2 Position"]
 pub async fn get_all_settings() -> [String; 6] {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
-    let result = sqlx::query("SELECT school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position FROM settings WHERE id = 1;").fetch_one(&db).await;
+    let result = sqlx::query("SELECT school_name, school_location, school_functionary_1, school_functionary_2, school_functionary_1_position, school_functionary_2_position FROM settings WHERE id = 1;").fetch_one(db).await;
 
     match result {
         Ok(row) => array::from_fn(|i| row.get(i)),
@@ -333,7 +350,7 @@ pub async fn get_all_settings() -> [String; 6] {
 }
 
 async fn create_students_table() {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS students (
@@ -372,13 +389,13 @@ async fn create_students_table() {
         level_of_competition TEXT
     );",
     )
-    .execute(&db)
+    .execute(db)
     .await
     .map_err(|e| eprintln!("Error creating students table: {}", e));
 }
 
 pub async fn add_student(first_name: String, last_name: String, birthday: String) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query(
         "INSERT INTO students(first_name, last_name, birthday, certificate) VALUES
@@ -388,17 +405,17 @@ pub async fn add_student(first_name: String, last_name: String, birthday: String
     .bind(last_name)
     .bind(birthday)
     .bind("none")
-    .execute(&db)
+    .execute(db)
     .await
     .map_err(|e| eprintln!("Error adding student: {}", e));
 }
 
 pub async fn get_student_birthday(student_id: i32) -> String {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT birthday FROM students WHERE student_id = ?;")
         .bind(student_id)
-        .fetch_one(&db)
+        .fetch_one(db)
         .await;
 
     match result {
@@ -414,7 +431,7 @@ pub async fn get_student_birthday(student_id: i32) -> String {
 }
 
 async fn create_additional_mint_activities_table() {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS additional_mint_activities (
@@ -427,7 +444,7 @@ async fn create_additional_mint_activities_table() {
         sek INTEGER
     );",
     )
-    .execute(&db)
+    .execute(db)
     .await
     .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
 
@@ -435,7 +452,7 @@ async fn create_additional_mint_activities_table() {
 }
 
 async fn create_student_additional_mint_activities_table() {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS student_additional_mint_activities (
@@ -447,7 +464,7 @@ async fn create_student_additional_mint_activities_table() {
             FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
             );"
         )//Remove the Primary Key line, if you want to allow a student to have the same additional mint activity multiple times
-        .execute(&db)
+        .execute(db)
         .await
         .map_err(|e| eprintln!("Error creating student_additional_mint_activities table: {}", e));
 }
@@ -457,7 +474,7 @@ pub async fn add_additional_mint_activity_to_student(
     additional_mint_activity_id: i32,
     level: i32,
 ) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let _result = sqlx::query(
         "INSERT INTO student_additional_mint_activities(student_id, additional_mint_activity_id, level) VALUES
@@ -466,7 +483,7 @@ pub async fn add_additional_mint_activity_to_student(
     .bind(&student_id)
     .bind(&additional_mint_activity_id)
     .bind(&level)
-    .execute(&db)
+    .execute(db)
     .await
     .map_err(|e|eprintln!("Error adding additional MINT activity to student: {}", e));
 }
@@ -478,12 +495,12 @@ pub async fn add_additional_mint_activity_to_student(
     - `2`: Level of Competition
     - second i32: Grade of Paper"]
 pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [String; 3], i32) {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result =
         sqlx::query("SELECT type_of_paper, topic_of_paper, description_of_paper, grade_of_paper, level_of_competition FROM students WHERE student_id = ?;")
             .bind(student_id)
-            .fetch_one(&db).await;
+            .fetch_one(db).await;
 
     match result {
         Ok(row) => (row.get(0), [row.get(1), row.get(2), row.get(4)], row.get(3)),
@@ -495,7 +512,7 @@ pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [Stri
 }
 
 pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), String> {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query(
         "SELECT
@@ -522,7 +539,7 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
          FROM students WHERE student_id = ?;",
     )
     .bind(student_id)
-    .fetch_one(&db)
+    .fetch_one(db)
     .await;
 
     match result {
@@ -539,11 +556,11 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
 }
 
 pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)> {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 1;")
         .bind(student_id)
-        .fetch_all(&db)
+        .fetch_all(db)
         .await;
 
     match result {
@@ -565,11 +582,11 @@ pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)
 }
 
 pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)> {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
     let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 2;")
         .bind(student_id)
-        .fetch_all(&db)
+        .fetch_all(db)
         .await;
 
     match result {
@@ -591,9 +608,9 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
 }
 
 /*async fn run_migrations() {
-    let db = SqlitePool::connect(get_database_path()).await.unwrap();
+    let db = get_pool().await;
 
-    let result = sqlx::query("PRAGMA user_version;").fetch_one(&db).await;
+    let result = sqlx::query("PRAGMA user_version;").fetch_one(db).await;
 
     match result {
         Ok(row) => {
@@ -617,3 +634,27 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
 }
 
 async fn migrate_to_version_1(db: &SqlitePool) {}*/
+
+/// Creates database indexes for improved query performance
+async fn create_indexes() {
+    let db = get_pool().await;
+
+    // Index for student name searches (used in search box with LIKE queries)
+    let _ = sqlx::query("CREATE INDEX IF NOT EXISTS idx_students_name ON students(name);")
+        .execute(db)
+        .await
+        .map_err(|e| eprintln!("Error creating students name index: {}", e));
+
+    // Index for student_additional_mint_activities lookups by student_id
+    let _ = sqlx::query("CREATE INDEX IF NOT EXISTS idx_sama_student_id ON student_additional_mint_activities(student_id);")
+        .execute(db)
+        .await
+        .map_err(|e| eprintln!("Error creating student_additional_mint_activities student_id index: {}", e));
+
+    // Index for additional_mint_activities lookups by sek
+    let _ =
+        sqlx::query("CREATE INDEX IF NOT EXISTS idx_ama_sek ON additional_mint_activities(sek);")
+            .execute(db)
+            .await
+            .map_err(|e| eprintln!("Error creating additional_mint_activities sek index: {}", e));
+}

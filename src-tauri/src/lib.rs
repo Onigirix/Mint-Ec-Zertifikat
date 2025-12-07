@@ -25,16 +25,13 @@ fn get_database_path() -> String {
 pub fn run() {
     Builder::default()
         .setup(|app| {
-            // Get app data directory
             let app_data_dir = app
                 .path()
                 .app_data_dir()
                 .expect("Failed to get app data directory");
 
-            // Get resource directory (for migration from old location)
             let resource_dir = app.path().resource_dir().ok();
 
-            // Setup database with correct paths
             db::setup_db(app_data_dir, resource_dir);
 
             app.manage(Mutex::new(AppState::default()));
@@ -46,15 +43,6 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(prevent_default())
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .target(tauri_plugin_log::Target::new(
-                    tauri_plugin_log::TargetKind::LogDir {
-                        file_name: Some("logs".to_string()),
-                    },
-                ))
-                .build(),
-        )
         .invoke_handler(tauri::generate_handler![
             pdf::generate_pdf,
             state::get_state,
@@ -77,36 +65,26 @@ pub fn run() {
 
 #[cfg(debug_assertions)]
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
-    use tauri_plugin_prevent_default::Flags;
-
-    // start the builder with the common flags
-    let mut builder = tauri_plugin_prevent_default::Builder::new()
-        .with_flags(Flags::all().difference(Flags::DEV_TOOLS | Flags::RELOAD));
-
-    #[cfg(target_os = "windows")]
-    {
-        builder = builder.platform(PlatformOptions {
-            general_autofill: false,
-            password_autosave: false,
-        });
-    }
-
-    builder.build()
+    tauri_plugin_prevent_default::debug()
 }
 
 #[cfg(not(debug_assertions))]
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     use tauri_plugin_prevent_default::Flags;
 
-    let mut builder = tauri_plugin_prevent_default::Builder::new()
-        .with_flags(Flags::all().difference(Flags::DEV_TOOLS));
+    let mut builder = tauri_plugin_prevent_default::Builder::new().with_flags(Flags::all());
 
     #[cfg(target_os = "windows")]
     {
-        builder = builder.platform(PlatformOptions {
-            general_autofill: false,
-            password_autosave: false,
-        });
+        use tauri_plugin_prevent_default::PlatformOptions;
+        builder = tauri_plugin_prevent_default::Builder::new().platform(
+            PlatformOptions::new()
+                .general_autofill(false)
+                .password_autosave(false)
+                .browser_accelerator_keys(false)
+                .default_context_menus(false)
+                .default_script_dialogs(false),
+        );
     }
 
     builder.build()

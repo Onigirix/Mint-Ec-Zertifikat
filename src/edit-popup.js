@@ -1,9 +1,10 @@
+import { getDb } from './db-connection.js';
+
 const { getCurrentWindow } = window.__TAURI__.window;
-const Database = window.__TAURI__.sql;
 const invoke = window.__TAURI__.core.invoke;
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+let db = null;
+const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
 
 // Async confirmation dialog
@@ -21,6 +22,7 @@ const nameField = document.getElementById("name");
 const graduationYearField = document.getElementById("abijahr");
 const geburtsdatumField = document.getElementById("geburtsdatum");
 
+await dbReady;
 const [student] = await db.select(
   "SELECT name, graduation_year, birthday FROM students WHERE student_id = $1",
   [studentId]
@@ -67,9 +69,10 @@ async function formSubmitted(e) {
       return; // Don't save if user cancels
     }
   }
+  await dbReady;
 
   await db.execute(
-    "UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4",
+    \"UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4\",
     [nameField.value, graduationYearField.value, geburtsdatumField.value, studentId]
   );
   closeWindow();

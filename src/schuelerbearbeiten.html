@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
+    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="schuelerbearbeiten.css" />
     <script type="module" src="main.js" defer></script>

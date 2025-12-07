@@ -1,11 +1,12 @@
-const invoke = window.__TAURI__.core.invoke;
-const Database = window.__TAURI__.sql;
+import { getDb } from './db-connection.js';
 
-const dbPath = await invoke("get_database_path");
-const db = await Database.load(`sqlite://${dbPath}`);
+const invoke = window.__TAURI__.core.invoke;
 const listen = window.__TAURI__.event.listen;
 
-await listen("student-added", (event) => {
+let db = null;
+let dbReady = getDb().then(instance => { db = instance; });
+
+listen("student-added", (event) => {
 	init(event.payload.new_student_id, event.payload.new_student_name);
 });
 
@@ -13,7 +14,7 @@ window.studentState = {
 	studentId: 0,
 	studentName: "",
 };
-const [studentIdOnLoad, studentNameOnLoad] = await invoke("get_state");
+const statePromise = invoke("get_state");
 
 const openNavButton = document.querySelector("#openNav");
 const closeNavButton = document.querySelector("#closeNav");
@@ -49,7 +50,7 @@ async function generatePdf() {
 	try {
 		await invoke("generate_pdf");
 	} catch (error) {
-		console.error("Error generating PDF:", error);
+
 		alert("Failed to generate PDF. Please try again.");
 	}
 }
@@ -64,6 +65,7 @@ function closeNav() {
 
 async function searchBoxInputted(e) {
 	if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
+		await dbReady;
 		const suggestionResults = await db.select(
 			"SELECT * FROM students WHERE name LIKE $1",
 			[`%${searchBox.value}%`],
@@ -212,10 +214,10 @@ document.addEventListener(
 			e.preventDefault();
 		}
 	},
-	true,
-);
+		true,
+	);
 
-init(studentIdOnLoad, studentNameOnLoad);
-
-export { select_student };
+statePromise.then(([studentIdOnLoad, studentNameOnLoad]) => {
+	init(studentIdOnLoad, studentNameOnLoad);
+});export { select_student };
 
