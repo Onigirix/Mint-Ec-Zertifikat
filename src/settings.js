@@ -289,13 +289,69 @@ window.openSchool = function(event, schoolName) {
 }
 
 window.deleteSchool = function(event, schoolName) {
-	if (confirm(`Sind Sie sicher das sie ${schoolName} löschen möchten?`)) {
-		alert("Deleting " + schoolName);
-	}
+	  event.stopPropagation(); // verhindert weitere Click-Events
+	deleteSchool(event, schoolName);
 }
 
 window.addSchool = function(event) {
-	alert("Added School");
+	addTab("Neue Schule", "neue_schule");
 }
+
+function addTab(title, schoolName) {
+  const tabContainer = document.getElementById("tab");
+
+  // Wrapper div
+  const wrapper = document.createElement("div");
+  wrapper.className = "tab-button-wrapper";
+
+  // Haupt-Tab-Button
+  const mainButton = document.createElement("button");
+  mainButton.className = "tablinks";
+  mainButton.setAttribute("onclick", `openSchool(event, '${schoolName}')`);
+  mainButton.textContent = title;
+
+  // Close-Button
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "close_tablinks";
+  closeBtn.setAttribute("onclick", `deleteSchool(event, '${schoolName}')`);
+
+  const iconSpan = document.createElement("span");
+  iconSpan.className = "material-symbols-rounded icon";
+  iconSpan.textContent = "delete";
+
+  closeBtn.appendChild(iconSpan);
+
+  wrapper.appendChild(mainButton);
+  wrapper.appendChild(closeBtn);
+
+  // Vertical Stripe
+  const stripe = document.createElement("div");
+  stripe.className = "vertical_stripe";
+  stripe.textContent = " |";
+
+  // Oben einfügen (vor dem ersten vorhandenen Element)
+  tabContainer.prepend(stripe);
+  tabContainer.prepend(wrapper);
+}
+
+function deleteSchool(event, schoolName) {
+  // Event-Propagation stoppen (falls Buttons verschachtelt sind)
+  event.stopPropagation();
+
+  // Der Button > wrapper (tab-button-wrapper)
+  const wrapper = event.target.closest(".tab-button-wrapper");
+
+  if (!wrapper) return;
+
+  // Der nächste Nachbar ist die vertical_stripe
+  const stripe = wrapper.nextElementSibling;
+  if (stripe && stripe.classList.contains("vertical_stripe")) {
+    stripe.remove();
+  }
+
+  // Jetzt den Wrapper selbst löschen
+  wrapper.remove();
+}
+
 
 init();

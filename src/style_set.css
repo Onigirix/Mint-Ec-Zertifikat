@@ -40,8 +40,8 @@ settingsForm.folder-input {
   padding: 14px 16px;
   padding-left: 2px;
   transition: 0.3s;
-  width: 15vw;
-  max-width: 15vw;
+  width: 20vw;
+  max-width: 20vw;
   z-index: 5;
   white-space: nowrap;
   overflow: hidden;              /* wichtig */
@@ -70,6 +70,8 @@ settingsForm.folder-input {
 }
 
 .vertical_stripe {
+   display: inline-block; 
+  z-index:20;
   margin-left: -8px;
   margin-right: -8px;
   margin-top: 8px;
@@ -82,13 +84,13 @@ settingsForm.folder-input {
 
 .icon{
   font-size: small;
-  margin-left: -6px;
-  margin-top: 4px;
+  margin-left: -10px;
+  padding-top: 15px;
 }
 
 .icon_add{
   font-size: medium;
-  margin-left: -1px;
+  margin-left: -5px;
   padding-top: 14px;
 }
 
