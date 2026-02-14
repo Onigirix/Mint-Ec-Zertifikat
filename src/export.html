@@ -64,6 +64,7 @@
 
     <!--Main Content-->
     <div id="main">
+      
       <main id="content">
         <h1>PDF erstellen</h1>
 
@@ -81,7 +82,7 @@
         Zusätzlich kann man dann auch auswählen ob man von dieser Liste nur alle
         Zertifikate die mindestens Stufe 1, 2 bzw. 3 erreicht haben als PDF
         speichern möchte.
-
+        <button onclick="s(event)">Show Snackbar</button>
         <button
           class="blauerButton"
           onclick="window.location.href='zusaetzlich.html';"
@@ -89,6 +90,8 @@
         >
           <span class="material-symbols-rounded">arrow_back</span>
         </button>
+        <!-- The actual snackbar -->
+<div id="snackbar">Some text some message..</div>
       </main>
     </div>
   </body>
