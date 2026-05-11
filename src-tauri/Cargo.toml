@@ -35,10 +35,10 @@ tauri-plugin-dialog = "2.4.2"
 tauri-plugin-process = "2.3.1"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-rfd = { version = "0.16", default-features = false, features = ["gtk3"] }
+rfd = { version = "0.17", default-features = false, features = ["gtk3"] }
 
 [target.'cfg(not(target_os = "linux"))'.dependencies]
-rfd = { version = "0.16.0" }
+rfd = { version = "0.17.2" }
 
 [profile.dev]
 incremental = false
