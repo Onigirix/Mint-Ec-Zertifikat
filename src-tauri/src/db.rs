@@ -643,12 +643,6 @@ async fn migrate_to_version_1(db: &SqlitePool) {
         (14,  "MNU-Bundeswettbewerb Physik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die Bundesrunde",                          1),
         (15,  "Schueler experimentieren",                 "Ernsthafte Teilnahme",                                   "Alle Preistraeger beim Regionalwettbewerb",    "Qualifikation fuer den Landeswettbewerb",                     1),
         (16,  "Schuelerwettbewerb der Siemens Stiftung",  "Ernsthafte Teilnahme",                                   "Vorentscheid erreicht",                        "Finalteilnahme",                                              1),
-        // --- Landeswettbewerbe Sek I ---
-        (17,  "NW bio-logisch",                           "3x ernsthafte Teilnahme oder Urkunde mit gutem Erfolg",  "Urkunde mit sehr gutem Erfolg",                "Hall of Fame (Schuelerakademie)",                              1),
-        (18,  "NW Chemie entdecken",                      "Urkunde mit Erfolg",                                     "Urkunde mit grossem Erfolg",                   "Urkunde mit ausgezeichnetem Erfolg",                          1),
-        (19,  "NW zdi-Roboterwettbewerb",                 "Ernsthafte Teilnahme",                                   "Preistraeger",                                 "",                                                            1),
-        (20,  "RP Landeswettbewerb Mathematik",           "Qualifikation fuer die 2. Runde",                        "Preistraeger der 2. Runde",                    "Teilnahme an der 3. Runde",                                   1),
-        (21,  "RP Landeswettbewerb Physik",               "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Teilnahme an der 3. Runde",                                   1),
         // --- Bundeswettbewerbe Sek II ---
         (101, "BundesUmweltWettbewerb",                   "Urkunde",                                                "Foerder- oder Anerkennungspreis",              "Haupt- oder Sonderpreis",                                     2),
         (102, "Bundeswettbewerb Informatik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
@@ -667,12 +661,6 @@ async fn migrate_to_version_1(db: &SqlitePool) {
         (115, "MNU-Bundeswettbewerb Physik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die Bundesrunde",                          2),
         (116, "Jugend forscht",                           "Ernsthafte Teilnahme",                                   "Alle Preistraeger beim Regionalwettbewerb",    "Qualifikation fuer den Landes- oder Bundeswettbewerb",        2),
         (117, "Schuelerwettbewerb der Siemens Stiftung",  "Ernsthafte Teilnahme",                                   "Vorentscheid erreicht",                        "Finalteilnahme",                                              2),
-        // --- Landeswettbewerbe Sek II ---
-        (118, "NW bio-logisch",                           "3x ernsthafte Teilnahme oder Urkunde mit gutem Erfolg",  "Urkunde mit sehr gutem Erfolg",                "Hall of Fame (Schuelerakademie)",                              2),
-        (119, "NW Chemie entdecken",                      "Urkunde mit Erfolg",                                     "Urkunde mit grossem Erfolg",                   "Urkunde mit ausgezeichnetem Erfolg",                          2),
-        (120, "NW zdi-Roboterwettbewerb",                 "Ernsthafte Teilnahme",                                   "Preistraeger",                                 "",                                                            2),
-        (121, "RP Landeswettbewerb Mathematik",           "Qualifikation fuer die 2. Runde",                        "Preistraeger der 2. Runde",                    "Teilnahme an der 3. Runde",                                   2),
-        (122, "RP Landeswettbewerb Physik",               "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Teilnahme an der 3. Runde",                                   2),
     ];
 
     for &(id, name, level_one, level_two, level_three, sek) in competitions {
