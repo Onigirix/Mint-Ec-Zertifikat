@@ -288,7 +288,7 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (Strin
                 level = match best_average {
                     x if x < 9.0 => 0,
                     x if x < 11.0 => 1,
-                    x if x > 13.0 => 2,
+                    x if x < 13.0 => 2,
                     _ => 3,
                 };
             }
