@@ -339,7 +339,7 @@ async fn fachwissenschaftliches_arbeiten_text(
         )),
         2 => String::from(format!("{} hat das wissenschaftspropädeutische Fach {} belegt. \nEs wurden {} Punkte erreicht.", student_name, topics[0], grade_str)),
         3 => String::from(format!("{} hat eine besondere Lernleistung erbracht. \nThema: {} \n{} \nDie besondere Lernleistung wurde mit {} Punkten bewertet.", student_name, topics[0], topics[1], grade_str)),
-        4 => String::from(format!("{} hat an Jugend Forscht mit dem Projekt \"{}\" teilgenommen. \n{} \n{} \n{}", student_name, topics[0], topics[1], grade_str, topics[2])),
+        4 => String::from(format!("{} hat an Jugend Forscht mit dem Projekt \"{}\" teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
         5 => String::from(format!("{} hat an dem {} Wettbewerb teilgenommen. \n{} \n{}", student_name, topics[0], topics[1], topics[2])),
         _ => String::from("Error code 420"),
     };
