@@ -13,8 +13,6 @@ pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
 }
 
-/// Returns the global database connection pool.
-/// Must be called after setup_db has completed.
 pub async fn get_pool() -> &'static SqlitePool {
     DB_POOL
         .get_or_init(|| async {
@@ -26,9 +24,7 @@ pub async fn get_pool() -> &'static SqlitePool {
 }
 
 pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
-    // Use tauri's async runtime instead of creating a new tokio runtime
     tauri::async_runtime::block_on(async move {
-        // Ensure app data directory exists
         if let Err(e) = fs::create_dir_all(&app_data_dir) {
             eprintln!("Error creating app data directory: {}", e);
         }
@@ -36,7 +32,6 @@ pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
         let db_path = app_data_dir.join("db.sqlite");
         let db_path_str = db_path.to_string_lossy().to_string();
 
-        // Check if database exists in old resources location and move it
         if let Some(res_dir) = resource_dir {
             let old_db_path = res_dir.join("db.sqlite");
             if old_db_path.exists() && !db_path.exists() {
@@ -44,17 +39,13 @@ pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
                 if let Err(e) = fs::copy(&old_db_path, &db_path) {
                     eprintln!("Error copying database: {}", e);
                 } else {
-                    // Optionally delete the old database after successful copy
                     let _ = fs::remove_file(&old_db_path);
-                    println!("Database moved successfully to: {}", db_path_str);
                 }
             }
         }
 
-        // Also check for database in the working directory (legacy location)
         let legacy_db_path = PathBuf::from("resources/db.sqlite");
         if legacy_db_path.exists() && !db_path.exists() {
-            println!("Moving database from legacy location to app data directory...");
             if let Err(e) = fs::copy(&legacy_db_path, &db_path) {
                 eprintln!("Error copying database from legacy location: {}", e);
             } else {
@@ -65,7 +56,6 @@ pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
             }
         }
 
-        // Store the database path globally
         DATABASE_PATH
             .set(db_path_str.clone())
             .expect("Database path already set");
@@ -447,8 +437,6 @@ async fn create_additional_mint_activities_table() {
     .execute(db)
     .await
     .map_err(|e| eprintln!("Error creating additional_mint_activities table: {}", e));
-
-
 }
 
 async fn create_student_additional_mint_activities_table() {
@@ -635,23 +623,19 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
 
 async fn migrate_to_version_1(db: &SqlitePool) {}*/
 
-/// Creates database indexes for improved query performance
 async fn create_indexes() {
     let db = get_pool().await;
 
-    // Index for student name searches (used in search box with LIKE queries)
     let _ = sqlx::query("CREATE INDEX IF NOT EXISTS idx_students_name ON students(name);")
         .execute(db)
         .await
         .map_err(|e| eprintln!("Error creating students name index: {}", e));
 
-    // Index for student_additional_mint_activities lookups by student_id
     let _ = sqlx::query("CREATE INDEX IF NOT EXISTS idx_sama_student_id ON student_additional_mint_activities(student_id);")
         .execute(db)
         .await
         .map_err(|e| eprintln!("Error creating student_additional_mint_activities student_id index: {}", e));
 
-    // Index for additional_mint_activities lookups by sek
     let _ =
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_ama_sek ON additional_mint_activities(sek);")
             .execute(db)
