@@ -73,14 +73,13 @@ pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
         create_additional_mint_activities_table().await;
         create_student_additional_mint_activities_table().await;
         create_indexes().await;
-        //run_migrations().await;
+        run_migrations().await;
     });
 }
 
 async fn create_settings_table() {
     let db = get_pool().await;
 
-    // Create the settings table with default values
     let _creation_result = sqlx::query(
         "CREATE TABLE IF NOT EXISTS settings (
             id INTEGER PRIMARY KEY DEFAULT 1,
@@ -98,7 +97,6 @@ async fn create_settings_table() {
     .await
     .map_err(|e| eprintln!("Error creating settings table: {}", e));
 
-    // Insert the default row if it doesn't exist
     let _insert_result = sqlx::query("INSERT OR IGNORE INTO settings (id) VALUES (1);")
         .execute(db)
         .await
@@ -595,18 +593,19 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
     }
 }
 
-/*async fn run_migrations() {
+async fn run_migrations() {
     let db = get_pool().await;
 
     let result = sqlx::query("PRAGMA user_version;").fetch_one(db).await;
 
     match result {
         Ok(row) => {
-            let current_version: i32 = row.get(0);
+            let mut current_version: i32 = row.get(0);
             while current_version < CURRENT_SCHEMA_VERSION {
                 match current_version {
                     0 => {
-                        migrate_to_version_1(&db).await;
+                        migrate_to_version_1(db).await;
+                        current_version = 1;
                     }
                     _ => {
                         eprintln!("No migration path for version {}", current_version);
@@ -621,7 +620,83 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
     }
 }
 
-async fn migrate_to_version_1(db: &SqlitePool) {}*/
+async fn migrate_to_version_1(db: &SqlitePool) {
+    // Wettbewerbe aus den MINT-EC-Zertifikat-Kriterien (Anforderungsfeld III)
+    // IDs 1–99: Sek I, IDs 101–199: Sek II
+    // level_one = 5 Pkt / Niveau 1, level_two = 10 Pkt / Niveau 2, level_three = 15 Pkt / Niveau 3
+    #[rustfmt::skip]
+    let competitions: &[(i32, &str, &str, &str, &str, i32)] = &[
+        // --- Bundeswettbewerbe Sek I ---
+        (1,   "BundesUmweltWettbewerb",                  "Urkunde",                                                "Foerder- oder Anerkennungspreis",              "Haupt- oder Sonderpreis",                                     1),
+        (2,   "Bundeswettbewerb Informatik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             1),
+        (3,   "Bundeswettbewerb Mathematik",              "1. Runde (ernsthafte Teilnahme)",                        "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             1),
+        (4,   "DECHEMAX",                                 "Qualifikation fuer die 2. Runde",                        "Sonderpreis / bestes Klassenstufenteam",       "Siegerteam",                                                  1),
+        (5,   "FIRST LEGO League",                        "Ernsthafte Teilnahme Regionalwettbewerb",                "Preistraeger Regionalwettbewerb",              "Qualifikation Semi-Finals / Finale Zentraleuropa",            1),
+        (6,   "Informatik-Biber",                         "3x ernsthafte Teilnahme oder 3. Preis",                  "1. Preis oder 2. Preis",                       "",                                                            1),
+        (7,   "Internationale Biologie-Olympiade",        "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             1),
+        (8,   "Internationale Chemie-Olympiade",          "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             1),
+        (9,   "Internationaler Chemiewettbewerb",         "Certificate of merit / Certificate of high distinction", "Certificate of excellence",                    "",                                                            1),
+        (10,  "Internationale Junior Science Olympiade",  "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer das Bundesfinale",                         1),
+        (11,  "Internationale Physik-Olympiade",          "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             1),
+        (12,  "Kaenguru der Mathematik",                  "3x ernsthafte Teilnahme oder 3. Preis",                  "2. Preis oder 1. Preis",                       "",                                                            1),
+        (13,  "Mathematik-Olympiade",                     "3x ernsthafte Teilnahme an der Schulrunde",              "Qualifikation fuer die Regionalrunde (Stadt/Kreis)", "Qualifikation fuer die Landesrunde oder Bundeswettbewerb", 1),
+        (14,  "MNU-Bundeswettbewerb Physik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die Bundesrunde",                          1),
+        (15,  "Schueler experimentieren",                 "Ernsthafte Teilnahme",                                   "Alle Preistraeger beim Regionalwettbewerb",    "Qualifikation fuer den Landeswettbewerb",                     1),
+        (16,  "Schuelerwettbewerb der Siemens Stiftung",  "Ernsthafte Teilnahme",                                   "Vorentscheid erreicht",                        "Finalteilnahme",                                              1),
+        // --- Landeswettbewerbe Sek I ---
+        (17,  "NW bio-logisch",                           "3x ernsthafte Teilnahme oder Urkunde mit gutem Erfolg",  "Urkunde mit sehr gutem Erfolg",                "Hall of Fame (Schuelerakademie)",                              1),
+        (18,  "NW Chemie entdecken",                      "Urkunde mit Erfolg",                                     "Urkunde mit grossem Erfolg",                   "Urkunde mit ausgezeichnetem Erfolg",                          1),
+        (19,  "NW zdi-Roboterwettbewerb",                 "Ernsthafte Teilnahme",                                   "Preistraeger",                                 "",                                                            1),
+        (20,  "RP Landeswettbewerb Mathematik",           "Qualifikation fuer die 2. Runde",                        "Preistraeger der 2. Runde",                    "Teilnahme an der 3. Runde",                                   1),
+        (21,  "RP Landeswettbewerb Physik",               "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Teilnahme an der 3. Runde",                                   1),
+        // --- Bundeswettbewerbe Sek II ---
+        (101, "BundesUmweltWettbewerb",                   "Urkunde",                                                "Foerder- oder Anerkennungspreis",              "Haupt- oder Sonderpreis",                                     2),
+        (102, "Bundeswettbewerb Informatik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
+        (103, "Bundeswettbewerb Mathematik",              "1. Runde (ernsthafte Teilnahme)",                        "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
+        (104, "DECHEMAX",                                 "Qualifikation fuer die 2. Runde",                        "Sonderpreis / bestes Klassenstufenteam",       "Siegerteam",                                                  2),
+        (105, "Dr. Hans-Riegel-Fachpreis",                "",                                                       "",                                             "Preistraeger",                                                2),
+        (106, "FIRST LEGO League",                        "Ernsthafte Teilnahme Regionalwettbewerb",                "Preistraeger Regionalwettbewerb",              "Qualifikation Semi-Finals / Finale Zentraleuropa",            2),
+        (107, "Informatik-Biber",                         "3x ernsthafte Teilnahme oder 3. Preis",                  "1. Preis oder 2. Preis",                       "",                                                            2),
+        (108, "Internationale Biologie-Olympiade",        "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
+        (109, "Internationale Chemie-Olympiade",          "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
+        (110, "Internationaler Chemiewettbewerb",         "Certificate of merit / Certificate of high distinction", "Certificate of excellence",                    "",                                                            2),
+        (111, "Internationale Junior Science Olympiade",  "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer das Bundesfinale",                         2),
+        (112, "Internationale Physik-Olympiade",          "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die 3. Runde",                             2),
+        (113, "Kaenguru der Mathematik",                  "3x ernsthafte Teilnahme oder 3. Preis",                  "2. Preis oder 1. Preis",                       "",                                                            2),
+        (114, "Mathematik-Olympiade",                     "3x ernsthafte Teilnahme an der Schulrunde",              "Qualifikation fuer die Regionalrunde (Stadt/Kreis)", "Qualifikation fuer die Landesrunde oder Bundeswettbewerb", 2),
+        (115, "MNU-Bundeswettbewerb Physik",              "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Qualifikation fuer die Bundesrunde",                          2),
+        (116, "Jugend forscht",                           "Ernsthafte Teilnahme",                                   "Alle Preistraeger beim Regionalwettbewerb",    "Qualifikation fuer den Landes- oder Bundeswettbewerb",        2),
+        (117, "Schuelerwettbewerb der Siemens Stiftung",  "Ernsthafte Teilnahme",                                   "Vorentscheid erreicht",                        "Finalteilnahme",                                              2),
+        // --- Landeswettbewerbe Sek II ---
+        (118, "NW bio-logisch",                           "3x ernsthafte Teilnahme oder Urkunde mit gutem Erfolg",  "Urkunde mit sehr gutem Erfolg",                "Hall of Fame (Schuelerakademie)",                              2),
+        (119, "NW Chemie entdecken",                      "Urkunde mit Erfolg",                                     "Urkunde mit grossem Erfolg",                   "Urkunde mit ausgezeichnetem Erfolg",                          2),
+        (120, "NW zdi-Roboterwettbewerb",                 "Ernsthafte Teilnahme",                                   "Preistraeger",                                 "",                                                            2),
+        (121, "RP Landeswettbewerb Mathematik",           "Qualifikation fuer die 2. Runde",                        "Preistraeger der 2. Runde",                    "Teilnahme an der 3. Runde",                                   2),
+        (122, "RP Landeswettbewerb Physik",               "Ernsthafte Teilnahme",                                   "Qualifikation fuer die 2. Runde",              "Teilnahme an der 3. Runde",                                   2),
+    ];
+
+    for &(id, name, level_one, level_two, level_three, sek) in competitions {
+        let _ = sqlx::query(
+            "INSERT OR IGNORE INTO additional_mint_activities \
+             (additional_mint_activity_id, name, description, level_one, level_two, level_three, sek) \
+             VALUES (?, ?, '', ?, ?, ?, ?);",
+        )
+        .bind(id)
+        .bind(name)
+        .bind(level_one)
+        .bind(level_two)
+        .bind(level_three)
+        .bind(sek)
+        .execute(db)
+        .await
+        .map_err(|e| eprintln!("Error seeding competition '{}': {}", name, e));
+    }
+
+    let _ = sqlx::query("PRAGMA user_version = 1;")
+        .execute(db)
+        .await
+        .map_err(|e| eprintln!("Error setting schema version: {}", e));
+}
 
 async fn create_indexes() {
     let db = get_pool().await;
