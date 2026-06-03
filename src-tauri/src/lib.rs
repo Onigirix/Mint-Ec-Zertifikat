@@ -22,6 +22,11 @@ fn get_database_path() -> String {
     db::get_database_path().to_string()
 }
 
+#[tauri::command]
+fn get_database_url() -> String {
+    db::get_database_url()
+}
+
 pub fn run() {
     Builder::default()
         .setup(|app| {
@@ -49,7 +54,8 @@ pub fn run() {
             state::set_state,
             state::get_student_id,
             dialog::folder_select,
-            get_database_path
+            get_database_path,
+            get_database_url
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { .. } => {

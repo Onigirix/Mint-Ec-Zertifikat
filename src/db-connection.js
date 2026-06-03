@@ -17,8 +17,12 @@ let dbPath = null;
  */
 export async function getDb() {
     if (!dbInstance) {
-        dbPath = await invoke("get_database_path");
-        dbInstance = await Database.load(`sqlite://${dbPath}`);
+        // Load the connection URL verbatim from Rust (single source of truth for the
+        // `sqlite:` scheme + path). Do NOT build `sqlite://${path}` here: on Windows the
+        // resulting `sqlite://C:\...` breaks tauri-plugin-sql's path_mapper and points the
+        // frontend at a different file than the sqlx backend / PDF generator use.
+        const dbUrl = await invoke("get_database_url");
+        dbInstance = await Database.load(dbUrl);
     }
     return dbInstance;
 }
