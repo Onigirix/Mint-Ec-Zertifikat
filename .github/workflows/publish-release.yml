@@ -93,7 +93,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: >
-          winget install --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
+          rustup update
 
       - name: Enable long paths
         if: runner.os == 'Windows'
