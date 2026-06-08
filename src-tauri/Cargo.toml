@@ -27,7 +27,7 @@ tokio = { version = "1.50.0", features = ["rt-multi-thread", "sync", "fs", "macr
 bitflags = "2.10.0"
 derive-error = "0.0.5"
 encoding_rs = "0.8.35"
-lopdf = "0.40.0"
+lopdf = "0.41.0"
 chrono = "0.4.42"
 tauri-plugin-sql = { version = "2.3.1", features = ["sqlite"] }
 tauri-plugin-prevent-default = { version = "5.0.0", features = ["platform-windows"] }
