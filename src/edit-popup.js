@@ -72,7 +72,7 @@ async function formSubmitted(e) {
   await dbReady;
 
   await db.execute(
-    \"UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4\",
+    "UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4",
     [nameField.value, graduationYearField.value, geburtsdatumField.value, studentId]
   );
   closeWindow();
