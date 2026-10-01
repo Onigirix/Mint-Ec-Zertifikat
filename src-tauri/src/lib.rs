@@ -78,7 +78,8 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     use tauri_plugin_prevent_default::Flags;
 
-    let mut builder = tauri_plugin_prevent_default::Builder::new().with_flags(Flags::all());
+    let mut builder = tauri_plugin_prevent_default::Builder::new()
+        .with_flags(Flags::all().difference(Flags::CONTEXT_MENU));
 
     #[cfg(target_os = "windows")]
     {
@@ -88,7 +89,6 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
                 .general_autofill(false)
                 .password_autosave(false)
                 .browser_accelerator_keys(false)
-                .default_context_menus(false)
                 .default_script_dialogs(false),
         );
     }

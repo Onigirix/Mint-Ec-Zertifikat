@@ -1,0 +1,417 @@
+:root {
+	color-scheme: light dark;
+	font-family: var(--platform-font, system-ui, sans-serif);
+	font-size: 14px;
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--surface: #ffffff;
+	--surface-raised: #f5f6f8;
+	--text: #202124;
+	--text-muted: #5f6368;
+	--border: #d5d8dc;
+	--accent: #0b69c7;
+	--focus: var(--platform-focus, Highlight);
+	font-synthesis: none;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	width: 100%;
+	min-width: 0;
+	min-height: 100%;
+	margin: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100dvh;
+	font-family: var(--platform-font, system-ui, sans-serif);
+	font-size: 14px;
+	line-height: 1.45;
+	color: var(--text);
+	background: var(--surface-raised);
+	overflow: hidden;
+	-webkit-text-size-adjust: 100%;
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+button,
+[role="button"],
+header,
+.sidenav,
+.toolbar,
+th {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+input,
+textarea,
+select,
+td,
+pre,
+code,
+[contenteditable="true"] {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	-webkit-user-drag: none;
+	user-select: none;
+}
+
+button,
+input,
+select,
+textarea,
+a,
+[tabindex]:not([tabindex="-1"]) {
+	transition: color 100ms ease, background-color 100ms ease, border-color 100ms ease;
+}
+
+:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+button,
+.blauerButton,
+.roterButton,
+.btn,
+.add-button,
+#editButton,
+#deleteButton,
+#deleteYearButton {
+	min-height: 32px;
+	padding: 6px 12px;
+	border-radius: var(--platform-control-radius, 5px);
+	box-shadow: none;
+}
+
+button:hover,
+.blauerButton:hover,
+.roterButton:hover,
+.btn:hover,
+.add-button:hover {
+	filter: brightness(0.94);
+}
+
+button:active,
+.blauerButton:active,
+.roterButton:active,
+.btn:active {
+	filter: brightness(0.88);
+}
+
+input,
+select,
+textarea {
+	min-width: 0;
+	max-width: 100%;
+	color: var(--text);
+	background-color: var(--surface);
+	border: 1px solid var(--border);
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+progress {
+	accent-color: var(--accent);
+}
+
+#main {
+	flex: 1 1 0;
+	width: 100%;
+	height: auto;
+	min-width: 0;
+	min-height: 0;
+	padding: clamp(12px, 1.5vw, 24px);
+	overflow: auto;
+	overscroll-behavior: contain;
+	scrollbar-gutter: stable;
+}
+
+#content,
+#table-container,
+.workspace,
+form {
+	min-width: 0;
+	min-height: 0;
+}
+
+#content {
+	width: min(100%, 1600px);
+	margin-inline: auto;
+}
+
+header#header {
+	min-height: 58px;
+	padding: 8px clamp(12px, 2vw, 24px);
+	grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(0, auto);
+	gap: var(--space-3);
+}
+
+#schülerEingabe {
+	min-width: 0;
+	flex-wrap: wrap;
+	gap: var(--space-2);
+}
+
+#student-search {
+	width: min(42%, 320px);
+	min-width: 120px;
+}
+
+#navLinks a {
+	font-size: clamp(14px, 1rem, 16px);
+}
+
+.sidenav {
+	max-width: min(420px, 88vw);
+	overflow-y: auto;
+	scrollbar-gutter: stable;
+}
+
+.switch input:focus-visible + .slider {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+.slideshow-container {
+	width: min(100%, 1000px);
+	height: clamp(220px, 52dvh, 560px);
+}
+
+.slideshow-container img {
+	width: auto;
+	max-width: 100%;
+	height: 100%;
+	margin-inline: auto;
+	object-fit: contain;
+	aspect-ratio: 16 / 9;
+}
+
+#main h1 {
+	width: min(100%, 1200px);
+	font-size: clamp(20px, 1.5vw, 28px);
+	padding: clamp(12px, 1.5vw, 20px);
+}
+
+table {
+	max-width: 100%;
+}
+
+th,
+td {
+	min-width: 0;
+}
+
+#facharbeitForm,
+#settingsForm,
+#mintAktivitaetForm {
+	width: min(100%, 1100px);
+	max-width: none;
+	min-height: 0;
+	height: auto;
+	padding: clamp(12px, 1.5vw, 20px);
+	background: var(--surface);
+	color: var(--text);
+}
+
+#mintAktivitaetForm {
+	container-type: inline-size;
+}
+
+.aktivitaet,
+#schuelerPopup {
+	background: var(--surface);
+	color: var(--text);
+}
+
+#settingsForm {
+	container-type: inline-size;
+}
+
+@container (width < 560px) {
+	.inline-inputs,
+	.tables-container {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+#content > button[style*="position: absolute"] {
+	position: static !important;
+	margin: var(--space-2);
+}
+
+#content > div[style*="margin-top: -6vh"] {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--space-2);
+	margin: var(--space-4) auto !important;
+}
+
+#content > div[style*="margin-top: -6vh"] > button[style*="position:absolute"] {
+	position: static !important;
+	margin: 0;
+}
+
+@media (max-width: 900px) {
+	#filter-container {
+		flex-wrap: wrap;
+		gap: var(--space-2) !important;
+	}
+
+	#navLinks a {
+		white-space: normal;
+	}
+
+	#main h1 {
+		font-size: clamp(20px, 3vw, 28px);
+	}
+}
+
+@media (max-height: 700px) {
+	#main {
+		padding-block: 10px;
+	}
+
+	.slideshow-container {
+		height: 42dvh;
+		min-height: 180px;
+	}
+
+	#main h1 {
+		margin-block: 8px;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--surface: #242629;
+		--surface-raised: #1b1d20;
+		--text: #f2f3f5;
+		--text-muted: #c3c7cc;
+		--border: #484c52;
+		--accent: #69aaf0;
+	}
+
+	body,
+	#main {
+		background: var(--surface-raised);
+		color: var(--text);
+	}
+
+	#facharbeitForm,
+	#settingsForm,
+	#mintAktivitaetForm,
+	#schuelerForm,
+	#schuelerPopup,
+	.aktivitaet,
+	table,
+	.tab,
+	.tabcontent {
+		background-color: var(--surface);
+		color: var(--text);
+		border-color: var(--border);
+	}
+
+	th,
+	thead,
+	#table-container thead th,
+	#filter-container .search-box {
+		background-color: #30343a !important;
+		color: var(--text) !important;
+	}
+
+	td,
+	.gesamt-durchschnitt,
+	.gesamt-durchschnitt span,
+	label,
+	.tablinks,
+	.close_tablinks {
+		color: var(--text);
+	}
+
+	input,
+	select,
+	textarea,
+	.suggestions-list,
+	#competition-suggestions {
+		background-color: #292c30;
+		color: var(--text);
+		border-color: var(--border);
+	}
+
+	.suggestions-list li,
+	#competition-suggestions li {
+		color: var(--text);
+	}
+
+	.suggestions-list li:hover,
+	#competition-suggestions li:hover,
+	tr:not(.selected):hover {
+		background-color: #383d44;
+	}
+
+	tr.selected,
+	.active,
+	.tablinks.active {
+		background-color: #3d4652;
+	}
+
+	.slider {
+		background-color: #555b63;
+	}
+}
+
+@media (forced-colors: active) {
+	:focus-visible {
+		outline: 2px solid Highlight;
+	}
+
+	button,
+	input,
+	select,
+	textarea,
+	table,
+	th,
+	td {
+		border-color: CanvasText;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 1ms !important;
+		scroll-behavior: auto !important;
+	}
+}
