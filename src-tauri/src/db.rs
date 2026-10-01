@@ -7,7 +7,7 @@ use tokio::sync::OnceCell;
 
 static DATABASE_PATH: OnceLock<String> = OnceLock::new();
 static DB_POOL: OnceCell<SqlitePool> = OnceCell::const_new();
-const CURRENT_SCHEMA_VERSION: i32 = 1;
+const CURRENT_SCHEMA_VERSION: i32 = 2;
 
 pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
@@ -611,6 +611,10 @@ async fn run_migrations() {
                         migrate_to_version_1(db).await;
                         current_version = 1;
                     }
+                    1 => {
+                        migrate_to_version_2(db).await;
+                        current_version = 2;
+                    }
                     _ => {
                         eprintln!("No migration path for version {}", current_version);
                         break;
@@ -622,6 +626,76 @@ async fn run_migrations() {
             eprintln!("Error fetching user version: {}", e);
         }
     }
+}
+
+async fn migrate_to_version_2(db: &SqlitePool) {
+    let result = async {
+        sqlx::query(
+            "CREATE TABLE IF NOT EXISTS schools (
+                school_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                school_name TEXT NOT NULL,
+                school_location TEXT DEFAULT '',
+                school_functionary_1 TEXT DEFAULT '',
+                school_functionary_2 TEXT DEFAULT '',
+                school_functionary_1_position TEXT DEFAULT '',
+                school_functionary_2_position TEXT DEFAULT ''
+            );",
+        )
+        .execute(db)
+        .await?;
+
+        let has_school_id: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('students') WHERE name = 'school_id';",
+        )
+        .fetch_one(db)
+        .await?;
+        if has_school_id == 0 {
+            sqlx::query("ALTER TABLE students ADD COLUMN school_id INTEGER DEFAULT 1;")
+                .execute(db)
+                .await?;
+        }
+
+        sqlx::query(
+            "INSERT OR IGNORE INTO schools (
+                school_id, school_name, school_location, school_functionary_1,
+                school_functionary_2, school_functionary_1_position,
+                school_functionary_2_position
+            ) SELECT 1, school_name, school_location, school_functionary_1,
+                school_functionary_2, school_functionary_1_position,
+                school_functionary_2_position FROM settings WHERE id = 1;",
+        )
+        .execute(db)
+        .await?;
+        sqlx::query("UPDATE students SET school_id = 1;")
+            .execute(db)
+            .await?;
+        sqlx::query("CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id);")
+            .execute(db)
+            .await?;
+        sqlx::query("PRAGMA user_version = 2;").execute(db).await?;
+        Ok::<(), sqlx::Error>(())
+    }
+    .await;
+
+    if let Err(e) = result {
+        eprintln!("Error migrating database to version 2: {}", e);
+    }
+}
+
+pub async fn get_school_settings_for_student(student_id: i32) -> Result<[String; 6], String> {
+    let db = get_pool().await;
+    let row = sqlx::query(
+        "SELECT schools.school_name, schools.school_location,
+            schools.school_functionary_1, schools.school_functionary_2,
+            schools.school_functionary_1_position, schools.school_functionary_2_position
+         FROM students JOIN schools ON schools.school_id = students.school_id
+         WHERE students.student_id = ?;",
+    )
+    .bind(student_id)
+    .fetch_one(db)
+    .await
+    .map_err(|e| format!("Could not load the student's school settings: {}", e))?;
+    Ok(array::from_fn(|i| row.get(i)))
 }
 
 async fn migrate_to_version_1(db: &SqlitePool) {

@@ -1,301 +1,176 @@
 import { getDb } from './db-connection.js';
 
 const invoke = window.__TAURI__.core.invoke;
+const { ask } = window.__TAURI__.dialog;
+const db = await getDb();
+const schoolTabs = document.getElementById('schoolTabs');
+const schoolNameField = document.getElementById('schoolName');
+const schoolLocationField = document.getElementById('schoolLocation');
+const outputPathField = document.getElementById('outputPath');
+const selectFolderButton = document.getElementById('folderSelectButton');
+const schoolFunctionary1Field = document.getElementById('namePos1');
+const schoolFunctionary2Field = document.getElementById('namePos2');
+const schoolFunctionary1PositionField = document.getElementById('pos1');
+const schoolFunctionary2PositionField = document.getElementById('pos2');
 
-let db = null;
-const dbReady = getDb().then(instance => { db = instance; });
+let schools = [];
+let selectedSchoolId = null;
+const schoolFields = [schoolNameField, schoolLocationField, schoolFunctionary1Field,
+  schoolFunctionary2Field, schoolFunctionary1PositionField, schoolFunctionary2PositionField];
 
-const schoolNameField = document.getElementById("schoolName");
-const schoolLocationField = document.getElementById("schoolLocation");
-const outputPathField = document.getElementById("outputPath");
-const selectFolderButton = document.getElementById("folderSelectButton");
-const schoolFunctionary1Field = document.getElementById("namePos1");
-const schoolFunctionary2Field = document.getElementById("namePos2");
-const schoolFunctionary1PositionField = document.getElementById("pos1");
-const schoolFunctionary2PositionField = document.getElementById("pos2");
-
-async function init() {
-	await dbReady;
-	const [settings] = await db.select("SELECT * FROM settings WHERE id=1");
-
-	schoolNameField.value = settings.school_name;
-	schoolLocationField.value = settings.school_location;
-	outputPathField.value = settings.default_file_path;
-	schoolFunctionary1Field.value = settings.school_functionary_1;
-	schoolFunctionary2Field.value = settings.school_functionary_2;
-	schoolFunctionary1PositionField.value =
-		settings.school_functionary_1_position;
-	schoolFunctionary2PositionField.value =
-		settings.school_functionary_2_position;
+async function loadSchools(selectId = selectedSchoolId) {
+  schools = await db.select('SELECT * FROM schools ORDER BY school_id');
+  if (!schools.length) throw new Error('Keine Schule in der Datenbank gefunden.');
+  selectedSchoolId = schools.some(school => school.school_id === selectId) ? selectId : schools[0].school_id;
+  renderSchoolTabs();
+  loadSchoolFields();
 }
 
-schoolNameField.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_name = $1 WHERE id = 1",
-				[schoolNameField.value],
-			);
-			schoolNameField.style.border = "1px solid rgb(204, 204, 204)";
-			schoolNameField.style.backgroundColor = "white";
-		} else {
-			schoolNameField.style.border = "1px solid red";
-			schoolNameField.style.backgroundColor = "rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
+function renderSchoolTabs() {
+  schoolTabs.replaceChildren();
+  for (const school of schools) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `tab-button-wrapper${school.school_id === selectedSchoolId ? ' active' : ''}`;
+    const select = document.createElement('button');
+    select.type = 'button';
+    select.className = 'tablinks';
+    select.textContent = school.school_name;
+    select.title = school.school_name;
+    select.addEventListener('click', async () => {
+      await saveSchoolFields();
+      selectedSchoolId = school.school_id;
+      renderSchoolTabs();
+      loadSchoolFields();
+    });
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'close_tablinks';
+    remove.title = 'Schule löschen';
+    remove.textContent = '×';
+    remove.disabled = schools.length < 2;
+    remove.addEventListener('click', () => deleteSchool(school));
+    wrapper.append(select, remove);
+    schoolTabs.append(wrapper);
+  }
+}
 
-schoolLocationField.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_location = $1 WHERE id = 1",
-				[schoolLocationField.value],
-			);
-			schoolLocationField.style.border = "1px solid rgb(204, 204, 204)";
-			schoolLocationField.style.backgroundColor = "white";
-		} else {
-			schoolLocationField.style.border = "1px solid red";
-			schoolLocationField.style.backgroundColor = "rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
+function loadSchoolFields() {
+  const school = schools.find(item => item.school_id === selectedSchoolId);
+  if (!school) return;
+  schoolNameField.value = school.school_name ?? '';
+  schoolLocationField.value = school.school_location ?? '';
+  schoolFunctionary1Field.value = school.school_functionary_1 ?? '';
+  schoolFunctionary2Field.value = school.school_functionary_2 ?? '';
+  schoolFunctionary1PositionField.value = school.school_functionary_1_position ?? '';
+  schoolFunctionary2PositionField.value = school.school_functionary_2_position ?? '';
+}
 
-outputPathField.addEventListener("keydown", async (e) => {
-	await dbReady;
-	if (e.keyCode === 13 || e.keyCode === 9) {
-		//Enter or Tab
-		const res1 = await db.execute(
-			"UPDATE settings SET default_file_path = $1 WHERE id = 1",
-			[outputPathField.value],
-		);
-		outputPathField.style.border = "1px solid rgb(204, 204, 204)";
-		outputPathField.style.backgroundColor = "white";
-	} else {
-		outputPathField.style.border = "1px solid red";
-		outputPathField.style.backgroundColor = "rgb(255, 150, 150)";
-	}
+async function saveSchoolFields() {
+  if (selectedSchoolId === null) return;
+  const name = schoolNameField.value.trim();
+  if (!name) {
+    schoolNameField.focus();
+    throw new Error('Der Schulname darf nicht leer sein.');
+  }
+  await db.execute(
+    `UPDATE schools SET school_name = $1, school_location = $2,
+      school_functionary_1 = $3, school_functionary_2 = $4,
+      school_functionary_1_position = $5, school_functionary_2_position = $6
+     WHERE school_id = $7`,
+    [name, schoolLocationField.value, schoolFunctionary1Field.value,
+      schoolFunctionary2Field.value, schoolFunctionary1PositionField.value,
+      schoolFunctionary2PositionField.value, selectedSchoolId]
+  );
+  const school = schools.find(item => item.school_id === selectedSchoolId);
+  if (school) {
+    Object.assign(school, {
+      school_name: name,
+      school_location: schoolLocationField.value,
+      school_functionary_1: schoolFunctionary1Field.value,
+      school_functionary_2: schoolFunctionary2Field.value,
+      school_functionary_1_position: schoolFunctionary1PositionField.value,
+      school_functionary_2_position: schoolFunctionary2PositionField.value,
+    });
+    if (Number(selectedSchoolId) === 1) await syncLegacySettings(school);
+  }
+  renderSchoolTabs();
+}
+
+async function syncLegacySettings(school) {
+  await db.execute(
+    `UPDATE settings SET school_name = $1, school_location = $2,
+      school_functionary_1 = $3, school_functionary_2 = $4,
+      school_functionary_1_position = $5, school_functionary_2_position = $6
+     WHERE id = 1`,
+    [school.school_name, school.school_location, school.school_functionary_1,
+      school.school_functionary_2, school.school_functionary_1_position,
+      school.school_functionary_2_position]
+  );
+}
+
+schoolFields.forEach(field => field.addEventListener('blur', () => {
+  saveSchoolFields().catch(error => alert(error.message));
+}));
+document.getElementById('settingsForm').addEventListener('submit', event => event.preventDefault());
+schoolFields.forEach(field => field.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    saveSchoolFields().catch(error => alert(error.message));
+  }
+}));
+schoolNameField.addEventListener('input', () => {
+  const school = schools.find(item => item.school_id === selectedSchoolId);
+  if (school) school.school_name = schoolNameField.value.trim() || 'Neue Schule';
+  renderSchoolTabs();
 });
 
-schoolFunctionary1Field.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
-				[schoolFunctionary1Field.value],
-			);
-			schoolFunctionary1Field.style.border = "1px solid rgb(204, 204, 204)";
-			schoolFunctionary1Field.style.backgroundColor = "white";
-		} else {
-			schoolFunctionary1Field.style.border = "1px solid red";
-			schoolFunctionary1Field.style.backgroundColor = "rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
-
-schoolFunctionary2Field.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
-				[schoolFunctionary2Field.value],
-			);
-			schoolFunctionary2Field.style.border = "1px solid rgb(204, 204, 204)";
-			schoolFunctionary2Field.style.backgroundColor = "white";
-		} else {
-			schoolFunctionary2Field.style.border = "1px solid red";
-			schoolFunctionary2Field.style.backgroundColor = "rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
-
-schoolFunctionary1PositionField.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
-				[schoolFunctionary1PositionField.value],
-			);
-			schoolFunctionary1PositionField.style.border =
-				"1px solid rgb(204, 204, 204)";
-			schoolFunctionary1PositionField.style.backgroundColor = "white";
-		} else {
-			schoolFunctionary1PositionField.style.border = "1px solid red";
-			schoolFunctionary1PositionField.style.backgroundColor =
-				"rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
-
-schoolFunctionary2PositionField.addEventListener(
-	"keydown",
-	async (e) => {
-		await dbReady;
-		if (e.keyCode === 13 || e.keyCode === 9) {
-			//Enter or Tab
-			const res1 = await db.execute(
-				"UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
-				[schoolFunctionary2PositionField.value],
-			);
-			schoolFunctionary2PositionField.style.border =
-				"1px solid rgb(204, 204, 204)";
-			schoolFunctionary2PositionField.style.backgroundColor = "white";
-		} else {
-			schoolFunctionary2PositionField.style.border = "1px solid red";
-			schoolFunctionary2PositionField.style.backgroundColor =
-				"rgb(255, 150, 150)";
-		}
-	},
-	false,
-);
-
-selectFolderButton.addEventListener("click", async () => {
-	try {
-		await dbReady;
-		const folderPath = await invoke("folder_select");
-		await db.execute(
-			"UPDATE settings SET default_file_path = $1 WHERE id = 1",
-			[folderPath],
-		);
-		init();
-	} catch (error) {}
+const newSchoolDialog = document.getElementById('newSchoolDialog');
+const newSchoolForm = document.getElementById('newSchoolForm');
+document.getElementById('addSchoolButton').addEventListener('click', () => {
+  newSchoolForm.reset();
+  newSchoolDialog.showModal();
+  document.getElementById('newSchoolName').focus();
+});
+document.getElementById('cancelNewSchool').addEventListener('click', () => newSchoolDialog.close());
+newSchoolForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const name = document.getElementById('newSchoolName').value.trim();
+  if (!name) return;
+  await saveSchoolFields();
+  const result = await db.execute('INSERT INTO schools (school_name) VALUES ($1)', [name]);
+  newSchoolDialog.close();
+  await loadSchools(result.lastInsertId);
 });
 
-schoolNameField.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_name = $1 WHERE id = 1",
-		[schoolNameField.value],
-	  );
-	  schoolNameField.style.border = "1px solid rgb(204, 204, 204)";
-	  schoolNameField.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-  schoolLocationField.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_location = $1 WHERE id = 1",
-		[schoolLocationField.value],
-	  );
-	  schoolLocationField.style.border = "1px solid rgb(204, 204, 204)";
-	  schoolLocationField.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-  outputPathField.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET default_file_path = $1 WHERE id = 1",
-		[outputPathField.value],
-	  );
-	  outputPathField.style.border = "1px solid rgb(204, 204, 204)";
-	  outputPathField.style.backgroundColor = "white";
-	},
-  );
-
-  schoolFunctionary1Field.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_functionary_1 = $1 WHERE id = 1",
-		[schoolFunctionary1Field.value],
-	  );
-	  schoolFunctionary1Field.style.border = "1px solid rgb(204, 204, 204)";
-	  schoolFunctionary1Field.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-  schoolFunctionary2Field.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_functionary_2 = $1 WHERE id = 1",
-		[schoolFunctionary2Field.value],
-	  );
-	  schoolFunctionary2Field.style.border = "1px solid rgb(204, 204, 204)";
-	  schoolFunctionary2Field.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-  schoolFunctionary1PositionField.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_functionary_1_position = $1 WHERE id = 1",
-		[schoolFunctionary1PositionField.value],
-	  );
-	  schoolFunctionary1PositionField.style.border =
-		"1px solid rgb(204, 204, 204)";
-	  schoolFunctionary1PositionField.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-  schoolFunctionary2PositionField.addEventListener(
-	"blur",
-	async () => {
-	  const res1 = await db.execute(
-		"UPDATE settings SET school_functionary_2_position = $1 WHERE id = 1",
-		[schoolFunctionary2PositionField.value],
-	  );
-	  schoolFunctionary2PositionField.style.border =
-		"1px solid rgb(204, 204, 204)";
-	  schoolFunctionary2PositionField.style.backgroundColor = "white";
-	},
-	false,
-  );
-
-/*
-Erklärung:
-Wenn nur noch eine Schule vorhanden ist soll der lösch button deaktiviert sein. 
-
-Wenn auf den tab_button_wrapper geklickt wird soll der tab aktiv werden und die daten der schule geladen werden.
-Wenn auf den lösch button geklickt wird soll die schule gelöscht werden (mit bestätigung).
-Wenn auf den + button geklickt wird soll eine neue schule angelegt werden und ein neuer tab_button_wrapper mit trennstrich (vertical_stripe) davor erstellt werden.
-
-
-*/
-
-window.openSchool = function(event, schoolName) {
-	alert("Opend " + schoolName);
+async function deleteSchool(school) {
+  const [countRow] = await db.select('SELECT COUNT(*) AS count FROM students WHERE school_id = $1', [school.school_id]);
+  const count = Number(countRow.count);
+  const remaining = schools.filter(item => item.school_id !== school.school_id);
+  const destination = remaining[0];
+  const warning = count
+    ? `${count} Schüler sind dieser Schule zugeordnet und werden ${destination.school_name} zugeordnet. `
+    : '';
+  const confirmed = await ask(`${warning}Möchten Sie ${school.school_name} wirklich löschen?`, {
+    title: 'Schule löschen',
+    kind: 'warning',
+  });
+  if (!confirmed) return;
+  await db.execute('UPDATE students SET school_id = $1 WHERE school_id = $2', [destination.school_id, school.school_id]);
+  await db.execute('DELETE FROM schools WHERE school_id = $1', [school.school_id]);
+  if (Number(school.school_id) === 1) await syncLegacySettings(destination);
+  await loadSchools(destination.school_id);
 }
 
-window.deleteSchool = function(event, schoolName) {
-	if (confirm(`Sind Sie sicher das sie ${schoolName} löschen möchten?`)) {
-		alert("Deleting " + schoolName);
-	}
-}
-
-window.addSchool = function(event) {
-	alert("Added School");
-}
-
-init();
+const outputPath = await db.select('SELECT default_file_path FROM settings WHERE id = 1');
+outputPathField.value = outputPath[0]?.default_file_path ?? '/';
+outputPathField.addEventListener('blur', async () => {
+  await db.execute('UPDATE settings SET default_file_path = $1 WHERE id = 1', [outputPathField.value]);
+});
+selectFolderButton.addEventListener('click', async () => {
+  const folderPath = await invoke('folder_select');
+  if (folderPath) {
+    outputPathField.value = folderPath;
+    await db.execute('UPDATE settings SET default_file_path = $1 WHERE id = 1', [folderPath]);
+  }
+});
+await loadSchools();

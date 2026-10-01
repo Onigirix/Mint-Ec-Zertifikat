@@ -11,7 +11,7 @@ const dbReady = getDb().then(instance => { db = instance; });
 import { select_student } from "./main.js";
 
 const sortState = {
-	column: "name",      // name | graduation_year | birthday
+	column: "name",      // name | graduation_year | birthday | school_name
 	direction: "asc",    // asc | desc
 };
 
@@ -63,7 +63,7 @@ async function init() {
 async function loadStudents() {
 	await dbReady;
 	allStudents = await db.select(
-		"SELECT student_id, name, birthday, graduation_year FROM students",
+		"SELECT students.student_id, students.name, students.birthday, students.graduation_year, schools.school_name FROM students LEFT JOIN schools ON schools.school_id = students.school_id",
 	);
 }
 
@@ -103,6 +103,8 @@ async function generateTable() {
 				return dir * (a.name || "").localeCompare(b.name || "", "de", { sensitivity: "base" });
 			case "graduation_year":
 				return dir * ((a.graduation_year ?? 0) - (b.graduation_year ?? 0));
+			case "school_name":
+				return dir * (a.school_name || "").localeCompare(b.school_name || "", "de", { sensitivity: "base" });
 			case "birthday": {
 				const aHas = !!a.birthday;
 				const bHas = !!b.birthday;
@@ -121,6 +123,7 @@ async function generateTable() {
 	let table = "<table>";
 	const headers = [
 		{ label: "Name", col: "name" },
+		{ label: "Schule", col: "school_name" },
 		{ label: "Abijahrgang", col: "graduation_year" },
 		{ label: "Geburtsdatum", col: "birthday" },
 	];
@@ -136,6 +139,7 @@ async function generateTable() {
 	for (const student of sorted) {
 		table += `<tr class="student-row" data-id="${student.student_id}">
 			<td>${student.name}</td>
+			<td>${student.school_name ?? ""}</td>
 			<td>${student.graduation_year ?? ""}</td>
 			<td>${
 				student.birthday

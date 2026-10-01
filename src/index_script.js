@@ -82,7 +82,7 @@ async function checkAndPromptSettings() {
       );
 
       if (userWantsToEdit) {
-        window.location.href = "settings.html";
+        window.dispatchEvent(new CustomEvent("app-navigate", { detail: "settings" }));
       }
       return;
     }
@@ -110,7 +110,7 @@ async function checkAndPromptSettings() {
 
       if (userWantsToEdit) {
         // Navigate to settings page
-        window.location.href = "settings.html";
+        window.dispatchEvent(new CustomEvent("app-navigate", { detail: "settings" }));
       }
     }
   } catch (error) {

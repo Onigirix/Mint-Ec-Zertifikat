@@ -74,12 +74,17 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
             (field_7_text, fachwissenschaftliches_level),
             (field_9_text, zusätzliche_mint_aktivität_level),
         ) = tokio::join!(
-            db::get_all_settings(),
+            db::get_school_settings_for_student(student_id),
             db::get_student_birthday(student_id),
             fachliche_kompetenz_text(student_id, &student_name),
             fachwissenschaftliches_arbeiten_text(student_id, &student_name),
             zusätzliche_mint_aktivität_text(student_id, &student_name),
         );
+
+        let settings = match settings {
+            Ok(settings) => settings,
+            Err(error) => return Err(error),
+        };
 
         let birthday = match chrono::NaiveDate::parse_from_str(bday_str.as_str(), "%Y-%m-%d") {
             Ok(d) => d,
