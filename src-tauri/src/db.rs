@@ -13,10 +13,6 @@ pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
 }
 
-/// Connection URL for tauri-plugin-sql (frontend). The bare path returned by
-/// `get_database_path` is what sqlx uses on the backend; the plugin needs the `sqlite:`
-/// scheme. IMPORTANT: use a single `sqlite:` group (NOT `sqlite://`) so the plugin's
-/// path_mapper treats the remainder as a clean absolute path on Windows and macOS alike.
 pub fn get_database_url() -> String {
     format!("sqlite:{}", get_database_path())
 }
