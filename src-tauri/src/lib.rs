@@ -8,9 +8,6 @@ use tauri::{Builder, Manager};
 use tauri_plugin_prevent_default;
 use tokio::sync::Mutex;
 
-#[cfg(target_os = "windows")]
-use tauri_plugin_prevent_default::PlatformOptions;
-
 #[derive(Default)]
 pub struct AppState {
     student_name: String,
@@ -69,28 +66,30 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-#[cfg(debug_assertions)]
-fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
-    tauri_plugin_prevent_default::debug()
-}
-
-#[cfg(not(debug_assertions))]
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     use tauri_plugin_prevent_default::Flags;
 
+    #[cfg(debug_assertions)]
+    let mut builder = tauri_plugin_prevent_default::Builder::new()
+        .with_flags(Flags::debug());
+
+    #[cfg(not(debug_assertions))]
     let mut builder = tauri_plugin_prevent_default::Builder::new()
         .with_flags(Flags::all().difference(Flags::CONTEXT_MENU));
 
     #[cfg(target_os = "windows")]
     {
         use tauri_plugin_prevent_default::PlatformOptions;
-        builder = tauri_plugin_prevent_default::Builder::new().platform(
-            PlatformOptions::new()
-                .general_autofill(false)
-                .password_autosave(false)
-                .browser_accelerator_keys(false)
-                .default_script_dialogs(false),
-        );
+        let options = PlatformOptions::new().swipe_navigation(false);
+
+        #[cfg(not(debug_assertions))]
+        let options = options
+            .general_autofill(false)
+            .password_autosave(false)
+            .browser_accelerator_keys(false)
+            .default_script_dialogs(false);
+
+        builder = builder.platform(options);
     }
 
     builder.build()

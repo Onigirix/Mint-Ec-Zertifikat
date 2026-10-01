@@ -29,10 +29,6 @@ async function init(new_student_id, new_student_name) {
 	searchBox = document.getElementById("student-search");
 	list = document.getElementById("suggestions");
 	if (searchBox != null) searchBox.value = new_student_name;
-	openNavButton?.removeEventListener("click", openNav);
-	closeNavButton?.removeEventListener("click", closeNav);
-	openNavButton?.addEventListener("click", openNav);
-	closeNavButton?.addEventListener("click", closeNav);
 	mainContent.onclick = () => { searchBoxBlurred(); closeNav(); };
 	if (searchBox != null) {
 		searchBox.onclick = (e) => {
@@ -60,6 +56,16 @@ function openNav() {
 function closeNav() {
 	document.getElementById("sidenav").style.width = "0";
 }
+
+document.addEventListener("click", (event) => {
+	if (event.target.closest("#openNav")) {
+		event.stopPropagation();
+		openNav();
+	} else if (event.target.closest("#closeNav")) {
+		event.stopPropagation();
+		closeNav();
+	}
+});
 
 async function searchBoxInputted(e) {
 	if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {

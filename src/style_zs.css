@@ -169,13 +169,34 @@ input::-webkit-inner-spin-button {
 	height: 100%;
 	width: 0;
 	position: fixed;
-	z-index: 1;
+	z-index: 2001;
 	top: 0;
 	left: 0;
 	background-color: #212225;
 	overflow-x: hidden;
 	padding-top: 0; /* Changed from 3em to 0 */
 	transition: 0.5s;
+}
+
+#content [data-page-nav] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed !important;
+	top: auto !important;
+	bottom: 16px !important;
+	margin: 0 !important;
+	z-index: 1000 !important;
+}
+
+#content [data-page-nav="previous"] {
+	left: 16px !important;
+	right: auto !important;
+}
+
+#content [data-page-nav="next"] {
+	left: auto !important;
+	right: 16px !important;
 }
 
 #closeNav {

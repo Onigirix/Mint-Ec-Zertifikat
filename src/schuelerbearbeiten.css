@@ -2,7 +2,7 @@ table {
 	width: 100%;
 	max-width: 1200px;
 	margin: 0 auto;
-	border-collapse: separate;
+	border-collapse: collapse;
 	border-spacing: 0;
 	background-color: #ffffff;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -135,11 +135,34 @@ td {
 }
 
 .button-container {
+	position: relative;
+	width: min(100%, 1200px);
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	align-items: center;
+	gap: clamp(12px, 2vw, 28px);
+	margin: 10px auto 0;
+}
+
+.button-container > button {
+	min-width: 0;
 	width: 100%;
-	display: flex;
-	justify-content: center;
-	gap: 50px;
-	margin-top: 10px;
+	min-height: 44px;
+	height: auto;
+	padding: 6px 10px;
+	font-size: 15px;
+	line-height: 1.15;
+}
+
+.button-container > .blauerButton {
+	position: absolute;
+	left: calc(100% + 24px);
+	top: 50%;
+	width: 44px;
+	height: 44px;
+	margin: 0 !important;
+	transform: translateY(-50%);
 }
 
 #editButton[disabled] {
@@ -181,11 +204,16 @@ td {
 
 #table-container {
   position: relative;
+	width: min(100%, 1200px);
+	box-sizing: border-box;
+	margin-inline: auto;
 }
 
 #table-container table {
-  width: 100%;
-  border-collapse: separate !important;
+	width: 100%;
+	max-width: none;
+	margin-inline: 0;
+  border-collapse: collapse !important;
   border-spacing: 0;
   overflow: visible !important;
 }
@@ -194,7 +222,16 @@ td {
   position: sticky !important;
   top: 0 !important;
   z-index: 10;
-  background-color: #f4f4f4 !important;
+  background-color: #e9edf2;
+  color: #202124;
+  border: 1px solid #c5cbd3;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+#table-container tbody td {
+	border: 1px solid #d4d8de;
 }
 
 #table-container thead th:first-child {
@@ -203,6 +240,22 @@ td {
 
 #table-container thead th:last-child {
   border-top-right-radius: 8px;
+}
+
+@media (max-width: 900px) {
+	.button-container {
+		gap: 8px;
+	}
+
+	.button-container > button {
+		font-size: 13px;
+		padding-inline: 6px;
+	}
+
+	.button-container > .blauerButton {
+		left: calc(100% + 8px);
+		width: 44px;
+	}
 }
 
 #table-container tbody tr:last-child td:first-child {

@@ -131,7 +131,7 @@ async function generateTable() {
 	for (const h of headers) {
 		const active = sortState.column === h.col;
 		const arrow = active ? (sortState.direction === "asc" ? " ▲" : " ▼") : "";
-		table += `<th data-sort="${h.col}" style="cursor:pointer; user-select:none; position:sticky; top:0; background-color:#f4f4f4; z-index:10;">${h.label}${arrow}</th>`;
+		table += `<th data-sort="${h.col}">${h.label}${arrow}</th>`;
 	}
 	table += "</tr></thead>";
 

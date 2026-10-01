@@ -29,6 +29,7 @@ body {
 	min-width: 0;
 	min-height: 100%;
 	margin: 0;
+	overscroll-behavior: none;
 }
 
 body {
@@ -267,6 +268,24 @@ td {
 	margin: var(--space-2);
 }
 
+#content [data-page-nav] {
+	position: fixed !important;
+	top: auto !important;
+	bottom: max(16px, env(safe-area-inset-bottom)) !important;
+	margin: 0 !important;
+	z-index: 1000;
+}
+
+#content [data-page-nav="previous"] {
+	left: max(16px, env(safe-area-inset-left)) !important;
+	right: auto !important;
+}
+
+#content [data-page-nav="next"] {
+	left: auto !important;
+	right: max(16px, env(safe-area-inset-right)) !important;
+}
+
 #content > div[style*="margin-top: -6vh"] {
 	display: flex;
 	flex-wrap: wrap;
@@ -312,10 +331,15 @@ td {
 
 @media (prefers-color-scheme: dark) {
 	:root {
+		color-scheme: dark;
 		--surface: #242629;
 		--surface-raised: #1b1d20;
+		--surface-hover: #30343a;
+		--surface-selected: #38485a;
+		--surface-disabled: #34373b;
 		--text: #f2f3f5;
 		--text-muted: #c3c7cc;
+		--text-disabled: #a0a5ab;
 		--border: #484c52;
 		--accent: #69aaf0;
 	}
@@ -340,12 +364,51 @@ td {
 		border-color: var(--border);
 	}
 
+	table,
+	thead,
+	tbody,
+	tfoot,
+	tr,
+	th,
+	td {
+		background-color: var(--surface);
+		color: var(--text);
+		border-color: var(--border);
+	}
+
 	th,
 	thead,
 	#table-container thead th,
 	#filter-container .search-box {
-		background-color: #30343a !important;
+		background-color: var(--surface-hover) !important;
 		color: var(--text) !important;
+	}
+
+	#table-container table,
+	#table-container tbody tr,
+	#table-container tbody td {
+		background-color: var(--surface) !important;
+		color: var(--text) !important;
+	}
+
+	#table-container table {
+		border-collapse: collapse !important;
+		border-spacing: 0;
+	}
+
+	#table-container th,
+	#table-container td {
+		border: 1px solid #3a3e44;
+	}
+
+	#table-container thead th {
+		background-color: #30343a !important;
+		color: #f2f3f5 !important;
+		border-color: #3a3e44 !important;
+		font-weight: 700;
+		text-shadow: none;
+		opacity: 1;
+		visibility: visible;
 	}
 
 	td,
@@ -367,6 +430,28 @@ td {
 		border-color: var(--border);
 	}
 
+	label,
+	#filter-container label {
+		color: var(--text-muted) !important;
+	}
+
+	button:disabled,
+	button[disabled],
+	[role="button"][aria-disabled="true"] {
+		background-color: var(--surface-disabled) !important;
+		color: var(--text-disabled) !important;
+		border-color: var(--border) !important;
+		box-shadow: none !important;
+		filter: none !important;
+		cursor: not-allowed !important;
+		opacity: 1;
+	}
+
+	button:disabled:hover,
+	button[disabled]:hover {
+		background-color: var(--surface-disabled) !important;
+	}
+
 	.suggestions-list li,
 	#competition-suggestions li {
 		color: var(--text);
@@ -374,14 +459,35 @@ td {
 
 	.suggestions-list li:hover,
 	#competition-suggestions li:hover,
-	tr:not(.selected):hover {
-		background-color: #383d44;
+	tbody tr:not(.selected):hover,
+	.student-row:not(.selected):hover {
+		background-color: var(--surface-hover);
+		color: var(--text);
 	}
 
-	tr.selected,
+	tbody tr.selected,
+	tbody tr.selected td,
+	.student-row.selected,
+	.student-row.selected td {
+		background-color: var(--surface-selected) !important;
+		color: var(--text) !important;
+	}
+
+	#table-container tbody tr.selected,
+	#table-container tbody tr.selected td {
+		background-color: var(--surface-selected) !important;
+		color: var(--text) !important;
+	}
+
 	.active,
 	.tablinks.active {
-		background-color: #3d4652;
+		background-color: var(--surface-selected);
+		color: var(--text);
+	}
+
+	.selected-student {
+		background-color: var(--surface-selected);
+		color: var(--text);
 	}
 
 	.slider {

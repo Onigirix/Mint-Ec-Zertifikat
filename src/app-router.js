@@ -9,10 +9,17 @@ const routes = {
   contributors: { document: "contributors.html", scripts: [], styles: [] },
 };
 
+const pageNavigation = {
+  competence: { previous: ["students", "Previous page"], next: ["research", "Next page"] },
+  research: { previous: ["competence", "Previous page"], next: ["activities", "Next page"] },
+  activities: { previous: ["research", "Previous page"], next: ["export", "Next page"] },
+};
+
 const routeByDocument = Object.fromEntries(Object.entries(routes).map(([route, config]) => [config.document, route]));
 const views = new Map();
 const loadedScripts = new Set();
 const loadedStyles = new Set();
+const styleLoads = new Map();
 const routeStyleNames = new Set(Object.values(routes).flatMap(({ styles }) => styles));
 let latestNavigationId = 0;
 const main = document.getElementById("main");
@@ -48,6 +55,42 @@ function normalizeView(view) {
     }
   });
 }
+
+function renderPageNavigation(route) {
+  document.querySelectorAll("body > [data-page-nav]").forEach(button => button.remove());
+  const navigation = pageNavigation[route];
+  if (!navigation) return;
+
+  for (const [direction, [destination, label]] of Object.entries(navigation)) {
+    const button = document.createElement("button");
+    const isPrevious = direction === "previous";
+    button.type = "button";
+    button.className = "blauerButton";
+    button.dataset.pageNav = direction;
+    button.setAttribute("aria-label", label);
+    button.title = label;
+    const icon = document.createElement("span");
+    icon.className = "material-symbols-rounded";
+    icon.textContent = isPrevious ? "arrow_back" : "arrow_forward";
+    button.append(icon);
+    Object.assign(button.style, {
+      position: "fixed",
+      top: "auto",
+      bottom: "16px",
+      left: isPrevious ? "16px" : "auto",
+      right: isPrevious ? "auto" : "16px",
+      zIndex: "900",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      minWidth: "44px",
+      minHeight: "44px",
+    });
+    button.addEventListener("click", () => navigate(destination));
+    document.body.append(button);
+  }
+}
+
 normalizeView(initialView.content);
 
 async function loadView(route) {
@@ -65,10 +108,22 @@ async function loadView(route) {
   return view;
 }
 
+function waitForStylesheet(link, style) {
+  if (link.sheet) return Promise.resolve();
+
+  if (!styleLoads.has(style)) {
+    styleLoads.set(style, new Promise((resolve, reject) => {
+      link.addEventListener("load", () => resolve(), { once: true });
+      link.addEventListener("error", () => reject(new Error(`Could not load ${style}`)), { once: true });
+    }));
+  }
+
+  return styleLoads.get(style);
+}
+
 async function loadAssets(route, navigationId) {
   const config = routes[route];
   for (const style of config.styles) {
-    if (loadedStyles.has(style)) continue;
     let link = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).find(item => new URL(item.href, location.href).pathname.split("/").pop() === style);
     if (!link) {
       link = document.createElement("link");
@@ -77,6 +132,8 @@ async function loadAssets(route, navigationId) {
       document.head.appendChild(link);
     }
     link.dataset.spaStyle = style;
+    if (loadedStyles.has(style)) continue;
+    await waitForStylesheet(link, style);
     loadedStyles.add(style);
   }
   for (const script of config.scripts) {
@@ -106,6 +163,7 @@ export async function navigate(route, { replace = false } = {}) {
     const target = routeFromHref(link.getAttribute("href"));
     if (target) link.dataset.route = target;
   });
+  renderPageNavigation(route);
   try {
     await loadAssets(route, navigationId);
   } catch (error) {
@@ -113,6 +171,7 @@ export async function navigate(route, { replace = false } = {}) {
     return;
   }
   if (navigationId !== latestNavigationId) return;
+  renderPageNavigation(route);
   window.dispatchEvent(new CustomEvent("app-route-changed", { detail: { route } }));
 }
 
