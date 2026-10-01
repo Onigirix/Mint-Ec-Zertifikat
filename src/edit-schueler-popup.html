@@ -5,14 +5,20 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="edit-popup.js" type="module" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Schüler erstellen</title>
+    <title>Schüler bearbeiten</title>
   </head>
   <body>
     <div id="schuelerPopup">
       <h2>Schüler bearbeiten</h2>
       <form id="schuelerForm">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required /><br />
+        <input
+          type="text"
+          id="name"
+          name="name"
+          style="margin-left: 2px; max-width: 97%"
+          required
+        /><br />
         <label for="abijahr">Abijahrgang:</label>
         <input
           type="text"
@@ -21,6 +27,7 @@
           pattern="\d{4}"
           inputmode="numeric"
           maxlength="4"
+          style="margin-left: 2px; max-width: 97%"
           required
         /><br />
         <label for="geburtsdatum">Geburtsdatum:</label>
@@ -28,15 +35,9 @@
           type="date"
           id="geburtsdatum"
           name="geburtsdatum"
+          style="margin-left: 2px; max-width: 96%"
           required
         /><br />
-        <label for="school">Schule:</label>
-        <select id="school" name="schule" required>
-          <option value="">Bitte wählen</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option></select
-        ><br />
         <button type="submit" class="blauerButton">Fertig</button>
         <button type="button" class="roterButton" id="schuelerAbbrechen">
           Abbrechen

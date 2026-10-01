@@ -42,8 +42,9 @@ Form.addEventListener("submit", async (e) => {
   await formSubmitted(e);
 });
 
-async function formSubmitted(e) {
-  const graduationYear = parseInt(graduationYearField.value);
+async function formSubmitted() {
+  const name = nameField.value.trim();
+  const graduationYear = Number.parseInt(graduationYearField.value, 10);
   const birthDate = new Date(geburtsdatumField.value);
   const currentDate = new Date();
   const age = Math.floor((currentDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000));
@@ -73,7 +74,7 @@ async function formSubmitted(e) {
 
   await db.execute(
     "UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4",
-    [nameField.value, graduationYearField.value, geburtsdatumField.value, studentId]
+    [name, graduationYear, geburtsdatumField.value, studentId]
   );
   closeWindow();
 }

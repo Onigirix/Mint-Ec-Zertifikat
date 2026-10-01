@@ -16,33 +16,39 @@ window.studentState = {
 };
 const statePromise = invoke("get_state");
 
-const openNavButton = document.querySelector("#openNav");
-const closeNavButton = document.querySelector("#closeNav");
+let openNavButton = document.querySelector("#openNav");
+let closeNavButton = document.querySelector("#closeNav");
 const mainContent = document.querySelector("#main");
-const searchBox = document.getElementById("student-search");
-const list = document.getElementById("suggestions");
+let searchBox = document.getElementById("student-search");
+let list = document.getElementById("suggestions");
 
 async function init(new_student_id, new_student_name) {
 	select_student(new_student_id, new_student_name);
+	openNavButton = document.querySelector("#openNav");
+	closeNavButton = document.querySelector("#closeNav");
+	searchBox = document.getElementById("student-search");
+	list = document.getElementById("suggestions");
 	if (searchBox != null) {
 		searchBox.value = new_student_name;
 	}
-	openNavButton.addEventListener("click", openNav);
-	closeNavButton.addEventListener("click", closeNav);
-	mainContent.addEventListener("click", () => {
+	openNavButton?.removeEventListener("click", openNav);
+	closeNavButton?.removeEventListener("click", closeNav);
+	openNavButton?.addEventListener("click", openNav);
+	closeNavButton?.addEventListener("click", closeNav);
+	mainContent.onclick = () => {
 		searchBoxBlurred();
 		closeNav();
-	});
+	};
 	if (searchBox != null) {
-		searchBox.addEventListener("click", async (e) => {
+		searchBox.onclick = async (e) => {
 			e.stopPropagation();
 			e.preventDefault();
 
 			if (searchBox.value.trim() === window.studentState.studentName) {
 				searchBox.value = "";
 			}
-		});
-		searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
+		};
+		searchBox.onkeydown = async (e) => searchBoxInputted(e);
 	}
 }
 
@@ -153,10 +159,15 @@ function searchBoxBlurred() {
 }
 
 async function select_student(newStudentId, newStudentName) {
-	await invoke("set_state", {
-		studentId: newStudentId,
-		studentName: newStudentName,
-	});
+	if (
+		window.studentState.studentId !== newStudentId ||
+		window.studentState.studentName !== newStudentName
+	) {
+		await invoke("set_state", {
+			studentId: newStudentId,
+			studentName: newStudentName,
+		});
+	}
 	window.studentState.studentId = newStudentId;
 	window.studentState.studentName = newStudentName;
 	const event = new CustomEvent("studentChanged", {
@@ -219,5 +230,11 @@ document.addEventListener(
 
 statePromise.then(([studentIdOnLoad, studentNameOnLoad]) => {
 	init(studentIdOnLoad, studentNameOnLoad);
-});export { select_student };
+});
+
+window.addEventListener("app-route-changed", () => {
+	init(window.studentState.studentId, window.studentState.studentName);
+});
+
+export { select_student };
 
