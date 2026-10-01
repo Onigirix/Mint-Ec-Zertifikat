@@ -32,11 +32,8 @@
         required /><br />
       <label for="school">Schule:</label>
       <select id="school" name="schule" style="margin-left: 2px; max-width: 97%;" required>
-        <option value="">Bitte wählen</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
       </select><br />
+      <button type="button" id="add-school">+ Schule hinzufügen</button><br />
       <button type="submit" class="blauerButton" id="fertig">Fertig</button>
       <button type="submit" class="blauerButton" id="save">
         Speichern und neuen Schüler eingeben
@@ -45,6 +42,14 @@
         Abbrechen
       </button>
       </form>
+      <dialog id="new-school-dialog">
+        <form id="new-school-form">
+          <label for="new-school-name">Name der neuen Schule:</label>
+          <input id="new-school-name" type="text" required />
+          <button type="submit" class="blauerButton">Hinzufügen</button>
+          <button type="button" id="cancel-new-school">Abbrechen</button>
+        </form>
+      </dialog>
     </div>
   </body>
 </html>

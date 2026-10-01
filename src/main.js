@@ -28,27 +28,19 @@ async function init(new_student_id, new_student_name) {
 	closeNavButton = document.querySelector("#closeNav");
 	searchBox = document.getElementById("student-search");
 	list = document.getElementById("suggestions");
-	if (searchBox != null) {
-		searchBox.value = new_student_name;
-	}
+	if (searchBox != null) searchBox.value = new_student_name;
 	openNavButton?.removeEventListener("click", openNav);
 	closeNavButton?.removeEventListener("click", closeNav);
 	openNavButton?.addEventListener("click", openNav);
 	closeNavButton?.addEventListener("click", closeNav);
-	mainContent.onclick = () => {
-		searchBoxBlurred();
-		closeNav();
-	};
+	mainContent.onclick = () => { searchBoxBlurred(); closeNav(); };
 	if (searchBox != null) {
-		searchBox.onclick = async (e) => {
+		searchBox.onclick = (e) => {
 			e.stopPropagation();
 			e.preventDefault();
-
-			if (searchBox.value.trim() === window.studentState.studentName) {
-				searchBox.value = "";
-			}
+			if (searchBox.value.trim() === window.studentState.studentName) searchBox.value = "";
 		};
-		searchBox.onkeydown = async (e) => searchBoxInputted(e);
+		searchBox.onkeydown = (e) => searchBoxInputted(e);
 	}
 }
 
@@ -159,10 +151,7 @@ function searchBoxBlurred() {
 }
 
 async function select_student(newStudentId, newStudentName) {
-	if (
-		window.studentState.studentId !== newStudentId ||
-		window.studentState.studentName !== newStudentName
-	) {
+	if (window.studentState.studentId !== newStudentId || window.studentState.studentName !== newStudentName) {
 		await invoke("set_state", {
 			studentId: newStudentId,
 			studentName: newStudentName,

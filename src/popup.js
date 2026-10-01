@@ -6,6 +6,41 @@ const invoke = window.__TAURI__.core.invoke;
 let db = null;
 const dbReady = getDb().then(instance => { db = instance; });
 const emit = window.__TAURI__.event.emit;
+const schoolSelect = document.getElementById('school');
+
+async function loadSchools(selectedId = null) {
+	await dbReady;
+	const schools = await db.select('SELECT school_id, school_name FROM schools ORDER BY school_id');
+	schoolSelect.replaceChildren();
+	for (const school of schools) {
+		const option = document.createElement('option');
+		option.value = school.school_id;
+		option.textContent = school.school_name;
+		schoolSelect.append(option);
+	}
+	const defaultSchool = selectedId ?? schools.find(school => Number(school.school_id) === 1)?.school_id ?? schools[0]?.school_id;
+	if (defaultSchool !== undefined) schoolSelect.value = String(defaultSchool);
+}
+
+loadSchools().catch(error => alert(`Schulen konnten nicht geladen werden: ${error.message}`));
+
+const newSchoolDialog = document.getElementById('new-school-dialog');
+const newSchoolForm = document.getElementById('new-school-form');
+document.getElementById('add-school').addEventListener('click', () => {
+	newSchoolForm.reset();
+	newSchoolDialog.showModal();
+	document.getElementById('new-school-name').focus();
+});
+document.getElementById('cancel-new-school').addEventListener('click', () => newSchoolDialog.close());
+newSchoolForm.addEventListener('submit', async event => {
+	event.preventDefault();
+	const name = document.getElementById('new-school-name').value.trim();
+	if (!name) return;
+	await dbReady;
+	const result = await db.execute('INSERT INTO schools (school_name) VALUES ($1)', [name]);
+	newSchoolDialog.close();
+	await loadSchools(result.lastInsertId);
+});
 
 // Async confirmation dialog
 function asyncConfirm(message) {
@@ -48,6 +83,7 @@ document
 		e.preventDefault();
 
 		const graduationYear = parseInt(e.target.abijahr.value);
+		await dbReady;
 		const birthDate = new Date(e.target.geburtsdatum.value);
 		const currentDate = new Date();
 		const age = Math.floor((currentDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000));
@@ -75,11 +111,12 @@ document
 		}
 
 		const result = await db.execute(
-			"INSERT INTO students (name, birthday, graduation_year) VALUES ($1, $2, $3)",
+			"INSERT INTO students (name, birthday, graduation_year, school_id) VALUES ($1, $2, $3, $4)",
 			[
 				`${e.target.vorname.value} ${e.target.nachname.value}`,
 				e.target.geburtsdatum.value,
 				e.target.abijahr.value,
+				Number(schoolSelect.value),
 			],
 		);
 		await emit("student-added", {
