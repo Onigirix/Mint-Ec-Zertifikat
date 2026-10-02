@@ -6,6 +6,11 @@ html {
 	overscroll-behavior: none;
 }
 
+/* Keep the shared sidebar typography identical after SPA route styles load. */
+.app-root #sidenav #navLinks a {
+	font: 400 24px/normal Verdana, Tahoma, Helvetica, Arial, sans-serif !important;
+}
+
 /* Keep displayed text from being selected in any app window. */
 body,
 body * {
