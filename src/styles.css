@@ -312,10 +312,6 @@ input::-webkit-inner-spin-button {
 	white-space: nowrap;
 }
 
-:scope > [data-page-nav] {
-	z-index: 90 !important;
-}
-
 #Fachliche-Kompetenz:hover {
 	filter: drop-shadow(0 0 1rem rgb(0, 0, 255));
 }

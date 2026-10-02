@@ -75,10 +75,10 @@ function renderPageNavigation(route) {
     Object.assign(button.style, {
       position: "fixed",
       top: "auto",
-      bottom: "16px",
+      bottom: "max(16px, env(safe-area-inset-bottom))",
       left: isPrevious ? "16px" : "auto",
       right: isPrevious ? "auto" : "16px",
-      zIndex: "900",
+      zIndex: "1000",
       display: "inline-flex",
       alignItems: "center",
       justifyContent: "center",
