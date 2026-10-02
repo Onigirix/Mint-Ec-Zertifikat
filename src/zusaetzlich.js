@@ -10,17 +10,32 @@ let db = null;
 const dbReady = getDb().then(instance => { db = instance; });
 
 const deleteButton = document.createElement("button");
-const toggleSwitch = document.getElementById("toggleSwitch");
-const sekText = document.getElementById("sekText");
-const toggleSwitchTable = document.getElementById("toggleSwitchTable");
-const myTable = document.getElementById("wettbewerbe-table");
-const mySearch = document.getElementById("wettbewerbsSuche");
-const competitionSearchSuggestions = document.getElementById("competition-suggestions");
-const competitionSearchBox = document.getElementById("competition-search");
-const addCompetitionButton = document.getElementById("add-competition");
-const editCompetitionButton = document.getElementById("edit-competition");
-const deleteCompetitionButton = document.getElementById("delete-competition")
-const mainContent = document.querySelector("#main");
+let toggleSwitch;
+let sekText;
+let toggleSwitchTable;
+let myTable;
+let mySearch;
+let competitionSearchSuggestions;
+let competitionSearchBox;
+let addCompetitionButton;
+let editCompetitionButton;
+let deleteCompetitionButton;
+let mainContent;
+let boundActivityRoot = null;
+
+function refreshActivityElements() {
+  toggleSwitch = document.getElementById("toggleSwitch");
+  sekText = document.getElementById("sekText");
+  toggleSwitchTable = document.getElementById("toggleSwitchTable");
+  myTable = document.getElementById("wettbewerbe-table");
+  mySearch = document.getElementById("wettbewerbsSuche");
+  competitionSearchSuggestions = document.getElementById("competition-suggestions");
+  competitionSearchBox = document.getElementById("competition-search");
+  addCompetitionButton = document.getElementById("add-competition");
+  editCompetitionButton = document.getElementById("edit-competition");
+  deleteCompetitionButton = document.getElementById("delete-competition");
+  mainContent = document.querySelector("#main");
+}
 
 let selectedCompetitionName = "";
 let selectedCompetitionId = 0;
@@ -28,6 +43,9 @@ let competitionData = [{}];
 let sek = 2;
 
 async function init() {
+  if (!document.body.classList.contains("page-activities")) return;
+  refreshActivityElements();
+  if (!toggleSwitch || !toggleSwitchTable || !myTable || !mySearch) return;
   toggleSwitch.checked = true;
   await dbReady;
   populateWettbewerbeTable();
@@ -185,9 +203,9 @@ async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
 }
 
 async function updateErreichteWettbewerbeTable() {
-  const erreichteWettbewerbeTable = document
-    .getElementById("erreichte-wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
+  const table = document.getElementById("erreichte-wettbewerbe-table");
+  const erreichteWettbewerbeTable = table?.getElementsByTagName("tbody")[0];
+  if (!erreichteWettbewerbeTable) return;
   erreichteWettbewerbeTable.innerHTML = "";
 
   if (window.studentState) {
@@ -281,6 +299,13 @@ async function showEditWettbewerbForm(){
     }
   });
 }
+
+function bindActivityPage() {
+  if (!document.body.classList.contains("page-activities")) return;
+  refreshActivityElements();
+  const root = document.getElementById("content");
+  if (!root || boundActivityRoot === root || !toggleSwitch || !sekText || !toggleSwitchTable || !competitionSearchBox || !addCompetitionButton || !editCompetitionButton || !deleteCompetitionButton || !myTable || !mySearch || !competitionSearchSuggestions || !mainContent) return;
+  boundActivityRoot = root;
 
 toggleSwitch.addEventListener("change", () => {
   if (toggleSwitch.checked) {
@@ -438,7 +463,15 @@ async function deleteCompetition(){
 addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
 editCompetitionButton.addEventListener("click", async (e) => await showEditWettbewerbForm()) //TODO: Figure out if async is helpful
 deleteCompetitionButton.addEventListener("click", async (e) => await deleteCompetition())
+}
 
+document.addEventListener("app-route-changed", event => {
+  if (event.detail?.route !== "activities") return;
+  bindActivityPage();
+  void init();
+});
+
+bindActivityPage();
 await init();
 
 await listen("competitions-changed", (event) => populateWettbewerbeTable());

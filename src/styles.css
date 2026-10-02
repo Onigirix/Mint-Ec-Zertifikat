@@ -1,3 +1,24 @@
+html {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+	overscroll-behavior: none;
+}
+
+/* Keep the shared sidebar typography identical after SPA route styles load. */
+.app-root #sidenav #navLinks a {
+	font: 400 24px/normal Verdana, Tahoma, Helvetica, Arial, sans-serif !important;
+}
+
+/* Keep displayed text from being selected in any app window. */
+body,
+body * {
+	-webkit-user-select: none !important;
+	user-select: none !important;
+}
+
+@scope (.app-root) {
 /* Grundlegende Stile für das Layout */
 /* Farben
 #212225 - fast Schwarz
@@ -10,11 +31,37 @@
 	margin: 0;
 }
 
-body {
+:scope {
 	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
-	overflow: hidden;
 	-webkit-user-select: none;
 	user-select: none;
+}
+
+.app-root {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	height: 100dvh;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	overflow: hidden;
+	overscroll-behavior: none;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+#content {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 0;
+	width: 100%;
 }
 
 input,
@@ -32,12 +79,28 @@ body.dark-mode {
 	background-color: #333;
 }
 #main {
-	padding: 20px;
-	padding-bottom: 60px; /* Platz für den Footer */
-	width: 100vw;
-	height: 80vh;
-	overflow-y: auto;
-	overflow-x: hidden;
+	display: flex;
+	flex-direction: column;
+	padding: 16px;
+	width: auto;
+	height: auto;
+	min-width: 0;
+	min-height: 0;
+	flex: 1 1 auto;
+	overflow: auto;
+	overscroll-behavior: contain;
+}
+
+body.app-root #main {
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+}
+
+body.app-root header {
+	width: 100%;
+	flex: 0 0 auto;
+	box-sizing: border-box;
 }
 header {
 	background-color: #212225;
@@ -208,6 +271,10 @@ input::-webkit-inner-spin-button {
 	transition: 0.5s;
 }
 
+#sidenav {
+	z-index: 2001;
+}
+
 #closeNav {
 	position: absolute; /* Position absolutely within sidenav */
 	top: 1em; /* Match the vertical position of the open button */
@@ -237,7 +304,8 @@ input::-webkit-inner-spin-button {
 #navLinks a {
 	padding: 15px 25px;
 	text-decoration: none;
-	font-size: 1.5vw;
+	font-size: 24px !important;
+	font-family: inherit;
 	color: #ecf0f1;
 	display: block;
 	transition: 0.3s;
@@ -266,13 +334,6 @@ input::-webkit-inner-spin-button {
 
 #Schülerliste:hover {
 	filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
-}
-
-#main {
-	padding: 20px;
-	padding-bottom: 60px; /* Platz für den Footer */
-	width: 100vw;
-	height: 80vh;
 }
 
 .slideshow-container {
@@ -649,9 +710,176 @@ textarea {
 	gap: 20px; /* Abstand zwischen den Spalten */
   }
 
-  .labels {
+.labels {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	margin-right: 20px; /* Abstand zwischen den Labels und den Inputs */
   }
+
+/* Keep native controls and popup surfaces aligned with the selected UI theme. */
+:scope[data-theme="dark"] {
+	--theme-surface: #242629;
+	--theme-raised: #1b1d20;
+	--theme-text: #f2f3f5;
+	--theme-muted: #c3c7cc;
+	--theme-border: #484c52;
+	color-scheme: dark;
+}
+
+:scope[data-theme="light"] {
+	--theme-surface: #ffffff;
+	--theme-raised: #f5f6f8;
+	--theme-text: #202124;
+	--theme-muted: #5f6368;
+	--theme-border: #d5d8dc;
+	color-scheme: light;
+}
+
+:scope[data-theme="dark"] input,
+:scope[data-theme="dark"] select,
+:scope[data-theme="dark"] textarea,
+:scope[data-theme="dark"] option {
+	background-color: var(--theme-surface) !important;
+	color: var(--theme-text) !important;
+	border-color: var(--theme-border) !important;
+}
+
+:scope[data-theme="light"] input,
+:scope[data-theme="light"] select,
+:scope[data-theme="light"] textarea,
+:scope[data-theme="light"] option {
+	background-color: var(--theme-surface) !important;
+	color: var(--theme-text) !important;
+	border-color: var(--theme-border) !important;
+}
+
+:scope[data-theme="dark"] #schuelerPopup,
+:scope[data-theme="dark"] #schuelerForm,
+:scope[data-theme="dark"] #competitionPopup,
+:scope[data-theme="dark"] #competitionForm,
+:scope[data-theme="dark"] #settingsForm,
+:scope[data-theme="dark"] #facharbeitForm,
+:scope[data-theme="dark"] #mintAktivitaetForm,
+:scope[data-theme="dark"] #newSchoolDialog,
+:scope[data-theme="dark"] dialog,
+:scope[data-theme="dark"] .tab,
+:scope[data-theme="dark"] .tabcontent,
+:scope[data-theme="dark"] .aktivitaet,
+:scope[data-theme="dark"] .suggestions-list,
+:scope[data-theme="dark"] #competition-suggestions {
+	background-color: var(--theme-surface) !important;
+	color: var(--theme-text) !important;
+	border-color: var(--theme-border) !important;
+}
+
+:scope[data-theme="light"] #schuelerPopup,
+:scope[data-theme="light"] #schuelerForm,
+:scope[data-theme="light"] #competitionPopup,
+:scope[data-theme="light"] #competitionForm,
+:scope[data-theme="light"] #settingsForm,
+:scope[data-theme="light"] #facharbeitForm,
+:scope[data-theme="light"] #mintAktivitaetForm,
+:scope[data-theme="light"] #newSchoolDialog,
+:scope[data-theme="light"] dialog,
+:scope[data-theme="light"] .tab,
+:scope[data-theme="light"] .tabcontent,
+:scope[data-theme="light"] .aktivitaet,
+:scope[data-theme="light"] .suggestions-list,
+:scope[data-theme="light"] #competition-suggestions {
+	background-color: var(--theme-surface) !important;
+	color: var(--theme-text) !important;
+	border-color: var(--theme-border) !important;
+}
+
+:scope[data-theme="dark"] dialog::backdrop,
+:scope[data-theme="dark"] #newSchoolDialog::backdrop {
+	background: rgb(0 0 0 / 65%);
+}
+
+:scope[data-theme="light"] dialog::backdrop,
+:scope[data-theme="light"] #newSchoolDialog::backdrop {
+	background: rgb(0 0 0 / 35%);
+}
+
+:scope[data-theme="dark"] .tablinks,
+:scope[data-theme="dark"] .close_tablinks,
+:scope[data-theme="dark"] .suggestions-list li,
+:scope[data-theme="dark"] #competition-suggestions li,
+:scope[data-theme="light"] .tablinks,
+:scope[data-theme="light"] .close_tablinks,
+:scope[data-theme="light"] .suggestions-list li,
+:scope[data-theme="light"] #competition-suggestions li {
+	color: var(--theme-text) !important;
+}
+
+:scope[data-theme="dark"] .tablinks:hover,
+:scope[data-theme="dark"] .tab-button-wrapper:hover,
+:scope[data-theme="dark"] .suggestions-list li:hover,
+:scope[data-theme="dark"] #competition-suggestions li:hover {
+	background-color: #34383e !important;
+}
+
+:scope[data-theme="dark"] label,
+:scope[data-theme="dark"] h1,
+:scope[data-theme="dark"] h2,
+:scope[data-theme="dark"] h3,
+:scope[data-theme="light"] label,
+:scope[data-theme="light"] h1,
+:scope[data-theme="light"] h2,
+:scope[data-theme="light"] h3 {
+	color: var(--theme-text) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+	:scope[data-theme="system"] {
+		--theme-surface: #242629;
+		--theme-raised: #1b1d20;
+		--theme-text: #f2f3f5;
+		--theme-muted: #c3c7cc;
+		--theme-border: #484c52;
+		color-scheme: dark;
+	}
+	:scope[data-theme="system"] input,
+	:scope[data-theme="system"] select,
+	:scope[data-theme="system"] textarea,
+	:scope[data-theme="system"] option {
+		background-color: var(--theme-surface) !important;
+		color: var(--theme-text) !important;
+		border-color: var(--theme-border) !important;
+	}
+	:scope[data-theme="system"] #schuelerPopup,
+	:scope[data-theme="system"] #schuelerForm,
+	:scope[data-theme="system"] #competitionPopup,
+	:scope[data-theme="system"] #competitionForm,
+	:scope[data-theme="system"] #settingsForm,
+	:scope[data-theme="system"] #facharbeitForm,
+	:scope[data-theme="system"] #mintAktivitaetForm,
+	:scope[data-theme="system"] #newSchoolDialog,
+	:scope[data-theme="system"] dialog,
+	:scope[data-theme="system"] .tab,
+	:scope[data-theme="system"] .tabcontent,
+	:scope[data-theme="system"] .aktivitaet,
+	:scope[data-theme="system"] .suggestions-list,
+	:scope[data-theme="system"] #competition-suggestions {
+		background-color: var(--theme-surface) !important;
+		color: var(--theme-text) !important;
+		border-color: var(--theme-border) !important;
+	}
+	:scope[data-theme="system"] dialog::backdrop,
+	:scope[data-theme="system"] #newSchoolDialog::backdrop { background: rgb(0 0 0 / 65%); }
+	:scope[data-theme="system"] label,
+	:scope[data-theme="system"] h1,
+	:scope[data-theme="system"] h2,
+	:scope[data-theme="system"] h3 { color: var(--theme-text) !important; }
+	:scope[data-theme="system"] .tablinks,
+	:scope[data-theme="system"] .close_tablinks,
+	:scope[data-theme="system"] .suggestions-list li,
+	:scope[data-theme="system"] #competition-suggestions li { color: var(--theme-text) !important; }
+	:scope[data-theme="system"] .tablinks:hover,
+	:scope[data-theme="system"] .tab-button-wrapper:hover,
+	:scope[data-theme="system"] .suggestions-list li:hover,
+	:scope[data-theme="system"] #competition-suggestions li:hover { background-color: #34383e !important; }
+}
+
+}

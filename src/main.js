@@ -6,6 +6,21 @@ const listen = window.__TAURI__.event.listen;
 let db = null;
 let dbReady = getDb().then(instance => { db = instance; });
 
+async function applyThemePreference() {
+	await dbReady;
+	const rows = await db.select("SELECT theme_preference FROM settings WHERE id = 1");
+	applyTheme(rows[0]?.theme_preference ?? "system");
+}
+
+function applyTheme(preference) {
+	document.body.dataset.theme = preference;
+	document.documentElement.style.colorScheme = preference === "system" ? "light dark" : preference;
+}
+
+window.addEventListener("app-theme-changed", event => applyTheme(event.detail));
+
+applyThemePreference().catch(error => console.error("Could not load theme preference:", error));
+
 listen("student-added", (event) => {
 	init(event.payload.new_student_id, event.payload.new_student_name);
 });
@@ -29,10 +44,6 @@ async function init(new_student_id, new_student_name) {
 	searchBox = document.getElementById("student-search");
 	list = document.getElementById("suggestions");
 	if (searchBox != null) searchBox.value = new_student_name;
-	openNavButton?.removeEventListener("click", openNav);
-	closeNavButton?.removeEventListener("click", closeNav);
-	openNavButton?.addEventListener("click", openNav);
-	closeNavButton?.addEventListener("click", closeNav);
 	mainContent.onclick = () => { searchBoxBlurred(); closeNav(); };
 	if (searchBox != null) {
 		searchBox.onclick = (e) => {
@@ -60,6 +71,16 @@ function openNav() {
 function closeNav() {
 	document.getElementById("sidenav").style.width = "0";
 }
+
+document.addEventListener("click", (event) => {
+	if (event.target.closest("#openNav")) {
+		event.stopPropagation();
+		openNav();
+	} else if (event.target.closest("#closeNav")) {
+		event.stopPropagation();
+		closeNav();
+	}
+});
 
 async function searchBoxInputted(e) {
 	if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {

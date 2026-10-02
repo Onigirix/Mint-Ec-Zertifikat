@@ -1,0 +1,15 @@
+@scope (.app-root) {
+:scope {
+	--platform-font: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+	--platform-control-radius: 5px;
+	--platform-focus: #0067c0;
+}
+
+button,
+input,
+select,
+textarea {
+	border-radius: var(--platform-control-radius);
+}
+
+}

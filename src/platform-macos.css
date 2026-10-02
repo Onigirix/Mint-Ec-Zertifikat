@@ -1,0 +1,15 @@
+@scope (.app-root) {
+:scope {
+	--platform-font: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	--platform-control-radius: 7px;
+	--platform-focus: #0a84ff;
+}
+
+button,
+input,
+select,
+textarea {
+	border-radius: var(--platform-control-radius);
+}
+
+}

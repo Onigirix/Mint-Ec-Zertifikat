@@ -1,3 +1,4 @@
+@scope (.page-students) {
 /* Allgemeines Reset */
 * {
 	margin: 0;
@@ -243,7 +244,8 @@ input::-webkit-inner-spin-button {
 #main {
 	padding: 20px;
 	padding-bottom: 60px; /* Platz für den Footer */
-	width: 100vw;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .slideshow-container {
@@ -798,4 +800,6 @@ td {
 th {
 	color: black;
 	background-color: #f4f4f4;
+}
+
 }

@@ -12,6 +12,7 @@ const schoolFunctionary1Field = document.getElementById('namePos1');
 const schoolFunctionary2Field = document.getElementById('namePos2');
 const schoolFunctionary1PositionField = document.getElementById('pos1');
 const schoolFunctionary2PositionField = document.getElementById('pos2');
+const themePreferenceField = document.getElementById('themePreference');
 
 let schools = [];
 let selectedSchoolId = null;
@@ -165,6 +166,12 @@ const outputPath = await db.select('SELECT default_file_path FROM settings WHERE
 outputPathField.value = outputPath[0]?.default_file_path ?? '/';
 outputPathField.addEventListener('blur', async () => {
   await db.execute('UPDATE settings SET default_file_path = $1 WHERE id = 1', [outputPathField.value]);
+});
+const themePreference = await db.select('SELECT theme_preference FROM settings WHERE id = 1');
+themePreferenceField.value = themePreference[0]?.theme_preference ?? 'system';
+themePreferenceField.addEventListener('change', async () => {
+  await db.execute('UPDATE settings SET theme_preference = $1 WHERE id = 1', [themePreferenceField.value]);
+  window.dispatchEvent(new CustomEvent('app-theme-changed', { detail: themePreferenceField.value }));
 });
 selectFolderButton.addEventListener('click', async () => {
   const folderPath = await invoke('folder_select');
