@@ -1,3 +1,4 @@
+@scope (.page-students) {
 table {
 	width: 100%;
 	max-width: 1200px;
@@ -264,4 +265,6 @@ td {
 
 #table-container tbody tr:last-child td:last-child {
   border-bottom-right-radius: 8px;
+}
+
 }

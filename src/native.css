@@ -1,4 +1,5 @@
-:root {
+@scope (.app-root) {
+:scope {
 	color-scheme: light dark;
 	font-family: var(--platform-font, system-ui, sans-serif);
 	font-size: 14px;
@@ -9,6 +10,9 @@
 	--space-5: 20px;
 	--surface: #ffffff;
 	--surface-raised: #f5f6f8;
+	--surface-hover: #eceff2;
+	--surface-selected: #e4edf8;
+	--surface-disabled: #eceff2;
 	--text: #202124;
 	--text-muted: #5f6368;
 	--border: #d5d8dc;
@@ -330,7 +334,7 @@ td {
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	:scope {
 		color-scheme: dark;
 		--surface: #242629;
 		--surface-raised: #1b1d20;
@@ -398,13 +402,13 @@ td {
 
 	#table-container th,
 	#table-container td {
-		border: 1px solid #3a3e44;
+		border: 1px solid var(--border);
 	}
 
 	#table-container thead th {
 		background-color: #30343a !important;
 		color: #f2f3f5 !important;
-		border-color: #3a3e44 !important;
+		border-color: var(--border) !important;
 		font-weight: 700;
 		text-shadow: none;
 		opacity: 1;
@@ -495,6 +499,61 @@ td {
 	}
 }
 
+@media (prefers-color-scheme: dark) {
+	:scope[data-theme="light"] {
+		color-scheme: light;
+		--surface: #ffffff;
+		--surface-raised: #f5f6f8;
+		--surface-hover: #eceff2;
+		--surface-selected: #e4edf8;
+		--surface-disabled: #eceff2;
+		--text: #202124;
+		--text-muted: #5f6368;
+		--text-disabled: #757b82;
+		--border: #d5d8dc;
+		--accent: #0b69c7;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	:scope[data-theme="dark"] {
+		color-scheme: dark;
+		--surface: #242629;
+		--surface-raised: #1b1d20;
+		--surface-hover: #30343a;
+		--surface-selected: #38485a;
+		--surface-disabled: #34373b;
+		--text: #f2f3f5;
+		--text-muted: #c3c7cc;
+		--text-disabled: #a0a5ab;
+		--border: #484c52;
+		--accent: #69aaf0;
+	}
+
+	:scope[data-theme="dark"] body,
+	:scope[data-theme="dark"] #main,
+	:scope[data-theme="dark"] #facharbeitForm,
+	:scope[data-theme="dark"] #settingsForm,
+	:scope[data-theme="dark"] #mintAktivitaetForm,
+	:scope[data-theme="dark"] #schuelerForm,
+	:scope[data-theme="dark"] #schuelerPopup,
+	:scope[data-theme="dark"] .aktivitaet,
+	:scope[data-theme="dark"] table,
+	:scope[data-theme="dark"] .tab,
+	:scope[data-theme="dark"] .tabcontent {
+		background-color: var(--surface-raised);
+		color: var(--text);
+	}
+
+	:scope[data-theme="dark"] input,
+	:scope[data-theme="dark"] select,
+	:scope[data-theme="dark"] textarea {
+		background-color: var(--surface);
+		color: var(--text);
+		border-color: var(--border);
+	}
+}
+
 @media (forced-colors: active) {
 	:focus-visible {
 		outline: 2px solid Highlight;
@@ -520,4 +579,6 @@ td {
 		transition-duration: 1ms !important;
 		scroll-behavior: auto !important;
 	}
+}
+
 }

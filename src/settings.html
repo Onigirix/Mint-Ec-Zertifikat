@@ -38,7 +38,7 @@
     </style>
   </head>
 
-  <body>
+  <body class="app-root page-settings">
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
@@ -94,6 +94,13 @@
 
 
         <form id="settingsForm">
+          <label for="themePreference">Darstellung</label>
+          <select id="themePreference">
+            <option value="system">Systemeinstellung verwenden</option>
+            <option value="light">Hell</option>
+            <option value="dark">Dunkel</option>
+          </select>
+
           <label for="schoolName">Prefix und Name der Schule: </label>
           <input type="text" id="schoolName" />
 

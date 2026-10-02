@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_zs.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
@@ -19,7 +20,7 @@
     <script type="module" src="zusaetzlich.js" defer></script>
   </head>
 
-  <body>
+  <body class="app-root page-activities">
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
@@ -117,20 +118,18 @@
                 </table>
               </div>
             </div>
-            <div style="display: flex; gap: 10px; padding-top: 5px;">
+            <div class="activity-toggles">
               <label class="switch">
                 <input type="checkbox" id="toggleSwitch">
                 <span class="slider round sek_slider"></span>
               </label>
               <h4 style="padding-top: 10px" id="sekText">SEK II</h4>
 
-              <label class="switch"
-                style="margin-left: 8%; position: absolute">
+              <label class="switch">
                 <input type="checkbox" id="toggleSwitchTable">
                 <span class="slider round"></span>
               </label>
-              <h4
-                style="padding-top: 10px; margin-left: 11%; position: absolute">Suchleiste</h4>
+              <h4>Suchleiste</h4>
             </div>
 
               <!-- Tabelle 3: Erreichte Wettbewerbe einer Person -->
@@ -150,19 +149,16 @@
                   </table>
                 </div>
             </div>
-
-          </div>
-        </div>
-      </form>
-      <div style="margin-top: -6vh">
+        </form>
+      <div class="activity-actions">
       <button class="btn" id="add-competition"
-        style="position:absolute; left: 29vw;">Aktivität
+        >Aktivität
         hinzufügen</button>
         <button class="btn" id="edit-competition"
-        style="position:absolute; left: 43vw;">Aktivität
+        >Aktivität
         bearbeiten</button>
       <button class="delete-btn" id="delete-competition"
-        style="position:absolute; left: 57vw;">Aktivität
+        >Aktivität
         löschen</button>
         </div>
     </main>

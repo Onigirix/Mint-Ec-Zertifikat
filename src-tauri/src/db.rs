@@ -78,7 +78,32 @@ pub fn setup_db(app_data_dir: PathBuf, resource_dir: Option<PathBuf>) {
         create_student_additional_mint_activities_table().await;
         create_indexes().await;
         run_migrations().await;
+        ensure_theme_preference_column().await;
     });
+}
+
+async fn ensure_theme_preference_column() {
+    let db = get_pool().await;
+    let has_theme_preference: Result<i64, sqlx::Error> = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM pragma_table_info('settings') WHERE name = 'theme_preference';",
+    )
+    .fetch_one(db)
+    .await;
+
+    match has_theme_preference {
+        Ok(0) => {
+            if let Err(error) = sqlx::query(
+                "ALTER TABLE settings ADD COLUMN theme_preference TEXT NOT NULL DEFAULT 'system';",
+            )
+            .execute(db)
+            .await
+            {
+                eprintln!("Error adding theme preference setting: {}", error);
+            }
+        }
+        Ok(_) => {}
+        Err(error) => eprintln!("Error checking theme preference setting: {}", error),
+    }
 }
 
 async fn create_settings_table() {
@@ -630,6 +655,17 @@ async fn run_migrations() {
 
 async fn migrate_to_version_2(db: &SqlitePool) {
     let result = async {
+        let has_theme_preference: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('settings') WHERE name = 'theme_preference';",
+        )
+        .fetch_one(db)
+        .await?;
+        if has_theme_preference == 0 {
+            sqlx::query("ALTER TABLE settings ADD COLUMN theme_preference TEXT NOT NULL DEFAULT 'system';")
+                .execute(db)
+                .await?;
+        }
+
         sqlx::query(
             "CREATE TABLE IF NOT EXISTS schools (
                 school_id INTEGER PRIMARY KEY AUTOINCREMENT,

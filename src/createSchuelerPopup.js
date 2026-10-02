@@ -3,7 +3,6 @@ const { Webview } = window.__TAURI__.webview;
 
 function bindStudentPopupButtons() {
 	const createSchülerButton = document.querySelector("#create-student");
-	const startButton = document.querySelector("#startButton");
 	const addStudentButton = document.querySelector("#add-student");
 
 	if (createSchülerButton) {
@@ -11,9 +10,6 @@ function bindStudentPopupButtons() {
 	}
 	if (addStudentButton) {
 		addStudentButton.onclick = openStudentPopup;
-	}
-	if (startButton) {
-		startButton.onclick = openStudentPopup;
 	}
 }
 

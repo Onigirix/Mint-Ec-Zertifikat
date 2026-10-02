@@ -20,7 +20,6 @@ const views = new Map();
 const loadedScripts = new Set();
 const loadedStyles = new Set();
 const styleLoads = new Map();
-const routeStyleNames = new Set(Object.values(routes).flatMap(({ styles }) => styles));
 let latestNavigationId = 0;
 const main = document.getElementById("main");
 const header = document.getElementById("header");
@@ -142,11 +141,6 @@ async function loadAssets(route, navigationId) {
     loadedScripts.add(script);
   }
   if (navigationId !== latestNavigationId) return;
-  const activeStyles = new Set(config.styles);
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    const name = new URL(link.href, location.href).pathname.split("/").pop();
-    if (routeStyleNames.has(name)) link.disabled = !activeStyles.has(name);
-  });
 }
 
 export async function navigate(route, { replace = false } = {}) {
@@ -158,6 +152,7 @@ export async function navigate(route, { replace = false } = {}) {
   if (navigationId !== latestNavigationId) return;
   header.replaceChildren(...view.header.map(child => child.cloneNode(true)));
   main.replaceChildren(view.content);
+  document.body.className = `app-root page-${route}`;
   document.title = "MINT-EC-Zertifikat";
   document.querySelectorAll("#navLinks a").forEach(link => {
     const target = routeFromHref(link.getAttribute("href"));

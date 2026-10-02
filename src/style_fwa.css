@@ -1,3 +1,4 @@
+@scope (.page-research) {
 /* Grundlegende Stile für das Layout */
 /* Farben
 #212225 - fast Schwarz
@@ -11,9 +12,7 @@
 }
 
 body {
-  font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
-  overflow-x: hidden;
-  -webkit-user-select: none;
+  font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -164,9 +163,7 @@ input::-webkit-inner-spin-button {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #212225;
-  overflow-x: hidden;
-  padding-top: 0; /* Changed from 3em to 0 */
+  background-color: #212225;  padding-top: 0; /* Changed from 3em to 0 */
   transition: 0.5s;
 }
 
@@ -228,15 +225,6 @@ input::-webkit-inner-spin-button {
 
 #Schülerliste:hover {
   filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
-}
-
-#main {
-  padding: 20px;
-  padding-bottom: 60px; /* Platz für den Footer */
-  width: 100vw;
-  height: 80vh;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 img {
@@ -515,4 +503,6 @@ select {
   background-color: #ccc !important;
   color: #666 !important;
   cursor: not-allowed !important;
+}
+
 }
