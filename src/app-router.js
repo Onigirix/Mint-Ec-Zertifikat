@@ -146,6 +146,9 @@ async function loadAssets(route, navigationId) {
 export async function navigate(route, { replace = false } = {}) {
   if (!routes[route]) return;
   const navigationId = ++latestNavigationId;
+  if (typeof window.__flushCompetenceSaves === "function") {
+    await window.__flushCompetenceSaves();
+  }
   const nextLocation = `#/${route}`;
   if (location.hash !== nextLocation) history[replace ? "replaceState" : "pushState"]({}, "", nextLocation);
   const view = await loadView(route);

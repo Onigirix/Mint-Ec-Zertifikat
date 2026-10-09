@@ -31,6 +31,12 @@ function hasFailingGradeInCourse(course) {
 	return false;
 }
 
+function hasAllGradesInCourse(course) {
+	const inputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+	return inputs.length === 4
+		&& [...inputs].every((input) => input.value !== "" && validateGradeInput(input));
+}
+
 function calculateBestAverage() {
 	if ([...noteInputs].some((input) => !validateGradeInput(input))) {
 		gesamtDurchschnittElement.classList.remove(
@@ -49,10 +55,10 @@ function calculateBestAverage() {
 	const avg3 = Number.parseFloat(document.getElementById("avg-3").textContent);
 	const avg4 = Number.parseFloat(document.getElementById("avg-4").textContent);
 
-	const isValid1 = avg1 >= 9 && !hasFailingGradeInCourse(1);
-	const isValid2 = avg2 >= 9 && !hasFailingGradeInCourse(2);
-	const isValid3 = avg3 >= 9 && !hasFailingGradeInCourse(3);
-	const isValid4 = avg4 >= 9 && !hasFailingGradeInCourse(4);
+	const isValid1 = hasAllGradesInCourse(1) && avg1 >= 9 && !hasFailingGradeInCourse(1);
+	const isValid2 = hasAllGradesInCourse(2) && avg2 >= 9 && !hasFailingGradeInCourse(2);
+	const isValid3 = hasAllGradesInCourse(3) && avg3 >= 9 && !hasFailingGradeInCourse(3);
+	const isValid4 = hasAllGradesInCourse(4) && avg4 >= 9 && !hasFailingGradeInCourse(4);
 
 	const validCombinations = [];
 

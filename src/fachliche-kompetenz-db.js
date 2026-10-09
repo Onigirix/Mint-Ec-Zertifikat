@@ -7,6 +7,46 @@ let db = null;
 const dbReady = getDb().then(instance => { db = instance; });
 const gradeFields = document.querySelectorAll(".note");
 const subjectFields = document.querySelectorAll(".subject");
+const saveChains = new Map();
+const pendingSaves = new Set();
+
+function saveField(field, studentId) {
+	const value = field.value;
+	const save = async () => {
+		await dbReady;
+		const column = field.classList.contains("note")
+			? `grade_${field.dataset.course}_${field.dataset.semester}`
+			: `subject_${field.dataset.course}`;
+		await db.execute(
+			`UPDATE students SET ${column} = $1 WHERE student_id = $2`,
+			[value, studentId],
+		);
+	};
+	const previousSave = saveChains.get(field) ?? Promise.resolve();
+	const currentSave = previousSave.catch(() => {}).then(save);
+	saveChains.set(field, currentSave);
+	pendingSaves.add(currentSave);
+	currentSave.then(() => {
+		if (saveChains.get(field) === currentSave) {
+			saveChains.delete(field);
+		}
+		pendingSaves.delete(currentSave);
+	}, () => {
+		if (saveChains.get(field) === currentSave) {
+			saveChains.delete(field);
+		}
+		pendingSaves.delete(currentSave);
+	});
+	return currentSave;
+}
+
+async function flushCompetenceSaves() {
+	while (pendingSaves.size > 0) {
+		await Promise.all([...pendingSaves]);
+	}
+}
+
+window.__flushCompetenceSaves = flushCompetenceSaves;
 
 document.addEventListener("studentChanged", async (e) => {
 	const { studentId } = e.detail;
@@ -50,6 +90,11 @@ async function fill_fields(studentId) {
 for (const field of gradeFields) {
 	field.addEventListener("input", () => {
 		validateGradeInput(field);
+		if (validateGradeInput(field)) {
+			void saveField(field, window.studentState.studentId).catch(error => {
+				console.error("Could not save grade input:", error);
+			});
+		}
 	});
 	field.addEventListener("keyup", async (e) => {
 		if (e.key !== "Enter" && e.key !== "Tab") {
@@ -61,20 +106,16 @@ for (const field of gradeFields) {
 		}
 	});
 	field.addEventListener("blur", async (e) => {
-		await dbReady;
 		if (!validateGradeInput(field)) {
 			field.reportValidity();
 			return;
 		}
-		const res1 = await db.execute(
-			`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
-			[field.value, window.studentState.studentId],
-		);
+		const studentId = window.studentState.studentId;
+		await saveField(field, studentId);
 		field.style.border = "1px solid #ccc";
 		field.style.backgroundColor = "white";
 	});
 	field.addEventListener("keydown", async (e) => {
-		await dbReady;
 		if (e.key === "Tab") {
 			//Enter or Tab
 			if (!validateGradeInput(field)) {
@@ -82,10 +123,8 @@ for (const field of gradeFields) {
 				field.reportValidity();
 				return;
 			}
-			const res1 = await db.execute(
-				`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
-				[field.value, window.studentState.studentId],
-			);
+			const studentId = window.studentState.studentId;
+			await saveField(field, studentId);
 			field.style.border = "1px solid #ccc";
 			field.style.backgroundColor = "white";
 		} else if (e.key === "Enter") {
@@ -94,10 +133,8 @@ for (const field of gradeFields) {
 				field.reportValidity();
 				return;
 			}
-			const res1 = await db.execute(
-				`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
-				[field.value, window.studentState.studentId],
-			);
+			const studentId = window.studentState.studentId;
+			await saveField(field, studentId);
 			field.style.border = "1px solid #ccc";
 			field.style.backgroundColor = "white";
 		}
@@ -105,6 +142,11 @@ for (const field of gradeFields) {
 }
 
 for (const field of subjectFields) {
+	field.addEventListener("input", () => {
+		void saveField(field, window.studentState.studentId).catch(error => {
+			console.error("Could not save subject input:", error);
+		});
+	});
 	field.addEventListener("keyup", (e) => {
 		if (e.key !== "Enter" && e.key !== "Tab") {
 			if (field.value !== "") {
@@ -114,11 +156,8 @@ for (const field of subjectFields) {
 		}
 	});
 	field.addEventListener("blur", async (e) => {
-		await dbReady;
-		await db.execute(
-			`UPDATE students SET subject_${field.dataset.course} = $1 WHERE student_id = $2`,
-			[field.value, window.studentState.studentId],
-		);
+		const studentId = window.studentState.studentId;
+		await saveField(field, studentId);
 		field.style.border = "1px solid #ccc";
 		field.style.backgroundColor = "white";
 	});
