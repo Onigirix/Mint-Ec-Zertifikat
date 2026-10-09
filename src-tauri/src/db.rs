@@ -518,7 +518,17 @@ pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [Stri
             .fetch_one(db).await;
 
     match result {
-        Ok(row) => (row.get(0), [row.get(1), row.get(2), row.get(4)], row.get(3)),
+        Ok(row) => {
+            let grade: i32 = row.get(3);
+            if !(0..=15).contains(&grade) {
+                eprintln!(
+                    "Invalid grade_of_paper {} for student {}: expected 0..15",
+                    grade, student_id
+                );
+                return (0, array::from_fn(|_| String::from("Error")), 0);
+            }
+            (row.get(0), [row.get(1), row.get(2), row.get(4)], grade)
+        }
         Err(e) => {
             eprintln!("Error fetching fachwissenschaftliches_arbeiten: {}", e);
             (0, array::from_fn(|_i| String::from("Error")), 0)
@@ -561,6 +571,11 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
         Ok(row) => {
             let subjects: [String; 4] = [row.get(0), row.get(1), row.get(2), row.get(3)];
             let grades: [i32; 16] = std::array::from_fn(|i| row.get(i + 4));
+            if grades.iter().any(|grade| !(0..=15).contains(grade)) {
+                return Err(String::from(
+                    "Ungültige Notenpunkte: Alle Werte müssen zwischen 0 und 15 liegen.",
+                ));
+            }
             Ok((subjects, grades))
         }
         Err(e) => {

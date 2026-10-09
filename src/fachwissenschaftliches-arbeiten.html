@@ -1,16 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="assets/MaterialSymbolsRounded.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_fwa.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
         });
       }
     </script>
@@ -43,7 +49,17 @@
           Schüler erstellen
         </button>
       </div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
+      <a
+        style="
+          text-decoration: none;
+          color: #ffffffaa;
+          font-weight: bolder;
+          font-size: x-large;
+        "
+        class="rightHeading"
+        href="contributors.html"
+        >Mint-EC Zertifikat</a
+      >
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
@@ -72,7 +88,7 @@
     <!--Main Content-->
     <div id="main">
       <main id="content">
-        <h1 style="color: #6C9644">Fachwissenschaftliches Arbeiten</h1>
+        <h1 style="color: #6c9644">Fachwissenschaftliches Arbeiten</h1>
 
         <form id="facharbeitForm" class="darken">
           <label for="arbeitTyp">Typ der Arbeit:</label>
@@ -116,7 +132,7 @@
           <input
             type="number"
             id="level"
-            min="1"
+            min="0"
             max="15"
             step="1"
             class="disabled-no-student"
@@ -124,7 +140,6 @@
           />
         </form>
 
-        
         <div class="button-container">
           <button
             form="facharbeitForm"
@@ -146,7 +161,6 @@
             Speichern
           </button>
         </div>
-
       </main>
     </div>
   </body>
