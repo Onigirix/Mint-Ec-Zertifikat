@@ -1,16 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="assets/MaterialSymbolsRounded.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
         });
       }
     </script>
@@ -40,7 +46,17 @@
           Schüler erstellen
         </button>
       </div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
+      <a
+        style="
+          text-decoration: none;
+          color: #ffffffaa;
+          font-weight: bolder;
+          font-size: x-large;
+        "
+        class="rightHeading"
+        href="contributors.html"
+        >Mint-EC Zertifikat</a
+      >
 
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
@@ -318,9 +334,7 @@
             </tbody>
           </table>
         </form>
-        <div
-          class="gesamt-div"
-        >
+        <div class="gesamt-div">
           <div>
             <label>Gesamt Durchschnitt:</label>
             <span id="gesamtDurchschnitt">- </span>
@@ -333,10 +347,8 @@
 
           <div class="afb-zuordnung" hidden>
             <label>AFB III zuordnen:</label>
-            <button>Bestätigen
-            </button>
+            <button>Bestätigen</button>
           </div>
-
         </div>
       </main>
     </div>

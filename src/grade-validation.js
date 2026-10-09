@@ -1,4 +1,11 @@
 export function isValidGradeValue(value) {
+	if (
+		(typeof value !== "number" && typeof value !== "string") ||
+		(typeof value === "string" && value.trim() === "")
+	) {
+		return false;
+	}
+
 	const grade = Number(value);
 	return Number.isInteger(grade) && grade >= 0 && grade <= 15;
 }

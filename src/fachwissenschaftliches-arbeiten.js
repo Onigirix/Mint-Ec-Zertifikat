@@ -257,10 +257,6 @@ async function typeChanged(selected) {
 		});
 	}
 }
-document.addEventListener("studentChanged", async (e) => {
-	const { studentId } = e.detail;
-	await fill_fields(studentId);
-});
 
 document.getElementById("level").addEventListener("input", (e) => {
 	validateGradeInput(e.target);

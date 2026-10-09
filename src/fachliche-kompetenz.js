@@ -31,7 +31,7 @@ function hasFailingGradeInCourse(course) {
 	return false;
 }
 
-async function calculateBestAverage() {
+function calculateBestAverage() {
 	if ([...noteInputs].some((input) => !validateGradeInput(input))) {
 		gesamtDurchschnittElement.classList.remove(
 			"grade-red",
@@ -120,15 +120,13 @@ for (const input of noteInputs) {
 	input.addEventListener("input", () => {
 		if (!validateGradeInput(input)) {
 			document.getElementById(`avg-${input.getAttribute("data-course")}`).textContent = "-";
-			calculateBestAverage();
+			gesamtDurchschnittElement.textContent = calculateBestAverage();
 			return;
 		}
 		const course = input.getAttribute("data-course");
 		const avg = calculateCourseAverage(course);
 		document.getElementById(`avg-${course}`).textContent = avg;
-		calculateBestAverage().then((result) => {
-			gesamtDurchschnittElement.textContent = result;
-		});
+		gesamtDurchschnittElement.textContent = calculateBestAverage();
 	});
 }
 
@@ -142,11 +140,9 @@ document.addEventListener("fields_filled", () => {
 			const courseInputs = document.querySelectorAll(`.note[data-course="${course}"]`);
 			avgElement.textContent = [...courseInputs].every(validateGradeInput) ? avg : "-";
 		}
-		calculateBestAverage().then((result) => {
-			if (gesamtDurchschnittElement) {
-				gesamtDurchschnittElement.textContent = result;
-			}
-		});
+		if (gesamtDurchschnittElement) {
+			gesamtDurchschnittElement.textContent = calculateBestAverage();
+		}
 	}
 });
 

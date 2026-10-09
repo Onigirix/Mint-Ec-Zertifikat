@@ -52,7 +52,7 @@ for (const field of gradeFields) {
 		validateGradeInput(field);
 	});
 	field.addEventListener("keyup", async (e) => {
-		if (e.keyCode !== 13 && e.keyCode !== 9) {
+		if (e.key !== "Enter" && e.key !== "Tab") {
 			await dbReady;
 			if (field.value !== "") {
 				field.style.border = "1px solid red";
@@ -75,7 +75,7 @@ for (const field of gradeFields) {
 	});
 	field.addEventListener("keydown", async (e) => {
 		await dbReady;
-		if (e.keyCode === 9) {
+		if (e.key === "Tab") {
 			//Enter or Tab
 			if (!validateGradeInput(field)) {
 				e.preventDefault();
@@ -88,7 +88,7 @@ for (const field of gradeFields) {
 			);
 			field.style.border = "1px solid #ccc";
 			field.style.backgroundColor = "white";
-		} else if (e.keyCode === 13) {
+		} else if (e.key === "Enter") {
 			e.preventDefault();
 			if (!validateGradeInput(field)) {
 				field.reportValidity();
@@ -106,7 +106,7 @@ for (const field of gradeFields) {
 
 for (const field of subjectFields) {
 	field.addEventListener("keyup", (e) => {
-		if (e.keyCode !== 13 && e.keyCode !== 9) {
+		if (e.key !== "Enter" && e.key !== "Tab") {
 			if (field.value !== "") {
 				field.style.border = "1px solid red";
 				field.style.backgroundColor = "rgb(255, 150, 150)";
@@ -123,7 +123,7 @@ for (const field of subjectFields) {
 		field.style.backgroundColor = "white";
 	});
 	/*field.addEventListener("keydown", async (e) => {
-    if (e.keyCode === 9) {
+    if (e.key === "Tab") {
       //Enter or Tab
       const res1 = await db.execute(
         "UPDATE students SET subject_" +
@@ -134,7 +134,7 @@ for (const field of subjectFields) {
       );
       field.style.border = "1px solid #ccc";
       field.style.backgroundColor = "white";
-    } else if (e.keyCode === 13) {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       const res1 = await db.execute(
         "UPDATE students SET subject_" +
