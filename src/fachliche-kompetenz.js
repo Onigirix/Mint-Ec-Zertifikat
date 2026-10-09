@@ -1,3 +1,5 @@
+import { validateGradeInput } from './grade-validation.js';
+
 const noteInputs = document.querySelectorAll(".note");
 const courseAverages = document.querySelectorAll('[id^="avg-"]');
 const gesamtDurchschnittElement = document.getElementById("gesamtStufe"); //namensverwechslung mit gesamtStufe
@@ -30,6 +32,18 @@ function hasFailingGradeInCourse(course) {
 }
 
 async function calculateBestAverage() {
+	if ([...noteInputs].some((input) => !validateGradeInput(input))) {
+		gesamtDurchschnittElement.classList.remove(
+			"grade-red",
+			"grade-orange",
+			"grade-yellow",
+			"grade-green",
+		);
+		gesamtDurchschnittElement.classList.add("grade-default");
+		gesamtStufeElement.textContent = "-";
+		return "-";
+	}
+
 	const avg1 = Number.parseFloat(document.getElementById("avg-1").textContent);
 	const avg2 = Number.parseFloat(document.getElementById("avg-2").textContent);
 	const avg3 = Number.parseFloat(document.getElementById("avg-3").textContent);
@@ -104,6 +118,11 @@ async function calculateBestAverage() {
 
 for (const input of noteInputs) {
 	input.addEventListener("input", () => {
+		if (!validateGradeInput(input)) {
+			document.getElementById(`avg-${input.getAttribute("data-course")}`).textContent = "-";
+			calculateBestAverage();
+			return;
+		}
 		const course = input.getAttribute("data-course");
 		const avg = calculateCourseAverage(course);
 		document.getElementById(`avg-${course}`).textContent = avg;
@@ -120,7 +139,8 @@ document.addEventListener("fields_filled", () => {
 		const avg = calculateCourseAverage(course);
 		const avgElement = document.getElementById(`avg-${course}`);
 		if (avgElement) {
-			avgElement.textContent = avg;
+			const courseInputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+			avgElement.textContent = [...courseInputs].every(validateGradeInput) ? avg : "-";
 		}
 		calculateBestAverage().then((result) => {
 			if (gesamtDurchschnittElement) {

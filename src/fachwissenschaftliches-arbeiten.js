@@ -1,4 +1,5 @@
 import { getDb } from './db-connection.js';
+import { validateGradeInput } from './grade-validation.js';
 
 const invoke = window.__TAURI__.core.invoke;
 
@@ -120,6 +121,11 @@ document.addEventListener("studentChanged", async (e) => {
 
 async function save_form() {
 	await dbReady;
+	const gradeInput = document.getElementById("level");
+	if (!option_4_5_selected && !validateGradeInput(gradeInput)) {
+		gradeInput.reportValidity();
+		return;
+	}
 	if (!option_4_5_selected) {
 		await db.execute(
 			"UPDATE students SET type_of_paper = $1, topic_of_paper = $2, description_of_paper = $3, grade_of_paper = $4 WHERE student_id = $5",
@@ -211,7 +217,7 @@ async function typeChanged(selected) {
 		const numberInput = document.createElement("input");
 		numberInput.type = "number";
 		numberInput.id = "level";
-		numberInput.min = "1";
+		numberInput.min = "0";
 		numberInput.max = "15";
 		numberInput.step = "1";
 		const levelDescriptionInput = document.getElementById("levelDescription");
@@ -240,6 +246,7 @@ async function typeChanged(selected) {
 		}
 
 		numberInput.addEventListener("input", (e) => {
+			validateGradeInput(numberInput);
 			changeStufe(e.target.value);
 		});
 	}
@@ -256,6 +263,7 @@ document.addEventListener("studentChanged", async (e) => {
 });
 
 document.getElementById("level").addEventListener("input", (e) => {
+	validateGradeInput(e.target);
 	changeStufe(e.target.value);
 });
 

@@ -1,4 +1,5 @@
 import { getDb } from './db-connection.js';
+import { validateGradeInput } from './grade-validation.js';
 
 const invoke = window.__TAURI__.core.invoke;
 
@@ -47,6 +48,9 @@ async function fill_fields(studentId) {
 }
 
 for (const field of gradeFields) {
+	field.addEventListener("input", () => {
+		validateGradeInput(field);
+	});
 	field.addEventListener("keyup", async (e) => {
 		if (e.keyCode !== 13 && e.keyCode !== 9) {
 			await dbReady;
@@ -58,6 +62,10 @@ for (const field of gradeFields) {
 	});
 	field.addEventListener("blur", async (e) => {
 		await dbReady;
+		if (!validateGradeInput(field)) {
+			field.reportValidity();
+			return;
+		}
 		const res1 = await db.execute(
 			`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
 			[field.value, window.studentState.studentId],
@@ -69,6 +77,11 @@ for (const field of gradeFields) {
 		await dbReady;
 		if (e.keyCode === 9) {
 			//Enter or Tab
+			if (!validateGradeInput(field)) {
+				e.preventDefault();
+				field.reportValidity();
+				return;
+			}
 			const res1 = await db.execute(
 				`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
 				[field.value, window.studentState.studentId],
@@ -77,6 +90,10 @@ for (const field of gradeFields) {
 			field.style.backgroundColor = "white";
 		} else if (e.keyCode === 13) {
 			e.preventDefault();
+			if (!validateGradeInput(field)) {
+				field.reportValidity();
+				return;
+			}
 			const res1 = await db.execute(
 				`UPDATE students SET grade_${field.dataset.course}_${field.dataset.semester} = $1 WHERE student_id = $2`,
 				[field.value, window.studentState.studentId],

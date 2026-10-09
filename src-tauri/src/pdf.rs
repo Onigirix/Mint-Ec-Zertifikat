@@ -103,6 +103,15 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
             (zusätzliche_mint_aktivität_level, "Zusätzliche Aktivitäten"),
         ];
 
+        if anforderungsfelder
+            .iter()
+            .any(|(level, _)| *level < 0 || *level > 3)
+        {
+            return Err(String::from(
+                "Ungültige Zertifikatsstufe: Jede Anforderungsfeldstufe muss zwischen 0 und 3 liegen.",
+            ));
+        }
+
         let mut level_zero_error: Option<String> = None;
         for (index, (level, name)) in anforderungsfelder.iter().enumerate() {
             if *level == 0 {
