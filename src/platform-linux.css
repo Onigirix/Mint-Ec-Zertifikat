@@ -1,0 +1,15 @@
+@scope (.app-root) {
+:scope {
+	--platform-font: system-ui, "Noto Sans", sans-serif;
+	--platform-control-radius: 4px;
+	--platform-focus: Highlight;
+}
+
+button,
+input,
+select,
+textarea {
+	border-radius: var(--platform-control-radius);
+}
+
+}

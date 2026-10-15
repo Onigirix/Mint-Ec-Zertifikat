@@ -7,7 +7,7 @@ use tokio::sync::OnceCell;
 
 static DATABASE_PATH: OnceLock<String> = OnceLock::new();
 static DB_POOL: OnceCell<SqlitePool> = OnceCell::const_new();
-const CURRENT_SCHEMA_VERSION: i32 = 1;
+const CURRENT_SCHEMA_VERSION: i32 = 4;
 
 pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
@@ -374,6 +374,12 @@ async fn create_students_table() {
         grade_4_3 INT,
         grade_4_4 INT,
         grade_4_avg REAL,
+        subject_5 TEXT,
+        grade_5_1 INT,
+        grade_5_2 INT,
+        grade_5_3 INT,
+        grade_5_4 INT,
+        grade_5_avg REAL,
         type_of_paper INT DEFAUlT 0 NOT NULL,
         topic_of_paper TEXT,
         description_of_paper TEXT,
@@ -450,6 +456,8 @@ async fn create_student_additional_mint_activities_table() {
             student_id INTEGER,
             additional_mint_activity_id INTEGER,
             level INT,
+            year INTEGER,
+            achievement_info TEXT,
             FOREIGN KEY (student_id) REFERENCES students(student_id),
             FOREIGN KEY (additional_mint_activity_id) REFERENCES additional_mint_activities(additional_mint_activity_id)
             );"
@@ -493,7 +501,17 @@ pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [Stri
             .fetch_one(db).await;
 
     match result {
-        Ok(row) => (row.get(0), [row.get(1), row.get(2), row.get(4)], row.get(3)),
+        Ok(row) => {
+            let grade: i32 = row.get(3);
+            if !(0..=15).contains(&grade) {
+                eprintln!(
+                    "Invalid grade_of_paper {} for student {}: expected 0..15",
+                    grade, student_id
+                );
+                return (0, array::from_fn(|_| String::from("Error")), 0);
+            }
+            (row.get(0), [row.get(1), row.get(2), row.get(4)], grade)
+        }
         Err(e) => {
             eprintln!("Error fetching fachwissenschaftliches_arbeiten: {}", e);
             (0, array::from_fn(|_i| String::from("Error")), 0)
@@ -501,7 +519,7 @@ pub async fn get_fachwissenschaftliches_arbeiten(student_id: i32) -> (i32, [Stri
     }
 }
 
-pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), String> {
+pub async fn get_grades(student_id: i32) -> Result<([String; 5], [i32; 20]), String> {
     let db = get_pool().await;
 
     let result = sqlx::query(
@@ -510,6 +528,7 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
             COALESCE(subject_2, '...'),
             COALESCE(subject_3, '...'),
             COALESCE(subject_4, '...'),
+            COALESCE(subject_5, '...'),
             COALESCE(grade_1_1, 0),
             COALESCE(grade_1_2, 0),
             COALESCE(grade_1_3, 0),
@@ -525,7 +544,11 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
             COALESCE(grade_4_1, 0),
             COALESCE(grade_4_2, 0),
             COALESCE(grade_4_3, 0),
-            COALESCE(grade_4_4, 0)
+            COALESCE(grade_4_4, 0),
+            COALESCE(grade_5_1, 0),
+            COALESCE(grade_5_2, 0),
+            COALESCE(grade_5_3, 0),
+            COALESCE(grade_5_4, 0)
          FROM students WHERE student_id = ?;",
     )
     .bind(student_id)
@@ -534,8 +557,14 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
 
     match result {
         Ok(row) => {
-            let subjects: [String; 4] = [row.get(0), row.get(1), row.get(2), row.get(3)];
-            let grades: [i32; 16] = std::array::from_fn(|i| row.get(i + 4));
+            let subjects: [String; 5] =
+                [row.get(0), row.get(1), row.get(2), row.get(3), row.get(4)];
+            let grades: [i32; 20] = std::array::from_fn(|i| row.get(i + 5));
+            if grades.iter().any(|grade| !(0..=15).contains(grade)) {
+                return Err(String::from(
+                    "Ungültige Notenpunkte: Alle Werte müssen zwischen 0 und 15 liegen.",
+                ));
+            }
             Ok((subjects, grades))
         }
         Err(e) => {
@@ -545,10 +574,12 @@ pub async fn get_grades(student_id: i32) -> Result<([String; 4], [i32; 16]), Str
     }
 }
 
-pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)> {
+pub async fn get_sek1_competitions(
+    student_id: i32,
+) -> Vec<(String, String, i32, Option<i32>, String)> {
     let db = get_pool().await;
 
-    let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 1;")
+    let result = sqlx::query("SELECT a.name, s.level, CASE s.level WHEN 1 THEN a.level_one WHEN 2 THEN a.level_two WHEN 3 THEN a.level_three ELSE '' END, s.year, COALESCE(s.achievement_info, '') FROM additional_mint_activities a JOIN student_additional_mint_activities s ON a.additional_mint_activity_id = s.additional_mint_activity_id WHERE s.student_id = ? AND a.sek = 1;")
         .bind(student_id)
         .fetch_all(db)
         .await;
@@ -560,7 +591,7 @@ pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)
                 let name: String = row.get(0);
                 let level: i32 = row.get(1);
                 let level_description: String = row.get(2);
-                competitions.push((name, level_description, level));
+                competitions.push((name, level_description, level, row.get(3), row.get(4)));
             }
             competitions
         }
@@ -571,10 +602,12 @@ pub async fn get_sek1_competitions(student_id: i32) -> Vec<(String, String, i32)
     }
 }
 
-pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)> {
+pub async fn get_sek2_competitions(
+    student_id: i32,
+) -> Vec<(String, String, i32, Option<i32>, String)> {
     let db = get_pool().await;
 
-    let result = sqlx::query("SELECT additional_mint_activities.name, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = ? AND additional_mint_activities.sek = 2;")
+    let result = sqlx::query("SELECT a.name, s.level, CASE s.level WHEN 1 THEN a.level_one WHEN 2 THEN a.level_two WHEN 3 THEN a.level_three ELSE '' END, s.year, COALESCE(s.achievement_info, '') FROM additional_mint_activities a JOIN student_additional_mint_activities s ON a.additional_mint_activity_id = s.additional_mint_activity_id WHERE s.student_id = ? AND a.sek = 2;")
         .bind(student_id)
         .fetch_all(db)
         .await;
@@ -586,7 +619,7 @@ pub async fn get_sek2_competitions(student_id: i32) -> Vec<(String, String, i32)
                 let name: String = row.get(0);
                 let level: i32 = row.get(1);
                 let level_description: String = row.get(2);
-                competitions.push((name, level_description, level));
+                competitions.push((name, level_description, level, row.get(3), row.get(4)));
             }
             competitions
         }
@@ -606,15 +639,36 @@ async fn run_migrations() {
         Ok(row) => {
             let mut current_version: i32 = row.get(0);
             while current_version < CURRENT_SCHEMA_VERSION {
+                let previous_version = current_version;
                 match current_version {
                     0 => {
                         migrate_to_version_1(db).await;
-                        current_version = 1;
+                    }
+                    1 => {
+                        migrate_to_version_2(db).await;
+                    }
+                    2 => {
+                        migrate_to_version_3(db).await;
+                    }
+                    3 => {
+                        migrate_to_version_4(db).await;
                     }
                     _ => {
                         eprintln!("No migration path for version {}", current_version);
                         break;
                     }
+                }
+                current_version = sqlx::query("PRAGMA user_version;")
+                    .fetch_one(db)
+                    .await
+                    .map(|row| row.get(0))
+                    .unwrap_or(previous_version);
+                if current_version == previous_version {
+                    eprintln!(
+                        "Database migration from version {} did not advance",
+                        previous_version
+                    );
+                    break;
                 }
             }
         }
@@ -622,6 +676,153 @@ async fn run_migrations() {
             eprintln!("Error fetching user version: {}", e);
         }
     }
+}
+
+async fn migrate_to_version_3(db: &SqlitePool) {
+    let result = async {
+        let has_theme_preference: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('settings') WHERE name = 'theme_preference';",
+        )
+        .fetch_one(db)
+        .await?;
+        if has_theme_preference == 0 {
+            sqlx::query(
+                "ALTER TABLE settings ADD COLUMN theme_preference TEXT NOT NULL DEFAULT 'system';",
+            )
+            .execute(db)
+            .await?;
+        }
+        sqlx::query("PRAGMA user_version = 3;").execute(db).await?;
+        Ok::<(), sqlx::Error>(())
+    }
+    .await;
+    if let Err(error) = result {
+        eprintln!("Error migrating database to version 3: {}", error);
+    }
+}
+
+async fn migrate_to_version_4(db: &SqlitePool) {
+    let result = async {
+        for (table, column, definition) in [
+            ("students", "subject_5", "TEXT"),
+            ("students", "grade_5_1", "INT"),
+            ("students", "grade_5_2", "INT"),
+            ("students", "grade_5_3", "INT"),
+            ("students", "grade_5_4", "INT"),
+            ("students", "grade_5_avg", "REAL"),
+            ("student_additional_mint_activities", "year", "INTEGER"),
+            (
+                "student_additional_mint_activities",
+                "achievement_info",
+                "TEXT",
+            ),
+        ] {
+            // These identifiers come only from the migration's fixed allowlist above.
+            let exists: i64 = sqlx::query_scalar(sqlx::AssertSqlSafe(format!(
+                "SELECT COUNT(*) FROM pragma_table_info('{}') WHERE name = '{}';",
+                table, column
+            )))
+            .fetch_one(db)
+            .await?;
+            if exists == 0 {
+                sqlx::query(sqlx::AssertSqlSafe(format!(
+                    "ALTER TABLE {} ADD COLUMN {} {};",
+                    table, column, definition
+                )))
+                .execute(db)
+                .await?;
+            }
+        }
+        sqlx::query("PRAGMA user_version = 4;").execute(db).await?;
+        Ok::<(), sqlx::Error>(())
+    }
+    .await;
+    if let Err(error) = result {
+        eprintln!("Error migrating database to version 4: {}", error);
+    }
+}
+
+async fn migrate_to_version_2(db: &SqlitePool) {
+    let result = async {
+        let has_theme_preference: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('settings') WHERE name = 'theme_preference';",
+        )
+        .fetch_one(db)
+        .await?;
+        if has_theme_preference == 0 {
+            sqlx::query(
+                "ALTER TABLE settings ADD COLUMN theme_preference TEXT NOT NULL DEFAULT 'system';",
+            )
+            .execute(db)
+            .await?;
+        }
+
+        sqlx::query(
+            "CREATE TABLE IF NOT EXISTS schools (
+                school_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                school_name TEXT NOT NULL,
+                school_location TEXT DEFAULT '',
+                school_functionary_1 TEXT DEFAULT '',
+                school_functionary_2 TEXT DEFAULT '',
+                school_functionary_1_position TEXT DEFAULT '',
+                school_functionary_2_position TEXT DEFAULT ''
+            );",
+        )
+        .execute(db)
+        .await?;
+
+        let has_school_id: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('students') WHERE name = 'school_id';",
+        )
+        .fetch_one(db)
+        .await?;
+        if has_school_id == 0 {
+            sqlx::query("ALTER TABLE students ADD COLUMN school_id INTEGER DEFAULT 1;")
+                .execute(db)
+                .await?;
+        }
+
+        sqlx::query(
+            "INSERT OR IGNORE INTO schools (
+                school_id, school_name, school_location, school_functionary_1,
+                school_functionary_2, school_functionary_1_position,
+                school_functionary_2_position
+            ) SELECT 1, school_name, school_location, school_functionary_1,
+                school_functionary_2, school_functionary_1_position,
+                school_functionary_2_position FROM settings WHERE id = 1;",
+        )
+        .execute(db)
+        .await?;
+        sqlx::query("UPDATE students SET school_id = 1;")
+            .execute(db)
+            .await?;
+        sqlx::query("CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id);")
+            .execute(db)
+            .await?;
+        sqlx::query("PRAGMA user_version = 2;").execute(db).await?;
+        Ok::<(), sqlx::Error>(())
+    }
+    .await;
+
+    if let Err(e) = result {
+        eprintln!("Error migrating database to version 2: {}", e);
+    }
+}
+
+pub async fn get_school_settings_for_student(student_id: i32) -> Result<[String; 6], String> {
+    let db = get_pool().await;
+    let row = sqlx::query(
+        "SELECT schools.school_name, schools.school_location,
+            schools.school_functionary_1, schools.school_functionary_2,
+            schools.school_functionary_1_position, schools.school_functionary_2_position
+         FROM students JOIN schools ON schools.school_id = students.school_id
+         WHERE students.student_id = ?;",
+    )
+    .bind(student_id)
+    .fetch_one(db)
+    .await
+    .map_err(|e| format!("Could not load the student's school settings: {}", e))?;
+    Ok(array::from_fn(|i| row.get(i)))
 }
 
 async fn migrate_to_version_1(db: &SqlitePool) {

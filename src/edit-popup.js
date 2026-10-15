@@ -21,16 +21,26 @@ const studentId = new URLSearchParams(window.location.search).get("id");
 const nameField = document.getElementById("name");
 const graduationYearField = document.getElementById("abijahr");
 const geburtsdatumField = document.getElementById("geburtsdatum");
+const schoolField = document.getElementById("school");
 
 await dbReady;
 const [student] = await db.select(
-  "SELECT name, graduation_year, birthday FROM students WHERE student_id = $1",
+  "SELECT name, graduation_year, birthday, school_id FROM students WHERE student_id = $1",
   [studentId]
 );
+
+const schools = await db.select("SELECT school_id, school_name FROM schools ORDER BY school_id");
+for (const school of schools) {
+  const option = document.createElement("option");
+  option.value = school.school_id;
+  option.textContent = school.school_name;
+  schoolField.append(option);
+}
 
 nameField.value = student.name;
 graduationYearField.value = student.graduation_year;
 geburtsdatumField.value = student.birthday;
+schoolField.value = String(student.school_id ?? schools[0]?.school_id ?? "");
 
 
 closeButton.addEventListener("click", () => {
@@ -42,8 +52,9 @@ Form.addEventListener("submit", async (e) => {
   await formSubmitted(e);
 });
 
-async function formSubmitted(e) {
-  const graduationYear = parseInt(graduationYearField.value);
+async function formSubmitted() {
+  const name = nameField.value.trim();
+  const graduationYear = Number.parseInt(graduationYearField.value, 10);
   const birthDate = new Date(geburtsdatumField.value);
   const currentDate = new Date();
   const age = Math.floor((currentDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000));
@@ -72,8 +83,8 @@ async function formSubmitted(e) {
   await dbReady;
 
   await db.execute(
-    "UPDATE students SET name = $1, graduation_year = $2, birthday = $3 WHERE student_id = $4",
-    [nameField.value, graduationYearField.value, geburtsdatumField.value, studentId]
+    "UPDATE students SET name = $1, graduation_year = $2, birthday = $3, school_id = $4 WHERE student_id = $5",
+    [nameField.value, graduationYearField.value, geburtsdatumField.value, Number(schoolField.value), studentId]
   );
   closeWindow();
 }

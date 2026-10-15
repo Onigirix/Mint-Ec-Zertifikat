@@ -10,17 +10,32 @@ let db = null;
 const dbReady = getDb().then(instance => { db = instance; });
 
 const deleteButton = document.createElement("button");
-const toggleSwitch = document.getElementById("toggleSwitch");
-const sekText = document.getElementById("sekText");
-const toggleSwitchTable = document.getElementById("toggleSwitchTable");
-const myTable = document.getElementById("wettbewerbe-table");
-const mySearch = document.getElementById("wettbewerbsSuche");
-const competitionSearchSuggestions = document.getElementById("competition-suggestions");
-const competitionSearchBox = document.getElementById("competition-search");
-const addCompetitionButton = document.getElementById("add-competition");
-const editCompetitionButton = document.getElementById("edit-competition");
-const deleteCompetitionButton = document.getElementById("delete-competition")
-const mainContent = document.querySelector("#main");
+let toggleSwitch;
+let sekText;
+let toggleSwitchTable;
+let myTable;
+let mySearch;
+let competitionSearchSuggestions;
+let competitionSearchBox;
+let addCompetitionButton;
+let editCompetitionButton;
+let deleteCompetitionButton;
+let mainContent;
+let boundActivityRoot = null;
+
+function refreshActivityElements() {
+  toggleSwitch = document.getElementById("toggleSwitch");
+  sekText = document.getElementById("sekText");
+  toggleSwitchTable = document.getElementById("toggleSwitchTable");
+  myTable = document.getElementById("wettbewerbe-table");
+  mySearch = document.getElementById("wettbewerbsSuche");
+  competitionSearchSuggestions = document.getElementById("competition-suggestions");
+  competitionSearchBox = document.getElementById("competition-search");
+  addCompetitionButton = document.getElementById("add-competition");
+  editCompetitionButton = document.getElementById("edit-competition");
+  deleteCompetitionButton = document.getElementById("delete-competition");
+  mainContent = document.querySelector("#main");
+}
 
 let selectedCompetitionName = "";
 let selectedCompetitionId = 0;
@@ -28,6 +43,9 @@ let competitionData = [{}];
 let sek = 2;
 
 async function init() {
+  if (!document.body.classList.contains("page-activities")) return;
+  refreshActivityElements();
+  if (!toggleSwitch || !toggleSwitchTable || !myTable || !mySearch) return;
   toggleSwitch.checked = true;
   await dbReady;
   populateWettbewerbeTable();
@@ -138,6 +156,9 @@ function updateStufenTable(additional_mint_activity_id) {
   stufeCell3.textContent = 3;
   const beschreibungCell3 = row3.insertCell(1);
   beschreibungCell3.textContent = selectedCompetition.level_three;
+  const row0 = stufenTable.insertRow();
+  row0.insertCell(0).textContent = "0";
+  row0.insertCell(1).textContent = "Keine Punkte";
 
   row1.classList.add("clickable");
   row1.addEventListener("click", () => {
@@ -151,43 +172,34 @@ function updateStufenTable(additional_mint_activity_id) {
   row3.addEventListener("click", () => {
     addToErreichteWettbewerbe(3, selectedCompetition.level_three);
   });
+  row0.classList.add("clickable");
+  row0.addEventListener("click", () => addToErreichteWettbewerbe(0, "Keine Punkte"));
 }
 
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     await dbReady;
+    if (!window.studentState?.studentId) return;
+    const yearInput = document.getElementById("competition-year");
+    const yearValue = yearInput.value;
+    const year = yearValue === "" ? null : Number(yearValue);
+    if (year !== null && (!Number.isInteger(year) || year < 1900 || year > 2100)) {
+      yearInput.reportValidity();
+      return;
+    }
+    const achievementInfo = document.getElementById("competition-achievement").value.trim();
     const db_result = await db.execute(
-    `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
-    [window.studentState.studentId, selectedCompetitionId, stufe]
+    `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level, year, achievement_info) VALUES ($1, $2, $3, $4, $5)`,
+    [window.studentState.studentId, selectedCompetitionId, stufe, year, achievementInfo || null]
   );
-
-  const erreichteWettbewerbeTable = document
-    .getElementById("erreichte-wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
-  const newRow = erreichteWettbewerbeTable.insertRow();
-  newRow.insertCell(0).textContent = selectedCompetitionName;
-  newRow.insertCell(1).textContent = `${stufe}: ${stufe_beschreibung}`;
-
-  // Löschen-Button hinzufügen
-  const deleteCell = newRow.insertCell(2);
-
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Löschen";
-  deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
-  deleteButton.addEventListener("click", async (e) => {
-    const temp = await db.execute(
-      "DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ?",
-      [db_result.lastInsertId]
-    );
-    newRow.remove();
-    e.stopPropagation();
-  });
-  deleteCell.appendChild(deleteButton);
+  document.getElementById("competition-year").value = "";
+  document.getElementById("competition-achievement").value = "";
+  await updateErreichteWettbewerbeTable();
 }
 
 async function updateErreichteWettbewerbeTable() {
-  const erreichteWettbewerbeTable = document
-    .getElementById("erreichte-wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
+  const table = document.getElementById("erreichte-wettbewerbe-table");
+  const erreichteWettbewerbeTable = table?.getElementsByTagName("tbody")[0];
+  if (!erreichteWettbewerbeTable) return;
   erreichteWettbewerbeTable.innerHTML = "";
 
   if (window.studentState) {
@@ -208,7 +220,7 @@ async function updateErreichteWettbewerbeTable() {
   await dbReady;
 
   const erreichteWettbewerbe = await db.select(
-    "SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = $1;",
+    "SELECT s.student_additional_mint_activities_id AS combination_id, a.name AS competition_name, a.sek AS sek, s.level AS level, CASE s.level WHEN 1 THEN a.level_one WHEN 2 THEN a.level_two WHEN 3 THEN a.level_three ELSE 'Keine Punkte' END AS level_description, s.year, COALESCE(s.achievement_info, '') AS achievement_info FROM additional_mint_activities a JOIN student_additional_mint_activities s ON a.additional_mint_activity_id = s.additional_mint_activity_id WHERE s.student_id = $1;",
     [window.studentState.studentId]
   );
   const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(
@@ -222,7 +234,7 @@ async function updateErreichteWettbewerbeTable() {
     row.insertCell(0).textContent = eintrag.competition_name;
     row.insertCell(
       1
-    ).textContent = `${eintrag.level}: ${eintrag.level_description}`;
+    ).textContent = `${eintrag.year ?? "Kein Jahr"} - ${eintrag.achievement_info || eintrag.level_description}: Stufe ${eintrag.level}`;
 
     const deleteCell = row.insertCell(2);
     const deleteButton = document.createElement("button");
@@ -281,6 +293,13 @@ async function showEditWettbewerbForm(){
     }
   });
 }
+
+function bindActivityPage() {
+  if (!document.body.classList.contains("page-activities")) return;
+  refreshActivityElements();
+  const root = document.getElementById("content");
+  if (!root || boundActivityRoot === root || !toggleSwitch || !sekText || !toggleSwitchTable || !competitionSearchBox || !addCompetitionButton || !editCompetitionButton || !deleteCompetitionButton || !myTable || !mySearch || !competitionSearchSuggestions || !mainContent) return;
+  boundActivityRoot = root;
 
 toggleSwitch.addEventListener("change", () => {
   if (toggleSwitch.checked) {
@@ -438,7 +457,15 @@ async function deleteCompetition(){
 addCompetitionButton.addEventListener("click", (e) => showAddWettbewerbForm());
 editCompetitionButton.addEventListener("click", async (e) => await showEditWettbewerbForm()) //TODO: Figure out if async is helpful
 deleteCompetitionButton.addEventListener("click", async (e) => await deleteCompetition())
+}
 
+document.addEventListener("app-route-changed", event => {
+  if (event.detail?.route !== "activities") return;
+  bindActivityPage();
+  void init();
+});
+
+bindActivityPage();
 await init();
 
 await listen("competitions-changed", (event) => populateWettbewerbeTable());

@@ -1,4 +1,5 @@
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
+const { Webview } = window.__TAURI__.webview;
 const { ask, message } = window.__TAURI__.dialog;
 const { check } = window.__TAURI__.updater;
 const { relaunch } = window.__TAURI__.process;
@@ -19,7 +20,7 @@ try {
   console.error("Error checking for updates:", error);
 }
 
-document.getElementById("manual").addEventListener("click", (event) => {
+document.getElementById("manual")?.addEventListener("click", (event) => {
   const handbookWebview = new WebviewWindow("handbook", {
     hiddenTitle: true,
     title: "Handbuch",
@@ -82,7 +83,7 @@ async function checkAndPromptSettings() {
       );
 
       if (userWantsToEdit) {
-        window.location.href = "settings.html";
+        window.dispatchEvent(new CustomEvent("app-navigate", { detail: "settings" }));
       }
       return;
     }
@@ -109,8 +110,7 @@ async function checkAndPromptSettings() {
       );
 
       if (userWantsToEdit) {
-        // Navigate to settings page
-        window.location.href = "settings.html";
+        window.dispatchEvent(new CustomEvent("app-navigate", { detail: "settings" }));
       }
     }
   } catch (error) {

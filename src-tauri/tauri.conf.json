@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "identifier": "de.mint-ec.app",
   "build": {
-    "frontendDist": "../src"
+    "beforeDevCommand": "node ../scripts/build-frontend.mjs",
+    "beforeBuildCommand": "node ../scripts/build-frontend.mjs",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,
@@ -12,7 +14,10 @@
         "label": "main-window",
         "title": "Mint-EC",
         "maximized": true,
-        "resizable": true
+        "resizable": true,
+        "minWidth": 900,
+        "minHeight": 600,
+        "preventOverflow": true
       }
     ],
     "security": {

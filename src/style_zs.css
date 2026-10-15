@@ -1,3 +1,4 @@
+@scope (.page-activities) {
 /* Grundlegende Stile für das Layout */
 /* Farben
 #212225 - fast Schwarz
@@ -12,9 +13,7 @@
 
 
 body {
-	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;
-	overflow-x: hidden;
-	-webkit-user-select: none;
+	font-family: Verdana, Tahoma, Helvetica, Arial, sans-serif;	-webkit-user-select: none;
 	user-select: none;
 }
 
@@ -169,13 +168,32 @@ input::-webkit-inner-spin-button {
 	height: 100%;
 	width: 0;
 	position: fixed;
-	z-index: 1;
+	z-index: 2001;
 	top: 0;
 	left: 0;
-	background-color: #212225;
-	overflow-x: hidden;
-	padding-top: 0; /* Changed from 3em to 0 */
+	background-color: #212225;	padding-top: 0; /* Changed from 3em to 0 */
 	transition: 0.5s;
+}
+
+#content [data-page-nav] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed !important;
+	top: auto !important;
+	bottom: 16px !important;
+	margin: 0 !important;
+	z-index: 1000 !important;
+}
+
+#content [data-page-nav="previous"] {
+	left: 16px !important;
+	right: auto !important;
+}
+
+#content [data-page-nav="next"] {
+	left: auto !important;
+	right: 16px !important;
 }
 
 #closeNav {
@@ -236,13 +254,6 @@ input::-webkit-inner-spin-button {
 
 #Schülerliste:hover {
 	filter: drop-shadow(0 0 1rem rgb(255, 255, 255));
-}
-
-#main {
-	padding: 20px;
-	padding-bottom: 60px; /* Platz für den Footer */
-	width: 100vw;
-	height: 80vh;
 }
 
 .slideshow-container {
@@ -795,4 +806,88 @@ table[disabled] tbody {
 	cursor: not-allowed !important;
 }
 
+body.app-root #content {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
 
+#mintAktivitaetForm {
+	width: 100%;
+	max-width: none;
+	height: auto;
+	min-height: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+#aktivitaetenContainer {
+	margin: 0;
+}
+
+.tables-container {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+	gap: 16px;
+	width: 100%;
+}
+
+.table-container {
+	min-width: 0;
+}
+
+.table-container table,
+#erreichte-wettbewerbe-table {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+}
+
+.activity-toggles {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding-top: 5px;
+	flex-wrap: wrap;
+}
+
+.activity-toggles h4 {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.activity-actions {
+	display: flex;
+	justify-content: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin-top: auto;
+	padding: 8px 0;
+}
+
+#wettbewerbsSuche {
+	position: static;
+	width: 100%;
+	min-height: 0;
+}
+
+#competition-search,
+#competition-suggestions {
+	width: 100%;
+}
+
+@media (max-width: 960px) {
+	.tables-container {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.tables-container {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+
+
+}

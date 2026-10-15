@@ -1,19 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="assets/MaterialSymbolsRounded.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_fwa.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
         });
       }
     </script>
     <script type="module" src="main.js" defer></script>
+    <script type="module" src="app-router.js" defer></script>
     <script
       type="module"
       src="fachwissenschaftliches-arbeiten.js"
@@ -22,7 +30,7 @@
     <script type="module" src="createSchuelerPopup.js" defer></script>
   </head>
 
-  <body>
+  <body class="app-root page-research">
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
@@ -41,7 +49,17 @@
           Schüler erstellen
         </button>
       </div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
+      <a
+        style="
+          text-decoration: none;
+          color: #ffffffaa;
+          font-weight: bolder;
+          font-size: x-large;
+        "
+        class="rightHeading"
+        href="contributors.html"
+        >Mint-EC Zertifikat</a
+      >
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
 
@@ -70,7 +88,7 @@
     <!--Main Content-->
     <div id="main">
       <main id="content">
-        <h1 style="color: #6C9644">Fachwissenschaftliches Arbeiten</h1>
+        <h1 style="color: #6c9644">Fachwissenschaftliches Arbeiten</h1>
 
         <form id="facharbeitForm" class="darken">
           <label for="arbeitTyp">Typ der Arbeit:</label>
@@ -114,7 +132,7 @@
           <input
             type="number"
             id="level"
-            min="1"
+            min="0"
             max="15"
             step="1"
             class="disabled-no-student"
@@ -122,7 +140,6 @@
           />
         </form>
 
-        
         <div class="button-container">
           <button
             form="facharbeitForm"
@@ -144,24 +161,6 @@
             Speichern
           </button>
         </div>
-
-        <button
-          class="blauerButton"
-          id="submitBtn"
-          onclick="window.location.href='fachliche-kompetenz.html';"
-          style="position: absolute; left: 12vw; margin-top: -5vh;"
-        >
-          <span class="material-symbols-rounded">arrow_back</span>
-        </button>
-
-        <button
-          class="blauerButton"
-          id="submitBtn"
-          onclick="window.location.href='zusaetzlich.html';"
-          style="position: absolute; right: 12vw; margin-top: -5vh;"
-        >
-          <span class="material-symbols-rounded">arrow_forward</span>
-        </button>
       </main>
     </div>
   </body>

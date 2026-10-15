@@ -1,3 +1,4 @@
+@scope (.page-competition-popup) {
 #competitionPopup {
 	padding: 20px;
 	background: white;
@@ -16,4 +17,5 @@
 #sek-container{
     display: flex;
     gap: 1em;
+}
 }

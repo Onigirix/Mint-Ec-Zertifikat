@@ -1,3 +1,5 @@
+import { validateGradeInput } from './grade-validation.js';
+
 const noteInputs = document.querySelectorAll(".note");
 const courseAverages = document.querySelectorAll('[id^="avg-"]');
 const gesamtDurchschnittElement = document.getElementById("gesamtStufe"); //namensverwechslung mit gesamtStufe
@@ -29,43 +31,47 @@ function hasFailingGradeInCourse(course) {
 	return false;
 }
 
-async function calculateBestAverage() {
-	const avg1 = Number.parseFloat(document.getElementById("avg-1").textContent);
-	const avg2 = Number.parseFloat(document.getElementById("avg-2").textContent);
-	const avg3 = Number.parseFloat(document.getElementById("avg-3").textContent);
-	const avg4 = Number.parseFloat(document.getElementById("avg-4").textContent);
+function hasAllGradesInCourse(course) {
+	const inputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+	return inputs.length === 4
+		&& [...inputs].every((input) => input.value !== "" && validateGradeInput(input));
+}
 
-	const isValid1 = avg1 >= 9 && !hasFailingGradeInCourse(1);
-	const isValid2 = avg2 >= 9 && !hasFailingGradeInCourse(2);
-	const isValid3 = avg3 >= 9 && !hasFailingGradeInCourse(3);
-	const isValid4 = avg4 >= 9 && !hasFailingGradeInCourse(4);
+function calculateBestAverage() {
+	if ([...noteInputs].some((input) => !validateGradeInput(input))) {
+		gesamtDurchschnittElement.classList.remove(
+			"grade-red",
+			"grade-orange",
+			"grade-yellow",
+			"grade-green",
+		);
+		gesamtDurchschnittElement.classList.add("grade-default");
+		gesamtStufeElement.textContent = "-";
+		return "-";
+	}
 
+	const averages = Array.from({ length: 5 }, (_, index) =>
+		Number.parseFloat(document.getElementById(`avg-${index + 1}`).textContent));
+	const valid = averages.map((average, index) =>
+		hasAllGradesInCourse(index + 1) && average >= 9 && !hasFailingGradeInCourse(index + 1));
+	const lkIndexes = [0, 1, 4];
+	const gkIndexes = [2, 3];
 	const validCombinations = [];
-
-	// LK average (courses 1 and 2) - only if both are valid
-	if (isValid1 && isValid2) {
-		validCombinations.push((avg1 + avg2) / 2);
+	for (let i = 0; i < lkIndexes.length; i++) {
+		for (let j = i + 1; j < lkIndexes.length; j++) {
+			const a = lkIndexes[i], b = lkIndexes[j];
+			if (valid[a] && valid[b]) validCombinations.push((averages[a] + averages[b]) / 2);
+		}
+		const lk = lkIndexes[i];
+		if (valid[lk] && gkIndexes.every(index => valid[index])) {
+			validCombinations.push((averages[lk] + averages[gkIndexes[0]] + averages[gkIndexes[1]]) / 3);
+		}
 	}
-
-	// Combination 1: courses 1, 2, 3
-	if (isValid1 && isValid2 && isValid3) {
-		validCombinations.push((avg1 + avg2 + avg3) / 3);
-	}
-
-	// Combination 2: courses 1, 2, 4
-	if (isValid1 && isValid2 && isValid4) {
-		validCombinations.push((avg1 + avg2 + avg4) / 3);
-	}
-
-	// Combination 3: courses 1, 3, 4
-	if (isValid1 && isValid3 && isValid4) {
-		validCombinations.push((avg1 + avg3 + avg4) / 3);
-	}
-
-	// Combination 4: courses 2, 3, 4
-	if (isValid2 && isValid3 && isValid4) {
-		validCombinations.push((avg2 + avg3 + avg4) / 3);
-	}
+	const hasFailingGrade = Array.from({ length: 5 }, (_, index) => index + 1).some(course => {
+		const subject = document.querySelector(`.subject[data-course="${course}"]`).value.trim();
+		return subject !== "" && (!hasAllGradesInCourse(course) || hasFailingGradeInCourse(course));
+	});
+	if (hasFailingGrade) validCombinations.length = 0;
 
 	// Find the highest average among valid combinations
 	const bestAverage = validCombinations.length > 0
@@ -104,29 +110,31 @@ async function calculateBestAverage() {
 
 for (const input of noteInputs) {
 	input.addEventListener("input", () => {
+		if (!validateGradeInput(input)) {
+			document.getElementById(`avg-${input.getAttribute("data-course")}`).textContent = "-";
+			gesamtDurchschnittElement.textContent = calculateBestAverage();
+			return;
+		}
 		const course = input.getAttribute("data-course");
 		const avg = calculateCourseAverage(course);
 		document.getElementById(`avg-${course}`).textContent = avg;
-		calculateBestAverage().then((result) => {
-			gesamtDurchschnittElement.textContent = result;
-		});
+		gesamtDurchschnittElement.textContent = calculateBestAverage();
 	});
 }
 
 gesamtDurchschnittElement.classList.add("grade-default");
 
 document.addEventListener("fields_filled", () => {
-	for (let course = 1; course <= 4; course++) {
+	for (let course = 1; course <= 5; course++) {
 		const avg = calculateCourseAverage(course);
 		const avgElement = document.getElementById(`avg-${course}`);
 		if (avgElement) {
-			avgElement.textContent = avg;
+			const courseInputs = document.querySelectorAll(`.note[data-course="${course}"]`);
+			avgElement.textContent = [...courseInputs].every(validateGradeInput) ? avg : "-";
 		}
-		calculateBestAverage().then((result) => {
-			if (gesamtDurchschnittElement) {
-				gesamtDurchschnittElement.textContent = result;
-			}
-		});
+		if (gesamtDurchschnittElement) {
+			gesamtDurchschnittElement.textContent = calculateBestAverage();
+		}
 	}
 });
 

@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="schuelerbearbeiten.css" />
     <script type="module" src="main.js" defer></script>
+    <script type="module" src="app-router.js" defer></script>
     <script type="module" src="schuelerbearbeiten.js" defer></script>
     <script type="module" src="createSchuelerPopup.js" defer></script>
   </head>
-  <body>
+  <body class="app-root page-students">
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
@@ -77,7 +78,7 @@
         <div id="table-container"
           style="max-height: 55vh; overflow: auto;"></div>
           <div class="button-container">
-            <button class="add-button" class="grünerButton" id="add-student">
+            <button class="add-button grünerButton" id="add-student">
               Neuen Schüler hinzufügen
             </button>
 
@@ -88,7 +89,7 @@
               Schüler bearbeiten
             </button>
             <button id="deleteYearButton" class="grünerButton" disabled>
-              Jahrgang des ausgewählten Schüler löschen
+              Jahrgang löschen
             </button>
             <button class="blauerButton"
               onclick="window.location.href='fachliche-kompetenz.html';"

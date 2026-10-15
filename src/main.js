@@ -6,6 +6,21 @@ const listen = window.__TAURI__.event.listen;
 let db = null;
 let dbReady = getDb().then(instance => { db = instance; });
 
+async function applyThemePreference() {
+	await dbReady;
+	const rows = await db.select("SELECT theme_preference FROM settings WHERE id = 1");
+	applyTheme(rows[0]?.theme_preference ?? "system");
+}
+
+function applyTheme(preference) {
+	document.body.dataset.theme = preference;
+	document.documentElement.style.colorScheme = preference === "system" ? "light dark" : preference;
+}
+
+window.addEventListener("app-theme-changed", event => applyTheme(event.detail));
+
+applyThemePreference().catch(error => console.error("Could not load theme preference:", error));
+
 listen("student-added", (event) => {
 	init(event.payload.new_student_id, event.payload.new_student_name);
 });
@@ -16,33 +31,27 @@ window.studentState = {
 };
 const statePromise = invoke("get_state");
 
-const openNavButton = document.querySelector("#openNav");
-const closeNavButton = document.querySelector("#closeNav");
+let openNavButton = document.querySelector("#openNav");
+let closeNavButton = document.querySelector("#closeNav");
 const mainContent = document.querySelector("#main");
-const searchBox = document.getElementById("student-search");
-const list = document.getElementById("suggestions");
+let searchBox = document.getElementById("student-search");
+let list = document.getElementById("suggestions");
 
 async function init(new_student_id, new_student_name) {
 	select_student(new_student_id, new_student_name);
+	openNavButton = document.querySelector("#openNav");
+	closeNavButton = document.querySelector("#closeNav");
+	searchBox = document.getElementById("student-search");
+	list = document.getElementById("suggestions");
+	if (searchBox != null) searchBox.value = new_student_name;
+	mainContent.onclick = () => { searchBoxBlurred(); closeNav(); };
 	if (searchBox != null) {
-		searchBox.value = new_student_name;
-	}
-	openNavButton.addEventListener("click", openNav);
-	closeNavButton.addEventListener("click", closeNav);
-	mainContent.addEventListener("click", () => {
-		searchBoxBlurred();
-		closeNav();
-	});
-	if (searchBox != null) {
-		searchBox.addEventListener("click", async (e) => {
+		searchBox.onclick = (e) => {
 			e.stopPropagation();
 			e.preventDefault();
-
-			if (searchBox.value.trim() === window.studentState.studentName) {
-				searchBox.value = "";
-			}
-		});
-		searchBox.addEventListener("keydown", async (e) => searchBoxInputted(e));
+			if (searchBox.value.trim() === window.studentState.studentName) searchBox.value = "";
+		};
+		searchBox.onkeydown = (e) => searchBoxInputted(e);
 	}
 }
 
@@ -62,6 +71,16 @@ function openNav() {
 function closeNav() {
 	document.getElementById("sidenav").style.width = "0";
 }
+
+document.addEventListener("click", (event) => {
+	if (event.target.closest("#openNav")) {
+		event.stopPropagation();
+		openNav();
+	} else if (event.target.closest("#closeNav")) {
+		event.stopPropagation();
+		closeNav();
+	}
+});
 
 async function searchBoxInputted(e) {
 	if (/^[a-zA-Z]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete") {
@@ -153,10 +172,12 @@ function searchBoxBlurred() {
 }
 
 async function select_student(newStudentId, newStudentName) {
-	await invoke("set_state", {
-		studentId: newStudentId,
-		studentName: newStudentName,
-	});
+	if (window.studentState.studentId !== newStudentId || window.studentState.studentName !== newStudentName) {
+		await invoke("set_state", {
+			studentId: newStudentId,
+			studentName: newStudentName,
+		});
+	}
 	window.studentState.studentId = newStudentId;
 	window.studentState.studentName = newStudentName;
 	const event = new CustomEvent("studentChanged", {
@@ -219,5 +240,11 @@ document.addEventListener(
 
 statePromise.then(([studentIdOnLoad, studentNameOnLoad]) => {
 	init(studentIdOnLoad, studentNameOnLoad);
-});export { select_student };
+});
+
+window.addEventListener("app-route-changed", () => {
+	init(window.studentState.studentId, window.studentState.studentName);
+});
+
+export { select_student };
 

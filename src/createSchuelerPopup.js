@@ -1,21 +1,20 @@
 const { WebviewWindow } = window.__TAURI__.webviewWindow;
 const { Webview } = window.__TAURI__.webview;
 
-window.addEventListener("DOMContentLoaded", () => {
+function bindStudentPopupButtons() {
 	const createSchülerButton = document.querySelector("#create-student");
-	const startButton = document.querySelector("#startButton");
 	const addStudentButton = document.querySelector("#add-student");
 
 	if (createSchülerButton) {
-		createSchülerButton.addEventListener("click", openStudentPopup);
+		createSchülerButton.onclick = openStudentPopup;
 	}
 	if (addStudentButton) {
-		addStudentButton.addEventListener("click", openStudentPopup);
+		addStudentButton.onclick = openStudentPopup;
 	}
-	if (startButton) {
-		startButton.addEventListener("click", openStudentPopup);
-	}
-});
+}
+
+bindStudentPopupButtons();
+window.addEventListener("app-route-changed", bindStudentPopupButtons);
 
 async function openStudentPopup() {
 	//This can create multiple webviews if you click the button multiple times while the app is frozen, but that shouldn't be a problem with only async functions and commands

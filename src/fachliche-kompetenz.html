@@ -1,25 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="assets/MaterialSymbolsRounded.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="style_fk.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MINT-EC-Zertifikat</title>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
         });
       }
     </script>
     <script type="module" src="main.js" defer></script>
+    <script type="module" src="app-router.js" defer></script>
     <script type="module" src="createSchuelerPopup.js" defer></script>
     <script type="module" src="fachliche-kompetenz.js" defer></script>
     <script type="module" src="fachliche-kompetenz-db.js" defer></script>
   </head>
 
-  <body>
+  <body class="app-root page-competence">
     <!-- Header with Button for Navigation-->
     <header id="header">
       <button id="openNav" class="openNav">
@@ -38,7 +46,17 @@
           Schüler erstellen
         </button>
       </div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
+      <a
+        style="
+          text-decoration: none;
+          color: #ffffffaa;
+          font-weight: bolder;
+          font-size: x-large;
+        "
+        class="rightHeading"
+        href="contributors.html"
+        >Mint-EC Zertifikat</a
+      >
 
       <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
     </header>
@@ -101,6 +119,9 @@
                     class="note"
                     data-course="1"
                     data-semester="1"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -109,6 +130,9 @@
                     class="note"
                     data-course="1"
                     data-semester="2"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -117,6 +141,9 @@
                     class="note"
                     data-course="1"
                     data-semester="3"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -125,6 +152,9 @@
                     class="note"
                     data-course="1"
                     data-semester="4"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td><span class="avg" id="avg-1">0.00</span></td>
@@ -146,6 +176,9 @@
                     class="note"
                     data-course="2"
                     data-semester="1"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -154,6 +187,9 @@
                     class="note"
                     data-course="2"
                     data-semester="2"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -162,6 +198,9 @@
                     class="note"
                     data-course="2"
                     data-semester="3"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -170,9 +209,21 @@
                     class="note"
                     data-course="2"
                     data-semester="4"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td><span class="avg" id="avg-2">0.00</span></td>
+              </tr>
+              <tr>
+                <td>Erhöhtes Niveau 3</td>
+                <td><input type="text" placeholder="Fachname" class="subject" data-course="5" /></td>
+                <td><input type="number" class="note" data-course="5" data-semester="1" min="0" max="15" step="1" /></td>
+                <td><input type="number" class="note" data-course="5" data-semester="2" min="0" max="15" step="1" /></td>
+                <td><input type="number" class="note" data-course="5" data-semester="3" min="0" max="15" step="1" /></td>
+                <td><input type="number" class="note" data-course="5" data-semester="4" min="0" max="15" step="1" /></td>
+                <td><span class="avg" id="avg-5">0.00</span></td>
               </tr>
               <!-- Grundlegendes Niveau -->
               <tr>
@@ -192,6 +243,9 @@
                     class="note"
                     data-course="3"
                     data-semester="1"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -200,6 +254,9 @@
                     class="note"
                     data-course="3"
                     data-semester="2"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -208,6 +265,9 @@
                     class="note"
                     data-course="3"
                     data-semester="3"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -216,6 +276,9 @@
                     class="note"
                     data-course="3"
                     data-semester="4"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td><span class="avg" id="avg-3">0.00</span></td>
@@ -237,6 +300,9 @@
                     class="note"
                     data-course="4"
                     data-semester="1"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -245,6 +311,9 @@
                     class="note"
                     data-course="4"
                     data-semester="2"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -253,6 +322,9 @@
                     class="note"
                     data-course="4"
                     data-semester="3"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td>
@@ -261,6 +333,9 @@
                     class="note"
                     data-course="4"
                     data-semester="4"
+                    min="0"
+                    max="15"
+                    step="1"
                   />
                 </td>
                 <td><span class="avg" id="avg-4">0.00</span></td>
@@ -268,9 +343,7 @@
             </tbody>
           </table>
         </form>
-        <div
-          class="gesamt-div"
-        >
+        <div class="gesamt-div">
           <div>
             <label>Gesamt Durchschnitt:</label>
             <span id="gesamtDurchschnitt">- </span>
@@ -283,25 +356,9 @@
 
           <div class="afb-zuordnung" hidden>
             <label>AFB III zuordnen:</label>
-            <button>Bestätigen
-            </button>
+            <button>Bestätigen</button>
           </div>
-
         </div>
-        <button
-          class="blauerButton"
-          onclick="window.location.href='schuelerbearbeiten.html';"
-          style="position: absolute; left: 12vw"
-        >
-          <span class="material-symbols-rounded">arrow_back</span>
-        </button>
-        <button
-          class="blauerButton"
-          onclick="window.location.href='fachwissenschaftliches-arbeiten.html';"
-          style="position: absolute; right: 12vw"
-        >
-          <span class="material-symbols-rounded">arrow_forward</span>
-        </button>
       </main>
     </div>
   </body>

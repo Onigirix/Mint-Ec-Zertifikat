@@ -1,3 +1,4 @@
+@scope (.page-settings) {
 settingsForm.folder-input {
   display: flex;
   justify-content: space-between;
@@ -144,4 +145,6 @@ settingsForm.folder-input {
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-top: none;
+}
+
 }
