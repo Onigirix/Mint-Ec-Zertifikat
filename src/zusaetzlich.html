@@ -103,6 +103,10 @@
               <!-- Tabelle 2: Stufen -->
               <div class="table-container scrollable-table">
                 <h2>Erreichte Stufen</h2>
+                <label for="competition-year">Jahr (optional)</label>
+                <input id="competition-year" type="number" min="1900" max="2100" />
+                <label for="competition-achievement">Erreichtes Ergebnis (optional)</label>
+                <textarea id="competition-achievement" rows="2"></textarea>
                 <table id="stufen-table" class="disabled-no-student" disabled>
                   <thead>
                     <tr>
@@ -114,6 +118,7 @@
                     <tr> <td>1</td><td></td></tr>
                     <tr> <td>2</td><td></td></tr>
                     <tr> <td>3</td><td></td></tr>
+                    <tr> <td>0</td><td>Keine Punkte</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -140,7 +145,7 @@
                     <thead>
                       <tr>
                         <th>Aktivität</th>
-                        <th>Stufe</th>
+                        <th>Ergebnis</th>
                         <th>Aktion</th>
                       </tr>
                     </thead>

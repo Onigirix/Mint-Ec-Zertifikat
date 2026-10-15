@@ -1,6 +1,7 @@
 use crate::{db, pdf_lib::Form, AppState};
 use chrono::Datelike;
 use rfd::AsyncFileDialog;
+use std::collections::BTreeMap;
 use tauri::{AppHandle, Manager, State};
 use tokio::sync::Mutex;
 
@@ -31,7 +32,10 @@ enum FormField {
 }
 
 #[tauri::command]
-pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> Result<(), String> {
+pub async fn generate_pdf(
+    app: AppHandle,
+    state: State<'_, Mutex<AppState>>,
+) -> Result<bool, String> {
     let (student_name, student_id) = {
         let s = state.lock().await;
         (s.student_name.clone(), s.student_id)
@@ -188,15 +192,21 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
         ];
 
         for result in results {
-            if let Err(_e) = result {
-                // Error while filling the PDF
-            }
+            result.map_err(|error| format!("Failed to fill PDF fields: {:?}", error))?;
         }
-        let _ = form.set_need_appearances(true);
+        form.set_need_appearances(true)
+            .map_err(|error| format!("Failed to prepare PDF form fields: {:?}", error))?;
         Ok(form)
     };
 
     let (path, form_result) = tokio::join!(spawn_file_dialog, prepare_pdf);
+
+    if path.is_none() {
+        return match form_result {
+            Ok(_) => Ok(false),
+            Err(error) => Err(error),
+        };
+    }
 
     if path.is_some() {
         let handle = path.unwrap();
@@ -243,90 +253,94 @@ pub async fn generate_pdf(app: AppHandle, state: State<'_, Mutex<AppState>>) -> 
                 //     log::info!("generate_pdf: opened PDF in browser via webbrowser");
                 // }
             }
-            Err(e) => {
-                return Err(e);
-            }
+            Err(e) => return Err(e),
         }
+        return Ok(true);
     }
 
-    Ok(())
-    //TODO: Add a success message (toast notification)
+    Ok(false)
 }
 
 async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (String, i32) {
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
-            let has_any_failing_grade = grades
-                .iter()
-                .enumerate()
-                .any(|(i, &grade)| subjects[i / 4] != "..." && grade < 5);
+            let has_any_failing_grade = (0..5).any(|course| {
+                !subjects[course].trim().is_empty()
+                    && subjects[course] != "..."
+                    && grades[course * 4..course * 4 + 4]
+                        .iter()
+                        .any(|grade| *grade < 5)
+            });
 
-            let mut level = 0;
-            let mut best_average = 0.0;
-            let mut best_combination = 0;
-            if !has_any_failing_grade {
-                let mut grade_averages: [f32; 4] = [0.0; 4];
-                for i in 0..=3 {
-                    for j in 0..4 {
-                        grade_averages[i] = grade_averages[i] + (grades[i * 4 + j] as f32);
-                    }
-                    grade_averages[i] = grade_averages[i] / 4.0;
-                }
-                let comb0 = (grade_averages[0] + grade_averages[1]) / 2.0;
-                let comb1 = (grade_averages[0] + grade_averages[1] + grade_averages[2]) / 3.0;
-                let comb2 = (grade_averages[0] + grade_averages[1] + grade_averages[3]) / 3.0;
-                let comb3 = (grade_averages[0] + grade_averages[2] + grade_averages[3]) / 3.0;
-                let comb4 = (grade_averages[1] + grade_averages[2] + grade_averages[3]) / 3.0;
-
-                best_average = comb0;
-
-                if comb1 > best_average {
-                    best_average = comb1;
-                    best_combination = 1;
-                }
-
-                if comb2 > best_average {
-                    best_average = comb2;
-                    best_combination = 2;
-                }
-                if comb3 > best_average {
-                    best_average = comb3;
-                    best_combination = 3;
-                }
-                if comb4 > best_average {
-                    best_average = comb4;
-                    best_combination = 4;
-                }
-
-                level = match best_average {
-                    x if x < 9.0 => 0,
-                    x if x < 11.0 => 1,
-                    x if x < 13.0 => 2,
-                    _ => 3,
-                };
+            let mut grade_averages = [0.0_f32; 5];
+            let mut course_valid = [false; 5];
+            for i in 0..5 {
+                let course_grades = &grades[i * 4..i * 4 + 4];
+                grade_averages[i] = course_grades.iter().sum::<i32>() as f32 / 4.0;
+                course_valid[i] = !subjects[i].trim().is_empty()
+                    && subjects[i] != "..."
+                    && course_grades.iter().all(|grade| *grade >= 5)
+                    && grade_averages[i] >= 9.0;
             }
+            let lk_indexes = [0usize, 1, 4];
+            let gk_indexes = [2usize, 3];
+            let mut candidates: Vec<(f32, Vec<usize>)> = Vec::new();
+            for i in 0..lk_indexes.len() {
+                for j in (i + 1)..lk_indexes.len() {
+                    let pair = vec![lk_indexes[i], lk_indexes[j]];
+                    if pair.iter().all(|index| course_valid[*index]) {
+                        let average =
+                            pair.iter().map(|index| grade_averages[*index]).sum::<f32>() / 2.0;
+                        candidates.push((average, pair));
+                    }
+                }
+                let lk = lk_indexes[i];
+                if course_valid[lk] && gk_indexes.iter().all(|index| course_valid[*index]) {
+                    candidates.push((
+                        (grade_averages[lk]
+                            + grade_averages[gk_indexes[0]]
+                            + grade_averages[gk_indexes[1]])
+                            / 3.0,
+                        vec![lk, gk_indexes[0], gk_indexes[1]],
+                    ));
+                }
+            }
+            if has_any_failing_grade {
+                candidates.clear();
+            }
+            let (best_average, best_combination) = candidates
+                .into_iter()
+                .max_by(|a, b| a.0.total_cmp(&b.0))
+                .unwrap_or((0.0, Vec::new()));
+            let level = match best_average {
+                x if x < 9.0 => 0,
+                x if x < 11.0 => 1,
+                x if x < 13.0 => 2,
+                _ => 3,
+            };
 
             let best_average_str = format!("{:04.1}", best_average);
 
-            let result = match best_combination {
-                0 => format!(
-                        "{} hat zwei F\u{00e4}cher auf erh\u{00f6}htem Niveau absolviert:\n{}\n{}\nDie Durchschnittsnote beträgt {} Punkte.",
-                        student_name, subjects[0], subjects[1], best_average_str
-                    ),
-                1 => format!(
-                    "{} hat die F\u{00e4}cher {} und {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[1], subjects[2], best_average_str),
-                2 => format!(
-                    "{} hat die F\u{00e4}cher {} und {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[1], subjects[3], best_average_str),
-                3 => format!(
-                    "{} hat {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} und {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[0], subjects[2], subjects[3], best_average_str),
-                4 => format!(
-                    "{} hat {} auf erh\u{00f6}htem Niveau absolviert. Zus\u{00e4}tzlich wurde noch {} und {} belegt. \nDie Durchschnittsnote beträgt {} Punkte.",
-                    student_name, subjects[1], subjects[2], subjects[3], best_average_str),
-                _ => String::from("Errorcode: 69"),
+            let selected_subjects = best_combination
+                .iter()
+                .map(|index| subjects[*index].as_str())
+                .collect::<Vec<_>>()
+                .join(" und ");
+            let result = if best_combination.len() == 2 {
+                format!("{} hat die Fächer {} auf erhöhtem Niveau absolviert.\nDie Durchschnittsnote beträgt {} Punkte.", student_name, selected_subjects, best_average_str)
+            } else if best_combination.len() == 3 {
+                let lk = best_combination
+                    .iter()
+                    .find(|index| [0, 1, 4].contains(*index))
+                    .map(|index| subjects[*index].as_str())
+                    .unwrap_or("");
+                format!("{} hat {} auf erhöhtem Niveau und zwei weitere Fächer belegt: {} und {}.\nDie Durchschnittsnote beträgt {} Punkte.", student_name, lk, subjects[2], subjects[3], best_average_str)
+            } else {
+                format!(
+                    "{} hat keine gültige Fachkombination für die Bewertung.",
+                    student_name
+                )
             };
 
             (result, level)
@@ -374,40 +388,27 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, _student_name: &str)
         db::get_sek2_competitions(student_id)
     );
 
-    let mut sek_1_points = 0;
-    let mut sek_2_points = 0;
-    let mut niveau_in_sek_2 = 0;
+    let sek_1_points: i32 = sek_1_competitions.iter().map(|entry| entry.2 * 5).sum();
+    let sek_2_points: i32 = sek_2_competitions.iter().map(|entry| entry.2 * 5).sum();
+    let niveau_in_sek_2: i32 = sek_2_competitions
+        .iter()
+        .map(|entry| match entry.2 {
+            2 => 1,
+            3 => 2,
+            _ => 0,
+        })
+        .sum();
     let mut sek_1_text = String::from("Sekundarstufe I: \n");
-    for competition in sek_1_competitions {
-        sek_1_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
-        match competition.2 {
-            1 => sek_1_points += 5,
-            2 => sek_1_points += 10,
-            3 => sek_1_points += 15,
-            _ => sek_1_points += 0,
-        }
+    for line in format_competitions(sek_1_competitions) {
+        sek_1_text.push_str(&line);
+        sek_1_text.push('\n');
     }
     sek_1_text.push_str("\n");
     let mut sek_2_text = String::from("Sekundarstufe II: \n");
-    for competition in sek_2_competitions {
-        sek_2_text.push_str(&format!("     {}: {}\n", competition.0, competition.1));
-        match competition.2 {
-            1 => {
-                sek_2_points += 5;
-                niveau_in_sek_2 += 0;
-            }
-            2 => {
-                sek_2_points += 10;
-                niveau_in_sek_2 += 1;
-            }
-            3 => {
-                sek_2_points += 15;
-                niveau_in_sek_2 += 2;
-            }
-            _ => sek_2_points += 0,
-        }
+    for line in format_competitions(sek_2_competitions) {
+        sek_2_text.push_str(&line);
+        sek_2_text.push('\n');
     }
-
     if ((sek_1_points + sek_2_points) >= 80) && (niveau_in_sek_2 >= 2) && sek_2_points >= 40 {
         (sek_1_text + &sek_2_text, 3)
     } else if (sek_1_points + sek_2_points) >= 60 && (niveau_in_sek_2 >= 1) && sek_2_points >= 30 {
@@ -420,6 +421,38 @@ async fn zusätzliche_mint_aktivität_text(student_id: i32, _student_name: &str)
             0,
         )
     }
+}
+
+fn format_competitions(
+    competitions: Vec<(String, String, i32, Option<i32>, String)>,
+) -> Vec<String> {
+    let mut grouped: BTreeMap<String, Vec<(Option<i32>, String)>> = BTreeMap::new();
+    for (name, description, level, year, achievement_info) in competitions {
+        let achieved = if achievement_info.trim().is_empty() {
+            if level == 0 {
+                "Keine Punkte".to_string()
+            } else {
+                format!("Stufe {}: {}", level, description)
+            }
+        } else {
+            achievement_info.trim().to_string()
+        };
+        grouped.entry(name).or_default().push((year, achieved));
+    }
+    grouped
+        .into_iter()
+        .map(|(name, mut entries)| {
+            entries.sort_by_key(|entry| entry.0.unwrap_or(i32::MAX));
+            let mut lines = vec![name];
+            for (year, achieved) in entries {
+                let detail = year
+                    .map(|year| format!("{}: {}", year, achieved))
+                    .unwrap_or(achieved);
+                lines.push(format!("    {}", detail));
+            }
+            lines.join("\n")
+        })
+        .collect()
 }
 
 //FONT is Calibri Bold
