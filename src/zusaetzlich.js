@@ -156,6 +156,9 @@ function updateStufenTable(additional_mint_activity_id) {
   stufeCell3.textContent = 3;
   const beschreibungCell3 = row3.insertCell(1);
   beschreibungCell3.textContent = selectedCompetition.level_three;
+  const row0 = stufenTable.insertRow();
+  row0.insertCell(0).textContent = "0";
+  row0.insertCell(1).textContent = "Keine Punkte";
 
   row1.classList.add("clickable");
   row1.addEventListener("click", () => {
@@ -169,37 +172,28 @@ function updateStufenTable(additional_mint_activity_id) {
   row3.addEventListener("click", () => {
     addToErreichteWettbewerbe(3, selectedCompetition.level_three);
   });
+  row0.classList.add("clickable");
+  row0.addEventListener("click", () => addToErreichteWettbewerbe(0, "Keine Punkte"));
 }
 
 async function addToErreichteWettbewerbe(stufe, stufe_beschreibung) {
     await dbReady;
+    if (!window.studentState?.studentId) return;
+    const yearInput = document.getElementById("competition-year");
+    const yearValue = yearInput.value;
+    const year = yearValue === "" ? null : Number(yearValue);
+    if (year !== null && (!Number.isInteger(year) || year < 1900 || year > 2100)) {
+      yearInput.reportValidity();
+      return;
+    }
+    const achievementInfo = document.getElementById("competition-achievement").value.trim();
     const db_result = await db.execute(
-    `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level) VALUES ($1, $2, $3)`,
-    [window.studentState.studentId, selectedCompetitionId, stufe]
+    `INSERT INTO student_additional_mint_activities (student_id, additional_mint_activity_id, level, year, achievement_info) VALUES ($1, $2, $3, $4, $5)`,
+    [window.studentState.studentId, selectedCompetitionId, stufe, year, achievementInfo || null]
   );
-
-  const erreichteWettbewerbeTable = document
-    .getElementById("erreichte-wettbewerbe-table")
-    .getElementsByTagName("tbody")[0];
-  const newRow = erreichteWettbewerbeTable.insertRow();
-  newRow.insertCell(0).textContent = selectedCompetitionName;
-  newRow.insertCell(1).textContent = `${stufe}: ${stufe_beschreibung}`;
-
-  // Löschen-Button hinzufügen
-  const deleteCell = newRow.insertCell(2);
-
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Löschen";
-  deleteButton.classList.add("delete-btn"); // Anwendung des neuen Stils
-  deleteButton.addEventListener("click", async (e) => {
-    const temp = await db.execute(
-      "DELETE FROM student_additional_mint_activities WHERE student_additional_mint_activities_id = ?",
-      [db_result.lastInsertId]
-    );
-    newRow.remove();
-    e.stopPropagation();
-  });
-  deleteCell.appendChild(deleteButton);
+  document.getElementById("competition-year").value = "";
+  document.getElementById("competition-achievement").value = "";
+  await updateErreichteWettbewerbeTable();
 }
 
 async function updateErreichteWettbewerbeTable() {
@@ -226,7 +220,7 @@ async function updateErreichteWettbewerbeTable() {
   await dbReady;
 
   const erreichteWettbewerbe = await db.select(
-    "SELECT student_additional_mint_activities.student_additional_mint_activities_id AS combination_id, additional_mint_activities.name AS competition_name, additional_mint_activities.sek AS sek, student_additional_mint_activities.level AS level, CASE student_additional_mint_activities.level WHEN 1 THEN additional_mint_activities.level_one WHEN 2 THEN additional_mint_activities.level_two WHEN 3 THEN additional_mint_activities.level_three END AS level_description FROM additional_mint_activities JOIN student_additional_mint_activities ON additional_mint_activities.additional_mint_activity_id = student_additional_mint_activities.additional_mint_activity_id WHERE student_additional_mint_activities.student_id = $1;",
+    "SELECT s.student_additional_mint_activities_id AS combination_id, a.name AS competition_name, a.sek AS sek, s.level AS level, CASE s.level WHEN 1 THEN a.level_one WHEN 2 THEN a.level_two WHEN 3 THEN a.level_three ELSE 'Keine Punkte' END AS level_description, s.year, COALESCE(s.achievement_info, '') AS achievement_info FROM additional_mint_activities a JOIN student_additional_mint_activities s ON a.additional_mint_activity_id = s.additional_mint_activity_id WHERE s.student_id = $1;",
     [window.studentState.studentId]
   );
   const erreichteWettbewerbeWithCorrectSek = erreichteWettbewerbe.filter(
@@ -240,7 +234,7 @@ async function updateErreichteWettbewerbeTable() {
     row.insertCell(0).textContent = eintrag.competition_name;
     row.insertCell(
       1
-    ).textContent = `${eintrag.level}: ${eintrag.level_description}`;
+    ).textContent = `${eintrag.year ?? "Kein Jahr"} - ${eintrag.achievement_info || eintrag.level_description}: Stufe ${eintrag.level}`;
 
     const deleteCell = row.insertCell(2);
     const deleteButton = document.createElement("button");
