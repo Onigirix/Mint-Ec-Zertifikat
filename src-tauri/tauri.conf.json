@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "identifier": "de.mint-ec.app",
   "build": {
-    "beforeDevCommand": "node ../scripts/build-frontend.mjs",
-    "beforeBuildCommand": "node ../scripts/build-frontend.mjs",
+    "beforeDevCommand": "npm --prefix ../src run dev -- --host 127.0.0.1",
+    "beforeBuildCommand": "npm --prefix ../src run build",
+    "devUrl": "http://127.0.0.1:1420",
     "frontendDist": "../dist"
   },
   "app": {
