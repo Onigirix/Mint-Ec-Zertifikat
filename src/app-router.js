@@ -4,7 +4,7 @@ const routes = {
   competence: { document: "fachliche-kompetenz.html", scripts: ["createSchuelerPopup.js", "fachliche-kompetenz.js", "fachliche-kompetenz-db.js"], styles: ["style_fk.css"] },
   research: { document: "fachwissenschaftliches-arbeiten.html", scripts: ["fachwissenschaftliches-arbeiten.js", "createSchuelerPopup.js"], styles: ["style_fwa.css"] },
   activities: { document: "zusaetzlich.html", scripts: ["createSchuelerPopup.js", "zusaetzlich.js"], styles: ["style_zs.css"] },
-  export: { document: "export.html", scripts: ["export.js"], styles: ["style_ex.css"] },
+  export: { document: "export.html", scripts: ["createSchuelerPopup.js", "export.js"], styles: ["style_ex.css"] },
   settings: { document: "settings.html", scripts: ["settings.js"], styles: ["style_set.css"] },
   contributors: { document: "contributors.html", scripts: [], styles: [] },
 };
