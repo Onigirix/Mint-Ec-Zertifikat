@@ -12,3 +12,4 @@ html,body{overscroll-behavior:none;overflow-x:hidden}.topbar{position:relative}.
 html,body{scrollbar-width:none}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
 .subtitle,.panel-heading p{display:none}
+.autosave .status-dot{background:#39bd8f;box-shadow:0 0 0 3px #39bd8f20}
