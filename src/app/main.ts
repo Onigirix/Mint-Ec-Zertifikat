@@ -14,12 +14,12 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/', redirect: '/students' },
-    { path: '/students', component: StudentsPage, meta: { title: 'Schüler*innen', subtitle: 'Verwalte Schüler*innen und Abijahrgänge.' } },
-    { path: '/competence', component: CompetencePage, meta: { title: 'Fachliche Kompetenz', subtitle: 'Erfasse Kurse und Leistungen für das Zertifikat.' } },
-    { path: '/research', component: ResearchPage, meta: { title: 'Fachwissenschaftliches Arbeiten', subtitle: 'Dokumentiere Facharbeiten und Wettbewerbsbeiträge.' } },
-    { path: '/activities', component: ActivitiesPage, meta: { title: 'MINT-Aktivitäten', subtitle: 'Verwalte Aktivitäten und erreichte Niveaus.' } },
-    { path: '/export', component: ExportPage, meta: { title: 'PDF erstellen', subtitle: 'Prüfe den ausgewählten Schüler und erstelle das Zertifikat.' } },
-    { path: '/settings', component: SettingsPage, meta: { title: 'Einstellungen', subtitle: 'Schulen, Unterschriften, Speicherort und Darstellung.' } },
+    { path: '/students', component: StudentsPage, meta: { title: 'Schüler*innen' } },
+    { path: '/competence', component: CompetencePage, meta: { title: 'Fachliche Kompetenz' } },
+    { path: '/research', component: ResearchPage, meta: { title: 'Fachwissenschaftliches Arbeiten' } },
+    { path: '/activities', component: ActivitiesPage, meta: { title: 'MINT-Aktivitäten' } },
+    { path: '/export', component: ExportPage, meta: { title: 'PDF erstellen' } },
+    { path: '/settings', component: SettingsPage, meta: { title: 'Einstellungen' } },
   ],
 });
 

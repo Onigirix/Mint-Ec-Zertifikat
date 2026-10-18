@@ -1,28 +1,335 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { Search, ArrowUpDown, Pencil, Trash2, UserPlus, Users, X } from 'lucide-vue-next';
-import { rows, run } from '../db';
-import { notify, refreshStudents, selectStudent, selectedStudent, students } from '../store';
-import type { School, Student } from '../types';
-import { ask } from '@tauri-apps/plugin-dialog';
-const search = ref(''); const year = ref(''); const sort = ref('name'); const asc = ref(true); const schools = ref<School[]>([]);
+import { computed, onMounted, ref } from "vue";
+import {
+  Search,
+  ArrowUpDown,
+  Pencil,
+  Trash2,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-vue-next";
+import { rows, run } from "../db";
+import {
+  notify,
+  refreshStudents,
+  selectStudent,
+  selectedStudent,
+  students,
+} from "../store";
+import type { School, Student } from "../types";
+import { ask } from "@tauri-apps/plugin-dialog";
+const search = ref("");
+const year = ref("");
+const sort = ref("name");
+const asc = ref(true);
+const schools = ref<School[]>([]);
 const edit = ref<Student | null>(null);
-const openCreate = () => window.dispatchEvent(new Event('open-create-student'));
-const form = ref({ name: '', birthday: '', graduation_year: 0, school_id: 1 });
-const filtered = computed(() => students.value.filter(s => (!search.value || s.name.toLocaleLowerCase('de').includes(search.value.toLocaleLowerCase('de'))) && (!year.value || String(s.graduation_year ?? '').includes(year.value))).sort((a,b) => { const x=(a as any)[sort.value] ?? ''; const y=(b as any)[sort.value] ?? ''; return (asc.value?1:-1)*String(x).localeCompare(String(y),'de',{numeric:true}); }));
-onMounted(async()=> { schools.value=await rows<School>('SELECT * FROM schools ORDER BY school_id'); });
-function beginEdit(s: Student) { edit.value=s; form.value={name:s.name,birthday:s.birthday ?? '',graduation_year:s.graduation_year ?? new Date().getFullYear()+2,school_id:s.school_id ?? schools.value[0]?.school_id ?? 1}; }
-async function save() { if (!edit.value) return; await run('UPDATE students SET name=$1,birthday=$2,graduation_year=$3,school_id=$4 WHERE student_id=$5',[form.value.name.trim(),form.value.birthday||null,form.value.graduation_year,form.value.school_id,edit.value.student_id]); await refreshStudents(); if(selectedStudent.value?.student_id===edit.value.student_id) await selectStudent(students.value.find(s=>s.student_id===edit.value!.student_id) ?? null); edit.value=null; notify('Schülerdaten gespeichert.'); }
-async function remove(s: Student) { if (!await ask(`Soll ${s.name} wirklich gelöscht werden? Zugehörige MINT-Aktivitäten werden ebenfalls entfernt.`,{title:'Schüler*in löschen',kind:'warning'})) return; await run('DELETE FROM student_additional_mint_activities WHERE student_id=$1',[s.student_id]); await run('DELETE FROM students WHERE student_id=$1',[s.student_id]); if(selectedStudent.value?.student_id===s.student_id) await selectStudent(null); await refreshStudents(); notify('Schüler*in gelöscht.'); }
-async function removeYear() { const s=selectedStudent.value; if(!s?.graduation_year) return; if(!await ask(`Alle Schüler*innen des Abiturjahrgangs ${s.graduation_year} löschen? Diese Aktion kann nicht rückgängig gemacht werden.`,{title:'Jahrgang löschen',kind:'warning'})) return; const yearIds=await rows<{student_id:number}>('SELECT student_id FROM students WHERE graduation_year=$1',[s.graduation_year]); for(const item of yearIds){await run('DELETE FROM student_additional_mint_activities WHERE student_id=$1',[item.student_id]);await run('DELETE FROM students WHERE student_id=$1',[item.student_id]);} if(yearIds.some(item=>item.student_id===selectedStudent.value?.student_id))await selectStudent(null); await refreshStudents(); notify(`${yearIds.length} Schüler*innen gelöscht.`); }
+const openCreate = () => window.dispatchEvent(new Event("open-create-student"));
+const form = ref({ name: "", birthday: "", graduation_year: 0, school_id: 1 });
+const filtered = computed(() =>
+  students.value
+    .filter(
+      (s) =>
+        (!search.value ||
+          s.name
+            .toLocaleLowerCase("de")
+            .includes(search.value.toLocaleLowerCase("de"))) &&
+        (!year.value || String(s.graduation_year ?? "").includes(year.value)),
+    )
+    .sort((a, b) => {
+      const x = (a as any)[sort.value] ?? "";
+      const y = (b as any)[sort.value] ?? "";
+      return (
+        (asc.value ? 1 : -1) *
+        String(x).localeCompare(String(y), "de", { numeric: true })
+      );
+    }),
+);
+onMounted(async () => {
+  schools.value = await rows<School>(
+    "SELECT * FROM schools ORDER BY school_id",
+  );
+});
+function beginEdit(s: Student) {
+  edit.value = s;
+  form.value = {
+    name: s.name,
+    birthday: s.birthday ?? "",
+    graduation_year: s.graduation_year ?? new Date().getFullYear() + 2,
+    school_id: s.school_id ?? schools.value[0]?.school_id ?? 1,
+  };
+}
+async function save() {
+  if (!edit.value) return;
+  await run(
+    "UPDATE students SET name=$1,birthday=$2,graduation_year=$3,school_id=$4 WHERE student_id=$5",
+    [
+      form.value.name.trim(),
+      form.value.birthday || null,
+      form.value.graduation_year,
+      form.value.school_id,
+      edit.value.student_id,
+    ],
+  );
+  await refreshStudents();
+  if (selectedStudent.value?.student_id === edit.value.student_id)
+    await selectStudent(
+      students.value.find((s) => s.student_id === edit.value!.student_id) ??
+        null,
+    );
+  edit.value = null;
+  notify("Schülerdaten gespeichert.");
+}
+async function remove(s: Student) {
+  if (
+    !(await ask(
+      `Soll ${s.name} wirklich gelöscht werden? Zugehörige MINT-Aktivitäten werden ebenfalls entfernt.`,
+      { title: "Schüler*in löschen", kind: "warning" },
+    ))
+  )
+    return;
+  await run(
+    "DELETE FROM student_additional_mint_activities WHERE student_id=$1",
+    [s.student_id],
+  );
+  await run("DELETE FROM students WHERE student_id=$1", [s.student_id]);
+  if (selectedStudent.value?.student_id === s.student_id)
+    await selectStudent(null);
+  await refreshStudents();
+  notify("Schüler*in gelöscht.");
+}
+async function removeYear() {
+  const s = selectedStudent.value;
+  if (!s?.graduation_year) return;
+  if (
+    !(await ask(
+      `Alle Schüler*innen des Abiturjahrgangs ${s.graduation_year} löschen? Diese Aktion kann nicht rückgängig gemacht werden.`,
+      { title: "Jahrgang löschen", kind: "warning" },
+    ))
+  )
+    return;
+  const yearIds = await rows<{ student_id: number }>(
+    "SELECT student_id FROM students WHERE graduation_year=$1",
+    [s.graduation_year],
+  );
+  for (const item of yearIds) {
+    await run(
+      "DELETE FROM student_additional_mint_activities WHERE student_id=$1",
+      [item.student_id],
+    );
+    await run("DELETE FROM students WHERE student_id=$1", [item.student_id]);
+  }
+  if (
+    yearIds.some(
+      (item) => item.student_id === selectedStudent.value?.student_id,
+    )
+  )
+    await selectStudent(null);
+  await refreshStudents();
+  notify(`${yearIds.length} Schüler*innen gelöscht.`);
+}
 </script>
 
 <template>
- <section class="panel students-page"><div class="toolbar"><div class="search-field"><Search :size="17"/><input v-model="search" placeholder="Name suchen…" aria-label="Schüler*innen suchen"/><button v-if="search" class="clear-search" @click="search=''" aria-label="Suche löschen"><X :size="14"/></button></div><label class="compact-field">Abiturjahrgang<input v-model="year" inputmode="numeric" placeholder="Alle Jahrgänge"/></label><button class="button primary" @click="openCreate"><UserPlus :size="16"/>Schüler*in hinzufügen</button></div>
-  <div class="table-caption"><span><b>{{ filtered.length }}</b> Schüler*innen</span><span>Zum Auswählen auf eine Zeile klicken</span></div>
-  <div class="table-scroll"><table class="data-table"><thead><tr><th><button @click="sort='name';asc=!asc">Name <ArrowUpDown :size="13"/></button></th><th><button @click="sort='school_name';asc=!asc">Schule <ArrowUpDown :size="13"/></button></th><th><button @click="sort='graduation_year';asc=!asc">Abiturjahrgang <ArrowUpDown :size="13"/></button></th><th><button @click="sort='birthday';asc=!asc">Geburtsdatum</button></th><th class="actions-col">Aktionen</th></tr></thead><tbody><tr v-for="student in filtered" :key="student.student_id" :class="{'selected-row':selectedStudent?.student_id===student.student_id}" @click="selectStudent(student)"><td><div class="student-cell"><b>{{student.name}}</b></div></td><td>{{student.school_name||'—'}}</td><td><span class="year-tag">{{student.graduation_year||'—'}}</span></td><td>{{student.birthday?new Date(student.birthday+'T00:00:00').toLocaleDateString('de-DE'):'—'}}</td><td class="row-actions"><button class="icon-button" :aria-label="`${student.name} bearbeiten`" title="Bearbeiten" @click.stop="beginEdit(student)"><Pencil :size="16"/></button><button class="icon-button danger-icon" :aria-label="`${student.name} löschen`" title="Löschen" @click.stop="remove(student)"><Trash2 :size="16"/></button></td></tr></tbody></table>
-   <div v-if="!filtered.length" class="empty-state"><span class="empty-icon"><Users :size="22"/></span><b>{{students.length?'Keine Treffer':'Noch keine Schüler*innen vorhanden'}}</b><p>{{students.length?'Passe die Suche oder den Jahrgangsfilter an.':'Füge die erste Person hinzu, um mit einem Zertifikat zu beginnen.'}}</p></div>
-  </div><footer class="table-footer"><span v-if="selectedStudent" class="selected-label"><span class="status-dot"></span>{{selectedStudent.name}} ist ausgewählt</span><span v-else>Keine Person ausgewählt</span><button class="button danger-soft" :disabled="!selectedStudent?.graduation_year" @click="removeYear"><Trash2 :size="15"/>Jahrgang löschen</button></footer>
- </section>
- <div v-if="edit" class="modal-backdrop" @click.self="edit=null"><section class="modal-card" role="dialog" aria-modal="true"><header class="modal-header"><div><p class="eyebrow">SCHÜLERDATEN</p><h2>Schüler*in bearbeiten</h2></div><button class="icon-button" @click="edit=null"><X :size="18"/></button></header><form class="form-grid" @submit.prevent="save"><label class="span-2">Vor- und Nachname<input v-model="form.name" required/></label><label>Geburtsdatum<input v-model="form.birthday" type="date" required/></label><label>Abiturjahrgang<input v-model.number="form.graduation_year" type="number" min="1900" max="2200" required/></label><label class="span-2">Schule<select v-model.number="form.school_id" required><option v-for="school in schools" :key="school.school_id" :value="school.school_id">{{school.school_name}}</option></select></label><footer class="modal-actions span-2"><button type="button" class="button secondary" @click="edit=null">Abbrechen</button><button class="button primary">Änderungen speichern</button></footer></form></section></div>
+  <section class="panel students-page">
+    <div class="toolbar">
+      <div class="search-field">
+        <Search :size="17" /><input
+          v-model="search"
+          placeholder="Name suchen…"
+          aria-label="Schüler*innen suchen"
+        /><button
+          v-if="search"
+          class="clear-search"
+          @click="search = ''"
+          aria-label="Suche löschen"
+        >
+          <X :size="14" />
+        </button>
+      </div>
+      <label class="compact-field"
+        >Abiturjahrgang<input
+          v-model="year"
+          inputmode="numeric"
+          placeholder="Alle Jahrgänge" /></label
+      ><button class="button primary" @click="openCreate">
+        <UserPlus :size="16" />Schüler*in hinzufügen
+      </button>
+    </div>
+    <div class="table-caption">
+      <span
+        ><b>{{ filtered.length }}</b> Schüler*innen</span
+      ><span>Zum Auswählen auf eine Zeile klicken</span>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>
+              <button
+                @click="
+                  sort = 'name';
+                  asc = !asc;
+                "
+              >
+                Name <ArrowUpDown :size="13" />
+              </button>
+            </th>
+            <th>
+              <button
+                @click="
+                  sort = 'school_name';
+                  asc = !asc;
+                "
+              >
+                Schule <ArrowUpDown :size="13" />
+              </button>
+            </th>
+            <th>
+              <button
+                @click="
+                  sort = 'graduation_year';
+                  asc = !asc;
+                "
+              >
+                Abiturjahrgang <ArrowUpDown :size="13" />
+              </button>
+            </th>
+            <th>
+              <button
+                @click="
+                  sort = 'birthday';
+                  asc = !asc;
+                "
+              >
+                Geburtsdatum
+              </button>
+            </th>
+            <th class="actions-col">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="student in filtered"
+            :key="student.student_id"
+            :class="{
+              'selected-row':
+                selectedStudent?.student_id === student.student_id,
+            }"
+            @click="selectStudent(student)"
+          >
+            <td>
+              <div class="student-cell">
+                <b>{{ student.name }}</b>
+              </div>
+            </td>
+            <td>{{ student.school_name || "—" }}</td>
+            <td>
+              <span class="year-tag">{{ student.graduation_year || "—" }}</span>
+            </td>
+            <td>
+              {{
+                student.birthday
+                  ? new Date(student.birthday + "T00:00:00").toLocaleDateString(
+                      "de-DE",
+                    )
+                  : "—"
+              }}
+            </td>
+            <td class="row-actions">
+              <button
+                class="icon-button"
+                :aria-label="`${student.name} bearbeiten`"
+                title="Bearbeiten"
+                @click.stop="beginEdit(student)"
+              >
+                <Pencil :size="16" /></button
+              ><button
+                class="icon-button danger-icon"
+                :aria-label="`${student.name} löschen`"
+                title="Löschen"
+                @click.stop="remove(student)"
+              >
+                <Trash2 :size="16" />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="!filtered.length" class="empty-state">
+        <span class="empty-icon"><Users :size="22" /></span
+        ><b>{{
+          students.length
+            ? "Keine Treffer"
+            : "Noch keine Schüler*innen vorhanden"
+        }}</b>
+        <p>
+          {{
+            students.length
+              ? "Passe die Suche oder den Jahrgangsfilter an."
+              : "Füge die erste Person hinzu, um mit einem Zertifikat zu beginnen."
+          }}
+        </p>
+      </div>
+    </div>
+    <footer class="table-footer">
+      <span v-if="selectedStudent" class="selected-label"
+        ><span class="status-dot"></span>{{ selectedStudent.name }} ist
+        ausgewählt</span
+      ><span v-else>Keine Person ausgewählt</span
+      ><button
+        class="button danger-soft"
+        :disabled="!selectedStudent?.graduation_year"
+        @click="removeYear"
+      >
+        <Trash2 :size="15" />Jahrgang löschen
+      </button>
+    </footer>
+  </section>
+  <div v-if="edit" class="modal-backdrop" @click.self="edit = null">
+    <section class="modal-card" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <div>
+          <p class="eyebrow">SCHÜLERDATEN</p>
+          <h2>Schüler*in bearbeiten</h2>
+        </div>
+        <button class="icon-button" @click="edit = null">
+          <X :size="18" />
+        </button>
+      </header>
+      <form class="form-grid" @submit.prevent="save">
+        <label class="span-2"
+          >Vor- und Nachname<input v-model="form.name" required /></label
+        ><label
+          >Geburtsdatum<input
+            v-model="form.birthday"
+            type="date"
+            required /></label
+        ><label
+          >Abiturjahrgang<input
+            v-model.number="form.graduation_year"
+            type="number"
+            min="1900"
+            max="2200"
+            required /></label
+        ><label class="span-2"
+          >Schule<select v-model.number="form.school_id" required>
+            <option
+              v-for="school in schools"
+              :key="school.school_id"
+              :value="school.school_id"
+            >
+              {{ school.school_name }}
+            </option>
+          </select></label
+        >
+        <footer class="modal-actions span-2">
+          <button type="button" class="button secondary" @click="edit = null">
+            Abbrechen</button
+          ><button class="button primary">Änderungen speichern</button>
+        </footer>
+      </form>
+    </section>
+  </div>
 </template>

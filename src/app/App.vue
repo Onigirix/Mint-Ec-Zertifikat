@@ -13,7 +13,6 @@ import { rows, run } from './db';
 const route = useRoute();
 const router = useRouter();
 const title = computed(() => String(route.meta.title ?? 'MINT-EC'));
-const subtitle = computed(() => String(route.meta.subtitle ?? ''));
 const nav = [
   { to: '/students', text: 'Schüler*innen', icon: Users },
   { to: '/competence', text: 'Fachliche Kompetenz', icon: GraduationCap },
@@ -105,7 +104,7 @@ async function createStudent() {
         </div>
       </header>
       <main class="page-wrap">
-        <div class="page-heading"><div><p class="eyebrow">MINT-EC ZERTIFIKAT</p><h1>{{ title }}</h1><p class="subtitle">{{ subtitle }}</p></div></div>
+        <div class="page-heading"><div><p class="eyebrow">MINT-EC ZERTIFIKAT</p><h1>{{ title }}</h1></div></div>
         <RouterView />
       </main>
     </section>
