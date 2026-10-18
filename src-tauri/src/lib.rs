@@ -80,7 +80,9 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
     #[cfg(target_os = "windows")]
     {
         use tauri_plugin_prevent_default::PlatformOptions;
-        let options = PlatformOptions::new().swipe_navigation(false);
+        let options = PlatformOptions::new()
+            .swipe_navigation(false)
+            .default_context_menus(false);
 
         #[cfg(not(debug_assertions))]
         let options = options
