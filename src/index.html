@@ -1,99 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preload" href="assets/MaterialSymbolsRounded.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="assets/notyf.min.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MINT-EC-Zertifikat</title>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
-      }
-    </script>
-    <script src="assets/notyf.min.js"></script>
-    <script type="module" src="main.js" defer></script>
-    <script type="module" src="app-router.js" defer></script>
+    <meta name="color-scheme" content="light dark" />
+    <title>MINT-EC Zertifikat</title>
   </head>
-
-  <body class="app-root page-start">
-    <!-- Header with Button for Navigation-->
-    <header id="header">
-      <button id="openNav" class="openNav">
-        <i class="material-icons">menu</i>
-      </button>
-      <div></div>
-      <a style="text-decoration: none; color: #ffffffaa; font-weight: bolder; font-size: x-large;" class="rightHeading" href="contributors.html">Mint-EC Zertifikat<a>
-      <!-- <div id="schuelerAnzeige"></div>  Bereich zur Anzeige des Schülers -->
-    </header>
-
-    <!-- Sidenavigation with close Button -->
-    <div id="sidenav" class="sidenav">
-      <a id="closeNav"><i class="material-icons">close</i></a>
-      <div id="navLinks">
-        <a href="index.html" id="Startseite">Startseite</a>
-        <a href="schuelerbearbeiten.html" id="Schülerliste">Schülerliste</a>
-        <a href="fachliche-kompetenz.html" id="Fachliche-Kompetenz"
-          >Fachliche Kompetenz</a
-        >
-        <a
-          href="fachwissenschaftliches-arbeiten.html"
-          id="Fachwissenschaftliches-Arbeiten"
-          >Fachwissenschaftliches Arbeiten</a
-        >
-        <a href="zusaetzlich.html" id="Zusätzliche-MINT-Aktivitäten"
-          >Zusätzliche MINT-Aktivitäten</a
-        >
-        <a href="export.html" id="export">Exportieren</a>
-        <a href="settings.html" id="settings">Einstellungen</a>
-      </div>
-    </div>
-
-    <!--Main Content-->
-    <div id="main">
-      <main id="content">
-        <h1>Mint-EC PDF Generator</h1>
-        <div class="slideshow-container">
-          <div>
-            <img
-              src="bilder/Mintec_slogan.png"
-              style="
-                height: 100%;
-                width: 80%;
-                display: block;
-                margin: 20px auto;
-              "
-            />
-          </div>
-        </div>
-        <div style="width: 100%; display: flex; gap: 3%; align-items: center; margin-top: 1%; justify-content: center;">
-          <button
-            class="manualButton blauerButton startButton"
-            id="manual"
-            style="padding: 10px 20px"
-          >
-            Handbuch
-          </button>
-          <button
-            id="startButton"
-            class="blauerButton"
-            onclick="window.location.href='schuelerbearbeiten.html';"
-            style="padding: 10px 20px"
-          >
-            Start
-          </button>
-        </div>
-      </main>
-    </div>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/app/main.ts"></script>
   </body>
 </html>
-
-<!--TODO: Make the Sidenav closable by clicking back on main-->
-<!--TODO: Light and Dark mode toggle-->
-<!--TODO: Make the Menu button a fixed size or make the middle items in the top bar relative to the left side-->
-<!--TODO: Add a layer over everything when the sidenav gets extended, that also slowly darkens and takes as long to darken as the animation of the sidenav is-->
-
-<!--cargo tauri dev --no-watch / cargo tauri build -->
