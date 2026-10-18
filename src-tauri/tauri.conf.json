@@ -1,6 +1,6 @@
 {
   "productName": "Mint-EC",
-  "version": "0.0.0",
+  "version": "0.5.0",
   "identifier": "de.mint-ec.app",
   "build": {
     "beforeDevCommand": "npm --prefix ../src run dev -- --host 127.0.0.1",
@@ -33,7 +33,8 @@
       "appimage",
       "nsis",
       "app",
-      "rpm"],
+      "rpm"
+    ],
     "icon": [
       "icons/16x16.png",
       "icons/24x24.png",
@@ -59,7 +60,7 @@
         ]
       }
     },
-    "macOS":{
+    "macOS": {
       "signingIdentity": "-"
     },
     "createUpdaterArtifacts": true
