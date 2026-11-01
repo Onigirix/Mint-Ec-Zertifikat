@@ -8,6 +8,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   seed-rust-cache:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
