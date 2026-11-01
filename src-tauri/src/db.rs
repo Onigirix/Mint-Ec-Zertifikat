@@ -7,7 +7,7 @@ use tokio::sync::OnceCell;
 
 static DATABASE_PATH: OnceLock<String> = OnceLock::new();
 static DB_POOL: OnceCell<SqlitePool> = OnceCell::const_new();
-const CURRENT_SCHEMA_VERSION: i32 = 4;
+const CURRENT_SCHEMA_VERSION: i32 = 5;
 
 pub fn get_database_path() -> &'static str {
     DATABASE_PATH.get().expect("Database path not initialized")
@@ -653,6 +653,9 @@ async fn run_migrations() {
                     3 => {
                         migrate_to_version_4(db).await;
                     }
+                    4 => {
+                        migrate_to_version_5(db).await;
+                    }
                     _ => {
                         eprintln!("No migration path for version {}", current_version);
                         break;
@@ -739,6 +742,210 @@ async fn migrate_to_version_4(db: &SqlitePool) {
     .await;
     if let Err(error) = result {
         eprintln!("Error migrating database to version 4: {}", error);
+    }
+}
+
+async fn migrate_to_version_5(db: &SqlitePool) {
+    let result = async {
+        let competitions = [
+            (
+                "BundesUmweltWettbewerb",
+                "BundesUmweltWettbewerb",
+                "Urkunde",
+                "Urkunde",
+                "Foerder- oder Anerkennungspreis",
+                "Förder- oder Anerkennungspreis",
+                "Haupt- oder Sonderpreis",
+                "Haupt- oder Sonderpreis",
+            ),
+            (
+                "Bundeswettbewerb Informatik",
+                "Bundeswettbewerb Informatik",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die 3. Runde",
+                "Qualifikation für die 3. Runde",
+            ),
+            (
+                "Bundeswettbewerb Mathematik",
+                "Bundeswettbewerb Mathematik",
+                "1. Runde (ernsthafte Teilnahme)",
+                "1. Runde (ernsthafte Teilnahme)",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die 3. Runde",
+                "Qualifikation für die 3. Runde",
+            ),
+            (
+                "DECHEMAX",
+                "DECHEMAX",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Sonderpreis / bestes Klassenstufenteam",
+                "Sonderpreis / bestes Klassenstufenteam",
+                "Siegerteam",
+                "Siegerteam",
+            ),
+            (
+                "FIRST LEGO League",
+                "FIRST LEGO League",
+                "Ernsthafte Teilnahme Regionalwettbewerb",
+                "Ernsthafte Teilnahme Regionalwettbewerb",
+                "Preistraeger Regionalwettbewerb",
+                "Preisträger Regionalwettbewerb",
+                "Qualifikation Semi-Finals / Finale Zentraleuropa",
+                "Qualifikation Semi-Finals / Finale Zentraleuropa",
+            ),
+            (
+                "Informatik-Biber",
+                "Informatik-Biber",
+                "3x ernsthafte Teilnahme oder 3. Preis",
+                "3x ernsthafte Teilnahme oder 3. Preis",
+                "1. Preis oder 2. Preis",
+                "1. Preis oder 2. Preis",
+                "",
+                "",
+            ),
+            (
+                "Internationale Biologie-Olympiade",
+                "Internationale Biologie-Olympiade",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die 3. Runde",
+                "Qualifikation für die 3. Runde",
+            ),
+            (
+                "Internationale Chemie-Olympiade",
+                "Internationale Chemie-Olympiade",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die 3. Runde",
+                "Qualifikation für die 3. Runde",
+            ),
+            (
+                "Internationaler Chemiewettbewerb",
+                "Internationaler Chemiewettbewerb",
+                "Certificate of merit / Certificate of high distinction",
+                "Certificate of merit / Certificate of high distinction",
+                "Certificate of excellence",
+                "Certificate of excellence",
+                "",
+                "",
+            ),
+            (
+                "Internationale Junior Science Olympiade",
+                "Internationale Junior Science Olympiade",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer das Bundesfinale",
+                "Qualifikation für das Bundesfinale",
+            ),
+            (
+                "Internationale Physik-Olympiade",
+                "Internationale Physik-Olympiade",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die 3. Runde",
+                "Qualifikation für die 3. Runde",
+            ),
+            (
+                "Kaenguru der Mathematik",
+                "Känguru der Mathematik",
+                "3x ernsthafte Teilnahme oder 3. Preis",
+                "3x ernsthafte Teilnahme oder 3. Preis",
+                "2. Preis oder 1. Preis",
+                "2. Preis oder 1. Preis",
+                "",
+                "",
+            ),
+            (
+                "Mathematik-Olympiade",
+                "Mathematik-Olympiade",
+                "3x ernsthafte Teilnahme an der Schulrunde",
+                "3x ernsthafte Teilnahme an der Schulrunde",
+                "Qualifikation fuer die Regionalrunde (Stadt/Kreis)",
+                "Qualifikation für die Regionalrunde (Stadt/Kreis)",
+                "Qualifikation fuer die Landesrunde oder Bundeswettbewerb",
+                "Qualifikation für die Landesrunde oder Bundeswettbewerb",
+            ),
+            (
+                "MNU-Bundeswettbewerb Physik",
+                "MNU-Bundeswettbewerb Physik",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Qualifikation fuer die 2. Runde",
+                "Qualifikation für die 2. Runde",
+                "Qualifikation fuer die Bundesrunde",
+                "Qualifikation für die Bundesrunde",
+            ),
+            (
+                "Schueler experimentieren",
+                "Schüler experimentieren",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Alle Preistraeger beim Regionalwettbewerb",
+                "Alle Preisträger beim Regionalwettbewerb",
+                "Qualifikation fuer den Landeswettbewerb",
+                "Qualifikation für den Landeswettbewerb",
+            ),
+            (
+                "Schuelerwettbewerb der Siemens Stiftung",
+                "Schülerwettbewerb der Siemens Stiftung",
+                "Ernsthafte Teilnahme",
+                "Ernsthafte Teilnahme",
+                "Vorentscheid erreicht",
+                "Vorentscheid erreicht",
+                "Finalteilnahme",
+                "Finalteilnahme",
+            ),
+        ];
+
+        for (
+            old_name,
+            new_name,
+            old_level_one,
+            new_level_one,
+            old_level_two,
+            new_level_two,
+            old_level_three,
+            new_level_three,
+        ) in competitions
+        {
+            sqlx::query(
+                "UPDATE additional_mint_activities
+                 SET name = ?, level_one = ?, level_two = ?, level_three = ?
+                 WHERE name = ? AND description = '' AND level_one = ?
+                   AND level_two = ? AND level_three = ?;",
+            )
+            .bind(new_name)
+            .bind(new_level_one)
+            .bind(new_level_two)
+            .bind(new_level_three)
+            .bind(old_name)
+            .bind(old_level_one)
+            .bind(old_level_two)
+            .bind(old_level_three)
+            .execute(db)
+            .await?;
+        }
+
+        sqlx::query("PRAGMA user_version = 5;").execute(db).await?;
+        Ok::<(), sqlx::Error>(())
+    }
+    .await;
+
+    if let Err(error) = result {
+        eprintln!("Error migrating database to version 5: {}", error);
     }
 }
 

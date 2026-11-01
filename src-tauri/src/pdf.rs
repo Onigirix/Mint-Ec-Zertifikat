@@ -265,14 +265,6 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (Strin
     let get_grades_return = db::get_grades(student_id).await;
     match get_grades_return {
         Ok((subjects, grades)) => {
-            let has_any_failing_grade = (0..5).any(|course| {
-                !subjects[course].trim().is_empty()
-                    && subjects[course] != "..."
-                    && grades[course * 4..course * 4 + 4]
-                        .iter()
-                        .any(|grade| *grade < 5)
-            });
-
             let mut grade_averages = [0.0_f32; 5];
             let mut course_valid = [false; 5];
             for i in 0..5 {
@@ -283,8 +275,8 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (Strin
                     && course_grades.iter().all(|grade| *grade >= 5)
                     && grade_averages[i] >= 9.0;
             }
-            let lk_indexes = [0usize, 1, 4];
-            let gk_indexes = [2usize, 3];
+            let lk_indexes = [0usize, 1, 2];
+            let gk_indexes = [3usize, 4];
             let mut candidates: Vec<(f32, Vec<usize>)> = Vec::new();
             for i in 0..lk_indexes.len() {
                 for j in (i + 1)..lk_indexes.len() {
@@ -305,9 +297,6 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (Strin
                         vec![lk, gk_indexes[0], gk_indexes[1]],
                     ));
                 }
-            }
-            if has_any_failing_grade {
-                candidates.clear();
             }
             let (best_average, best_combination) = candidates
                 .into_iter()
@@ -332,10 +321,10 @@ async fn fachliche_kompetenz_text(student_id: i32, student_name: &str) -> (Strin
             } else if best_combination.len() == 3 {
                 let lk = best_combination
                     .iter()
-                    .find(|index| [0, 1, 4].contains(*index))
+                    .find(|index| [0, 1, 2].contains(*index))
                     .map(|index| subjects[*index].as_str())
                     .unwrap_or("");
-                format!("{} hat {} auf erhöhtem Niveau und zwei weitere Fächer belegt: {} und {}.\nDie Durchschnittsnote beträgt {} Punkte.", student_name, lk, subjects[2], subjects[3], best_average_str)
+                format!("{} hat {} auf erhöhtem Niveau und zwei weitere Fächer belegt: {} und {}.\nDie Durchschnittsnote beträgt {} Punkte.", student_name, lk, subjects[3], subjects[4], best_average_str)
             } else {
                 format!(
                     "{} hat keine gültige Fachkombination für die Bewertung.",

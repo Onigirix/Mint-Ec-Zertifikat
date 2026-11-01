@@ -6,9 +6,9 @@ import { ask } from '@tauri-apps/plugin-dialog';
 import { check } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { ChevronRight, FileBadge, FileText, GraduationCap, ListChecks, Search, Settings, Users, X } from 'lucide-vue-next';
-import { notify, refreshStudents, selectStudent, selectedStudent, students, toast } from './store';
-import type { Student, School } from './types';
-import { rows, run } from './db';
+import { notify, refreshSchools, refreshStudents, selectStudent, selectedStudent, schools, students, toast } from './store';
+import type { Student } from './types';
+import { run } from './db';
 
 const route = useRoute();
 const router = useRouter();
@@ -24,7 +24,6 @@ const query = ref('');
 const searchFocused = ref(false);
 const suggestions = computed(() => searchFocused.value && query.value.trim() ? students.value.filter(s => s.name.toLocaleLowerCase('de').includes(query.value.toLocaleLowerCase('de'))).slice(0, 7) : []);
 const showCreate = ref(false);
-const schools = ref<School[]>([]);
 const studentForm = ref({ first: '', last: '', birthday: '', year: new Date().getFullYear() + 2, school_id: 1 });
 const busy = ref(false);
 const openCreate = () => { showCreate.value = true; };
@@ -32,7 +31,7 @@ onMounted(() => window.addEventListener('open-create-student', openCreate));
 onUnmounted(() => window.removeEventListener('open-create-student', openCreate));
 watch(selectedStudent, value => query.value = value?.name ?? '', { immediate: true });
 onMounted(async () => {
-  schools.value = await rows<School>('SELECT school_id, school_name FROM schools ORDER BY school_id');
+  await refreshSchools();
   try {
     const update = await check();
     if (update && await ask(`Update auf ${update.version} ist verfügbar.\n\n${update.body ?? ''}\n\nJetzt herunterladen und installieren?`, { title: 'Neues Update', kind: 'info', okLabel: 'Updaten', cancelLabel: 'Später' })) {

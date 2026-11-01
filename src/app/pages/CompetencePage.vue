@@ -9,9 +9,9 @@ const semesters = [1, 2, 3, 4];
 const labels = [
   "Erhöhtes Niveau 1",
   "Erhöhtes Niveau 2",
+  "Erhöhtes Niveau 3",
   "Grundkurs 1",
   "Grundkurs 2",
-  "Weiteres Fach",
 ];
 const subject = ref<Record<number, string>>({});
 const grade = ref<Record<number, Record<number, string>>>({});
@@ -62,8 +62,8 @@ const certification = computed(() => {
   );
   if (courses.some((c) => subject.value[c]?.trim() && !valid[c - 1]))
     return { average: "—", level: "—" };
-  const lk = [0, 1, 4],
-    gk = [2, 3],
+  const lk = [0, 1, 2],
+    gk = [3, 4],
     opts: number[] = [];
   for (let i = 0; i < lk.length; i++) {
     for (let j = i + 1; j < lk.length; j++) {

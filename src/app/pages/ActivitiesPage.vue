@@ -303,17 +303,15 @@ async function removeAchievement(a: Achievement) {
           >
             <span class="level-circle">{{ n }}</span
             ><span
-              ><b>{{ n === 0 ? "Keine Punkte" : `Stufe ${n}` }}</b
-              ><small>{{
-                n === 0
-                  ? "Ohne Punkte"
-                  : n === 1
-                    ? selected.level_one
-                    : n === 2
-                      ? selected.level_two
-                      : selected.level_three || "Keine Angabe"
+              ><b>Stufe {{ n }}</b
+              ><small v-if="n !== 0">{{
+                n === 1
+                  ? selected.level_one
+                  : n === 2
+                    ? selected.level_two
+                    : selected.level_three || "Keine Angabe"
               }}</small></span
-            >
+          >
           </button>
         </div>
         <div class="record-form">

@@ -82,8 +82,8 @@ watch(
         ).reduce((x, y) => x + y, 0)
       : 0;
     const options: number[] = [];
-    const lk = [0, 1, 4],
-      gk = [2, 3];
+    const lk = [0, 1, 2],
+      gk = [3, 4];
     for (let i = 0; i < lk.length; i++) {
       for (let j = i + 1; j < lk.length; j++)
         if (valid[lk[i]] && valid[lk[j]])

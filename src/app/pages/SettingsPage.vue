@@ -15,14 +15,15 @@ import { rows, run } from "../db";
 import {
   applyTheme,
   notify,
+  refreshSchools,
   refreshStudents,
   selectStudent,
   selectedStudent,
+  schools,
   students,
   theme,
 } from "../store";
 import type { School } from "../types";
-const schools = ref<School[]>([]);
 const activeId = ref(0);
 const model = ref<Partial<School>>({});
 const output = ref("");
@@ -30,9 +31,7 @@ const dirty = ref(false);
 const addDialog = ref(false);
 const newSchoolName = ref("");
 async function loadSchools(preferred = activeId.value) {
-  schools.value = await rows<School>(
-    "SELECT * FROM schools ORDER BY school_id",
-  );
+  await refreshSchools();
   activeId.value = schools.value.some((s) => s.school_id === preferred)
     ? preferred
     : (schools.value[0]?.school_id ?? 0);
@@ -256,10 +255,10 @@ async function savePath() {
           " /></label
       ><label
         >Position 2<input
-          :value="model.school_functionary_2 ?? ''"
+          :value="model.school_functionary_2_position ?? ''"
           @input="
             field(
-              'school_functionary_2',
+              'school_functionary_2_position',
               ($event.target as HTMLInputElement).value,
             )
           "

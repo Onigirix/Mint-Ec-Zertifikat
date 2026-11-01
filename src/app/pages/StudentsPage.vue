@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   Search,
   ArrowUpDown,
@@ -15,15 +16,16 @@ import {
   refreshStudents,
   selectStudent,
   selectedStudent,
+  schools,
   students,
 } from "../store";
-import type { School, Student } from "../types";
+import type { Student } from "../types";
 import { ask } from "@tauri-apps/plugin-dialog";
 const search = ref("");
 const year = ref("");
 const sort = ref("name");
 const asc = ref(true);
-const schools = ref<School[]>([]);
+const router = useRouter();
 const edit = ref<Student | null>(null);
 const openCreate = () => window.dispatchEvent(new Event("open-create-student"));
 const form = ref({ name: "", birthday: "", graduation_year: 0, school_id: 1 });
@@ -46,11 +48,6 @@ const filtered = computed(() =>
       );
     }),
 );
-onMounted(async () => {
-  schools.value = await rows<School>(
-    "SELECT * FROM schools ORDER BY school_id",
-  );
-});
 function beginEdit(s: Student) {
   edit.value = s;
   form.value = {
@@ -59,6 +56,10 @@ function beginEdit(s: Student) {
     graduation_year: s.graduation_year ?? new Date().getFullYear() + 2,
     school_id: s.school_id ?? schools.value[0]?.school_id ?? 1,
   };
+}
+async function chooseStudent(student: Student) {
+  await selectStudent(student);
+  await router.push("/competence");
 }
 async function save() {
   if (!edit.value) return;
@@ -217,7 +218,7 @@ async function removeYear() {
               'selected-row':
                 selectedStudent?.student_id === student.student_id,
             }"
-            @click="selectStudent(student)"
+            @click="chooseStudent(student)"
           >
             <td>
               <div class="student-cell">

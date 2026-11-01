@@ -1,9 +1,10 @@
 import { computed, ref } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { rows } from './db';
-import type { Student } from './types';
+import type { School, Student } from './types';
 
 export const students = ref<Student[]>([]);
+export const schools = ref<School[]>([]);
 export const selectedStudent = ref<Student | null>(null);
 export const theme = ref('system');
 export const toast = ref<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -18,6 +19,9 @@ export async function refreshStudents() {
   students.value = await rows<Student>(`SELECT s.student_id, s.name, s.birthday, s.graduation_year, s.school_id, c.school_name
     FROM students s LEFT JOIN schools c ON c.school_id=s.school_id`);
 }
+export async function refreshSchools() {
+  schools.value = await rows<School>('SELECT * FROM schools ORDER BY school_id');
+}
 export async function selectStudent(student: Student | null) {
   selectedStudent.value = student;
   const id = student?.student_id ?? 0;
@@ -26,7 +30,7 @@ export async function selectStudent(student: Student | null) {
   else localStorage.removeItem('mint-ec-selected-student');
 }
 export async function initialize() {
-  await refreshStudents();
+  await Promise.all([refreshStudents(), refreshSchools()]);
   const stored = Number(localStorage.getItem('mint-ec-selected-student') || 0);
   const student = students.value.find(item => item.student_id === stored) ?? null;
   await selectStudent(student);
